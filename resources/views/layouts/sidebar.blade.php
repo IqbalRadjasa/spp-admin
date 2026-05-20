@@ -21,7 +21,7 @@
 
                 <a href="{{ route('dashboard') }}"
                     class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
-                    <span>🏠</span>
+                    <span><i class="ri-dashboard-line"></i></span>
 
                     <span x-show="sidebarOpen">
                         Dashboard
@@ -32,7 +32,7 @@
                 <a href="{{ route('students.index') }}"
                     class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('students.index') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
 
-                    <span>🎓</span>
+                    <span><i class="ri-graduation-cap-line"></i></span>
 
                     <span x-show="sidebarOpen">
                         Student Records
@@ -43,7 +43,7 @@
                 <a href="{{ route('bills.index') }}"
                     class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.index') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
 
-                    <span>🎓</span>
+                    <span><i class="ri-file-list-3-line"></i></span>
 
                     <span x-show="sidebarOpen">
                         List Bills
@@ -54,7 +54,7 @@
                 <a href="{{ route('bills.generate.form') }}"
                     class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.generate.form') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
 
-                    <span>🎓</span>
+                    <span><i class="ri-file-settings-line"></i></span>
 
                     <span x-show="sidebarOpen">
                         Generate Bills

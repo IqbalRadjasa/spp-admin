@@ -1,5 +1,6 @@
 @import "./global.css";
-@import 'remixicon/fonts/remixicon.css';
+@import "remixicon/fonts/remixicon.css";
+@import "simple-datatables/dist/style.css";
 
 @tailwind base;
 @tailwind components;

@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <h1>Daftar Tagihan</h1>
 
-                    <table border="1" cellpadding="10">
+                    <table id="billsTable" class="min-w-full">
                         <tr>
                             <th>Siswa</th>
                             <th>Periode</th>
@@ -32,7 +32,7 @@
 
                                 <td>
                                     @if ($bill->status == 'unpaid')
-                                        <a class="bg-gray-200 py-2 px-3 rounded"
+                                        <a class="bg-gray-200 px-5 py-2 rounded transition hover:bg-gray-300"
                                             href="{{ route('payments.create', $bill->id) }}">
                                             Bayar
                                         </a>

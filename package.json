@@ -19,6 +19,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "remixicon": "^4.9.1"
+        "remixicon": "^4.9.1",
+        "simple-datatables": "^10.2.0"
     }
 }

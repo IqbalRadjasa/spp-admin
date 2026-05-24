@@ -1,68 +1,73 @@
-    <div x-data="{ sidebarOpen: true }" class="flex min-h-screen">
+@php
+    $active = 'bg-gray-700 text-white';
+    $inactive = 'hover:bg-gray-200';
+@endphp
 
-        <!-- Sidebar -->
-        <aside :class="sidebarOpen ? 'w-60' : 'w-16'" class="sidebar transition-all duration-100">
+<div x-data="{ sidebarOpen: true }" class="flex min-h-screen">
 
-            <!-- Header -->
-            <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">
+    <!-- Sidebar -->
+    <aside :class="sidebarOpen ? 'w-60' : 'w-16'" class="sidebar transition-all duration-100">
 
-                <span x-show="sidebarOpen" class="font-bold text-lg">
-                    SPP Admin
+        <!-- Header -->
+        <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">
+
+            <span x-show="sidebarOpen" class="font-bold text-lg">
+                SPP Admin
+            </span>
+
+            <button @click="sidebarOpen = !sidebarOpen">
+                ☰
+            </button>
+
+        </div>
+
+        <!-- Menu -->
+        <nav class="mt-4 space-y-2">
+
+            <a href="{{ route('dashboard') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
+                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('dashboard') ? $active : $inactive }}">
+                <span><i class="ri-dashboard-line"></i></span>
+
+                <span x-show="sidebarOpen">
+                    Dashboard
                 </span>
 
-                <button @click="sidebarOpen = !sidebarOpen">
-                    ☰
-                </button>
+            </a>
 
-            </div>
+            <a href="{{ route('students.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
+                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('students.*') ? $active : $inactive }}">
 
-            <!-- Menu -->
-            <nav class="mt-4 space-y-2">
+                <span><i class="ri-graduation-cap-line"></i></span>
 
-                <a href="{{ route('dashboard') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
-                    <span><i class="ri-dashboard-line"></i></span>
+                <span x-show="sidebarOpen">
+                    Student Records
+                </span>
 
-                    <span x-show="sidebarOpen">
-                        Dashboard
-                    </span>
+            </a>
 
-                </a>
+            <a href="{{ route('bills.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
+                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.index') ? $active : $inactive }}">
 
-                <a href="{{ route('students.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('students.index') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
+                <span><i class="ri-file-list-3-line"></i></span>
 
-                    <span><i class="ri-graduation-cap-line"></i></span>
+                <span x-show="sidebarOpen">
+                    List Bills
+                </span>
 
-                    <span x-show="sidebarOpen">
-                        Student Records
-                    </span>
+            </a>
 
-                </a>
+            <a href="{{ route('bills.generate.form') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
+                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.generate.form') ? $active : $inactive }}">
 
-                <a href="{{ route('bills.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.index') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
+                <span><i class="ri-file-settings-line"></i></span>
 
-                    <span><i class="ri-file-list-3-line"></i></span>
+                <span x-show="sidebarOpen">
+                    Generate Bills
+                </span>
 
-                    <span x-show="sidebarOpen">
-                        List Bills
-                    </span>
+            </a>
 
-                </a>
+        </nav>
 
-                <a href="{{ route('bills.generate.form') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.generate.form') ? 'bg-gray-700 text-white' : 'hover:bg-gray-200' }}">
-
-                    <span><i class="ri-file-settings-line"></i></span>
-
-                    <span x-show="sidebarOpen">
-                        Generate Bills
-                    </span>
-
-                </a>
-
-            </nav>
-
-        </aside>
-    </div>
+    </aside>
+</div>

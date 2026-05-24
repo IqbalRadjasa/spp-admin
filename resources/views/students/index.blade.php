@@ -6,7 +6,7 @@
             <a href="{{ route('students.create') }}"
                 class="bg-gray-700 text-white px-5 py-2 rounded transition hover:bg-gray-600">
                 <i class="ri-add-line"></i>
-                Tambah Siswa
+                Add Student
             </a>
         </div>
 
@@ -17,10 +17,10 @@
 
                         <thead>
                             <tr>
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>NIS</th>
-                                <th>Kelas</th>
-                                <th>Aksi</th>
+                                <th>Class</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -33,8 +33,7 @@
                                     <td>{{ $student->class }}</td>
                                     <td>
                                         <div class="flex flex-row gap-2">
-                                            <a class="bg-gray-200 px-5 py-2 rounded transition hover:bg-gray-300"
-                                                href="{{ route('students.edit', $student->id) }}">
+                                            <a class="btn-secondary" href="{{ route('students.edit', $student->id) }}">
                                                 Edit
                                             </a>
 
@@ -42,10 +41,8 @@
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button
-                                                    class="bg-gray-200 px-5 py-2 rounded transition hover:bg-gray-300"
-                                                    type="submit">
-                                                    Hapus
+                                                <button class="btn-secondary" type="submit">
+                                                    Delete
                                                 </button>
                                             </form>
                                         </div>

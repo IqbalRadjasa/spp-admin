@@ -1,20 +1,18 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Student Records') }}
-        </h2>
-    </x-slot>
+    <div class="py-6">
+        <div class="flex items-center pb-6 justify-between">
+            <h1 class="font-semibold text-xl">Student Records</h1>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto px-2">
+            <a href="{{ route('students.create') }}"
+                class="bg-gray-700 text-white px-5 py-2 rounded transition hover:bg-gray-600">
+                <i class="ri-add-line"></i>
+                Tambah Siswa
+            </a>
+        </div>
+
+        <div class="">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h1>Daftar Siswa</h1>
-
-                    <a href="{{ route('students.create') }}" class="underline">
-                        Tambah Siswa
-                    </a>
-
                     <table id="studentsTable" class="min-w-full">
 
                         <thead>

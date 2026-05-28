@@ -43,12 +43,12 @@
                         </div>
 
                         <div class="flex justify-end mt-6 gap-2">
-                            <a class="btn-secondary" href="{{ url()->previous() }}">
+                            <x-secondary-link :href="url()->previous()">
                                 Back
-                            </a>
-                            <button type="submit" class="btn-primary">
-                                Submit
-                            </button>
+                            </x-secondary-link>
+                            <x-primary-button>
+                                {{ __('Submit') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

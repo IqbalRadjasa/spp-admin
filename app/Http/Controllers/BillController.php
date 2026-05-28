@@ -51,8 +51,15 @@ class BillController extends Controller
         }
         // dd(DB::getQueryLog());
 
-        return redirect()
-            ->back()
-            ->with('success', 'Tagihan berhasil digenerate');
+        try {
+            return redirect()
+                ->back()
+                ->with('success', 'Bill successfully generated!');
+        } catch (\Exception $th) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Something went wrong, please try again later.');
+        }
     }
 }

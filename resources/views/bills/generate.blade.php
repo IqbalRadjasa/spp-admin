@@ -1,34 +1,53 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Student Records') }}
-        </h2>
-    </x-slot>
+    <div class="py-6">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="flex items-center pb-6 justify-between">
+            <h1 class="font-semibold text-xl">Generate Bills</h1>
+        </div>
+
+        <div class="">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h1>Generate Tagihan</h1>
-
+                <div class="p-6">
                     <form action="{{ route('bills.generate') }}" method="POST">
                         @csrf
 
-                        <div>
-                            <label>Periode Tagihan</label>
+                        <div class="flex gap-4">
+                            <div class="input-group w-1/3">
+                                <div class="flex items-center justify-between">
+                                    <x-input-label for="billing_period" :value="__('Billing Period')" />
 
-                            <input type="month" name="billing_period" required>
+                                    <span class="text-sm text-gray-400">
+                                        Example: 2026-01
+                                    </span>
+                                </div>
+                                <x-text-input id="billing_period" class="block mt-1 w-full" type="month"
+                                    name="billing_period" :value="old('billing_period')" required autofocus
+                                    autocomplete="billing_period" />
+                                <x-input-error :messages="$errors->get('billing_period')" />
+                            </div>
+
+                            <div class="input-group w-1/3">
+                                <div class="flex items-center justify-between">
+                                    <x-input-label for="amount" :value="__('Nominal SPP')" />
+
+                                    <span class="text-sm text-gray-400">
+                                        Example: 1500000
+                                    </span>
+                                </div>
+                                <x-text-input id="amount" class="block mt-1 w-full" type="number" name="amount"
+                                    :value="old('amount')" required autofocus autocomplete="amount" />
+                                <x-input-error :messages="$errors->get('amount')" />
+                            </div>
                         </div>
 
-                        <div>
-                            <label>Nominal SPP</label>
-
-                            <input type="number" name="amount" required>
+                        <div class="flex justify-end mt-6 gap-2">
+                            <x-secondary-link :href="route('bills.index')">
+                                Go to list bills
+                            </x-secondary-link>
+                            <x-primary-button>
+                                {{ __('Generate') }}
+                            </x-primary-button>
                         </div>
-
-                        <button type="submit">
-                            Generate
-                        </button>
                     </form>
 
                 </div>

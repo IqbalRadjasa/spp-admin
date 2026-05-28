@@ -92,7 +92,7 @@ class StudentController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to create data!');
+                ->with('error', 'Failed to update data!');
         }
     }
 
@@ -103,8 +103,14 @@ class StudentController extends Controller
     {
         $student->delete();
 
-        return redirect()
-            ->route('students.index')
-            ->with('success', 'Data deleted successfully!');
+        try {
+            return redirect()
+                ->route('students.index')
+                ->with('success', 'Data deleted successfully!');
+        } catch (\Exception $th) {
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to detele data!');
+        }
     }
 }

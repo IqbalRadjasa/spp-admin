@@ -38,13 +38,21 @@ class StudentController extends Controller
             'parent_phone' => 'required'
         ]);
 
-        Student::create($validated);
+        try {
 
-        return redirect()
-            ->route('students.index')
-            ->with('success', 'Siswa berhasil ditambahkan');
+            Student::create($validated);
+
+            return redirect()
+                ->route('students.index')
+                ->with('success', 'Data created successfully!');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create data!');
+        }
     }
-
     /**
      * Display the specified resource.
      */
@@ -73,11 +81,19 @@ class StudentController extends Controller
             'parent_phone' => 'required'
         ]);
 
-        $student->update($validated);
+        try {
+            $student->update($validated);
 
-        return redirect()
-            ->route('students.index')
-            ->with('success', 'Siswa berhasil diupdate');
+            return redirect()
+                ->route('students.index')
+                ->with('success', 'Data updated successfully!');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create data!');
+        }
     }
 
     /**
@@ -89,6 +105,6 @@ class StudentController extends Controller
 
         return redirect()
             ->route('students.index')
-            ->with('success', 'Siswa berhasil dihapus');
+            ->with('success', 'Data deleted successfully!');
     }
 }

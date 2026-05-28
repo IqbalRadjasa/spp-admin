@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "remixicon": "^4.9.1",
-        "simple-datatables": "^10.2.0"
+        "simple-datatables": "^10.2.0",
+        "sweetalert2": "^11.26.25"
     }
 }

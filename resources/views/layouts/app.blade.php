@@ -17,7 +17,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased dashboard-main">
+<body class="font-sans antialiased dashboard-main" data-success="{{ session('success') }}"
+    data-error="{{ session('error') }}">
 
     <div class="flex min-h-screen">
 
@@ -38,7 +39,6 @@
         </div>
 
     </div>
-
 </body>
 
 </html>

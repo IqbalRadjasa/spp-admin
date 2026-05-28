@@ -2,8 +2,22 @@ import "./bootstrap";
 
 import Alpine from "alpinejs";
 import { DataTable } from "simple-datatables";
+import {
+    toastSuccess,
+    toastError,
+    confirmDelete,
+    successAlert,
+    errorAlert,
+} from "./helpers/sweetalert";
 
 window.Alpine = Alpine;
+
+window.toastError = toastError;
+window.toastSuccess = toastSuccess;
+
+window.errorAlert = errorAlert;
+window.successAlert = successAlert;
+window.confirmDelete = confirmDelete;
 
 Alpine.start();
 
@@ -19,3 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
         new DataTable(billsTable);
     }
 });
+
+const successMessage = document.body.dataset.success;
+const errorMessage = document.body.dataset.error;
+
+if (successMessage) {
+    toastSuccess(successMessage);
+}
+
+if (errorMessage) {
+    toastError(errorMessage);
+}

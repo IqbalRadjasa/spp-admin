@@ -37,7 +37,14 @@
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('students.destroy', $student->id) }}" method="POST">
+                                            <form action="{{ route('students.destroy', $student->id) }}" method="POST"
+                                                onsubmit="
+                                                    event.preventDefault();
+
+                                                    confirmDelete(() => {
+                                                        this.submit();
+                                                    });
+                                                ">
                                                 @csrf
                                                 @method('DELETE')
 

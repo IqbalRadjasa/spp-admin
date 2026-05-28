@@ -31,7 +31,7 @@
                 Student Records
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*')">
+            <x-sidebar-link :href="route('bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('bills.index')">
                 List Bills
             </x-sidebar-link>
 

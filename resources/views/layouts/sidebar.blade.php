@@ -23,50 +23,21 @@
 
         <!-- Menu -->
         <nav class="mt-4 space-y-2">
+            <x-sidebar-link :href="route('dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('dashboard')">
+                Dashboard
+            </x-sidebar-link>
 
-            <a href="{{ route('dashboard') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('dashboard') ? $active : $inactive }}">
-                <span><i class="ri-dashboard-line"></i></span>
+            <x-sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
+                Student Records
+            </x-sidebar-link>
 
-                <span x-show="sidebarOpen">
-                    Dashboard
-                </span>
+            <x-sidebar-link :href="route('bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*')">
+                List Bills
+            </x-sidebar-link>
 
-            </a>
-
-            <a href="{{ route('students.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('students.*') ? $active : $inactive }}">
-
-                <span><i class="ri-graduation-cap-line"></i></span>
-
-                <span x-show="sidebarOpen">
-                    Student Records
-                </span>
-
-            </a>
-
-            <a href="{{ route('bills.index') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.index') ? $active : $inactive }}">
-
-                <span><i class="ri-file-list-3-line"></i></span>
-
-                <span x-show="sidebarOpen">
-                    List Bills
-                </span>
-
-            </a>
-
-            <a href="{{ route('bills.generate.form') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                class="flex items-center gap-3 px-4 py-3 transition {{ request()->routeIs('bills.generate.form') ? $active : $inactive }}">
-
-                <span><i class="ri-file-settings-line"></i></span>
-
-                <span x-show="sidebarOpen">
-                    Generate Bills
-                </span>
-
-            </a>
-
+            <x-sidebar-link :href="route('bills.generate.form')" icon="ri-file-settings-line" :active="request()->routeIs('bills.generate.form')">
+                Generate Bills
+            </x-sidebar-link>
         </nav>
 
     </aside>

@@ -10,11 +10,11 @@
                 <div class="p-6 text-gray-900">
                     <table id="billsTable" class="min-w-full">
                         <tr>
-                            <th>Siswa</th>
-                            <th>Periode</th>
+                            <th>Student</th>
+                            <th>Period</th>
                             <th>Nominal</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th>Action</th>
                         </tr>
 
                         @foreach ($bills as $bill)
@@ -29,12 +29,11 @@
 
                                 <td>
                                     @if ($bill->status == 'unpaid')
-                                        <a class="bg-gray-200 px-5 py-2 rounded transition hover:bg-gray-300"
-                                            href="{{ route('payments.create', $bill->id) }}">
-                                            Bayar
-                                        </a>
+                                        <x-secondary-link :href="route('payments.create', $bill->id)">
+                                            Pay
+                                        </x-secondary-link>
                                     @else
-                                        Sudah Lunas
+                                        Paid
                                     @endif
                                 </td>
                             </tr>

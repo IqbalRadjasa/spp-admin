@@ -1,67 +1,94 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Student') }}
-        </h2>
-    </x-slot>
+    <div class="py-6">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h1>Pembayaran SPP</h1>
+        <div class="flex items-center pb-6 justify-between">
+            <h1 class="font-semibold text-xl">SPP Payment</h1>
+        </div>
 
-                    <p>
-                        Nama Siswa:
-                        {{ $bill->student->name }}
-                    </p>
+        <div class="">
+            <div class="bg-white overflow-hidden shadow-sm border-4 border-double border-gray-400">
+                <div class="p-6">
+                    <div class="flex text-md">
+                        <div class="w-1/2">
+                            <p>
+                                Nama Siswa:
+                                <br>
+                                <span class="font-semibold">
+                                    {{ $bill->student->name }}
+                                </span>
+                            </p>
+                            <br>
+                            <p>
+                                Periode:
+                                <br>
+                                <span class="font-semibold">
+                                    {{ $bill->billing_period }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="w-1/2">
+                            <p>
+                                Nominal:
+                                <br>
+                                <span class="font-semibold">
+                                    Rp {{ number_format($bill->amount) }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
 
-                    <p>
-                        Periode:
-                        {{ $bill->billing_period }}
-                    </p>
-
-                    <p>
-                        Nominal:
-                        Rp {{ number_format($bill->amount) }}
-                    </p>
+                    <hr class="my-5 border-1 border-dashed border-gray-400">
 
                     <form action="{{ route('payments.store', $bill->id) }}" method="POST">
                         @csrf
 
-                        <div>
-                            <label>Metode Pembayaran</label>
+                        <div class="flex gap-4">
+                            <div class="input-group w-1/2">
+                                <x-input-label for="name" :value="__('Payment Method')" />
+                                <select name="payment_method_id">
+                                    @foreach ($paymentMethods as $method)
+                                        <option value="{{ $method->id }}">
+                                            {{ $method->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('payment_method_id')" />
+                            </div>
 
-                            <select name="payment_method_id">
-                                @foreach ($paymentMethods as $method)
-                                    <option value="{{ $method->id }}">
-                                        {{ $method->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="input-group w-1/2">
+                                <x-input-label for="paid_at" :value="__('Payment Date')" />
+                                <x-text-input id="paid_at" class="block mt-1 w-full" type="datetime-local"
+                                    name="paid_at" :value="old('paid_at')" required autofocus autocomplete="paid_at" />
+                                <x-input-error :messages="$errors->get('paid_at')" />
+                            </div>
                         </div>
 
-                        <div>
-                            <label>Tanggal Bayar</label>
+                        <div class="flex gap-4 mt-3">
+                            <div class="input-group w-1/2">
+                                <x-input-label for="amount_paid" :value="__('Total Amount')" />
+                                <x-text-input id="amount_paid" class="block mt-1 w-full" type="number"
+                                    name="amount_paid" :value="old('amount_paid')" required autofocus
+                                    autocomplete="amount_paid" />
+                                <x-input-error :messages="$errors->get('amount_paid')" />
+                            </div>
 
-                            <input type="datetime-local" name="paid_at">
+                            <div class="input-group w-1/2">
+                                <x-input-label for="notes" :value="__('Notes')" />
+                                <x-textarea name="notes" rows="4" class="w-full">
+                                    {{ old('address') }}
+                                </x-textarea>
+                                <x-input-error :messages="$errors->get('notes')" />
+                            </div>
                         </div>
 
-                        <div>
-                            <label>Jumlah Bayar</label>
-
-                            <input type="number" name="amount_paid" value="{{ $bill->amount }}">
+                        <div class="flex justify-end mt-6 gap-2">
+                            <x-secondary-link :href="url()->previous()">
+                                Back
+                            </x-secondary-link>
+                            <x-primary-button>
+                                {{ __('Save Payment') }}
+                            </x-primary-button>
                         </div>
-
-                        <div>
-                            <label>Catatan</label>
-
-                            <textarea name="notes"></textarea>
-                        </div>
-
-                        <button type="submit">
-                            Simpan Pembayaran
-                        </button>
                     </form>
                 </div>
             </div>

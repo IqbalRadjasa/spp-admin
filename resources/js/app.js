@@ -30,7 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (billsTable) {
-        new DataTable(billsTable);
+        new DataTable(billsTable, {
+            paging: false,
+            searchable: false,
+        });
     }
 });
 

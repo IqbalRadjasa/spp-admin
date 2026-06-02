@@ -10,11 +10,30 @@ use Illuminate\Support\Facades\DB;
 
 class BillController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bills = Bill::with('student')
-            ->latest()
-            ->get();
+        $query = Bill::with('student');
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->billing_period) {
+            $query->where(
+                'billing_period',
+                $request->billing_period
+            );
+        }
+
+        if ($request->search) {
+
+            $query->whereHas('student', function ($q) use ($request) {
+
+                $q->where('name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $bills = $query->latest()->paginate(5);
 
         return view('bills.index', compact('bills'));
     }

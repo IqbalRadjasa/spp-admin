@@ -9,10 +9,6 @@ use App\Http\Controllers\PaymentController;
 
 Route::redirect('/', '/login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // Auth's Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -20,24 +16,62 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Student's Routes
-Route::resource('students', StudentController::class);
+// User Admin's Routes
+Route::middleware([
+    'auth',
+    'role:super_admin'
+])->group(function () {
 
-// Biil's Routes
-Route::get('/bills/generate', [BillController::class, 'generateForm'])
-    ->name('bills.generate.form');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::post('/bills/generate', [BillController::class, 'generateBills'])
-    ->name('bills.generate');
+    // Student's Routes
+    Route::resource('students', StudentController::class);
 
-Route::get('/bills', [BillController::class, 'index'])
-    ->name('bills.index');
+    // Biil's Routes
+    Route::get('/bills/generate', [BillController::class, 'generateForm'])
+        ->name('bills.generate.form');
 
-// Payment's Routes
-Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
-    ->name('payments.create');
+    Route::post('/bills/generate', [BillController::class, 'generateBills'])
+        ->name('bills.generate');
 
-Route::post('/payments/{bill}', [PaymentController::class, 'store'])
-    ->name('payments.store');
+    Route::get('/bills', [BillController::class, 'index'])
+        ->name('bills.index');
+
+    // Payment's Routes
+    Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
+        ->name('payments.create');
+
+    Route::post('/payments/{bill}', [PaymentController::class, 'store'])
+        ->name('payments.store');
+});
+
+// TU Staff's Routes
+Route::middleware([
+    'auth',
+    'role:super_admin,tu_staff'
+])->group(function () {
+
+    // Student's Routes
+    Route::resource('students', StudentController::class);
+
+    // Biil's Routes
+    Route::get('/bills/generate', [BillController::class, 'generateForm'])
+        ->name('bills.generate.form');
+
+    Route::post('/bills/generate', [BillController::class, 'generateBills'])
+        ->name('bills.generate');
+
+    Route::get('/bills', [BillController::class, 'index'])
+        ->name('bills.index');
+
+    // Payment's Routes
+    Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
+        ->name('payments.create');
+
+    Route::post('/payments/{bill}', [PaymentController::class, 'store'])
+        ->name('payments.store');
+});
 
 require __DIR__ . '/auth.php';

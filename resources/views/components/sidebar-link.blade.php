@@ -18,6 +18,7 @@
                 : 'text-gray-700 hover:bg-gray-200')
         ])
     }}
+    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
 >
 
     {{-- Icon --}}

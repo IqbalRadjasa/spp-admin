@@ -23,9 +23,12 @@
 
         <!-- Menu -->
         <nav class="mt-4 space-y-2">
-            <x-sidebar-link :href="route('dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('dashboard')">
-                Dashboard
-            </x-sidebar-link>
+
+            @if (auth()->user()->isSuperAdmin())
+                <x-sidebar-link :href="route('dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('dashboard')">
+                    Dashboard
+                </x-sidebar-link>
+            @endif
 
             <x-sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
                 Student Records

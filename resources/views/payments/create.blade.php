@@ -67,15 +67,15 @@
                             <div class="input-group w-1/2">
                                 <x-input-label for="amount_paid" :value="__('Total Amount')" />
                                 <x-text-input id="amount_paid" class="block mt-1 w-full" type="number"
-                                    name="amount_paid" :value="old('amount_paid')" required autofocus
-                                    autocomplete="amount_paid" />
+                                    name="amount_paid" :value="$bill->amount" required autofocus autocomplete="amount_paid"
+                                    readonly />
                                 <x-input-error :messages="$errors->get('amount_paid')" />
                             </div>
 
                             <div class="input-group w-1/2">
                                 <x-input-label for="notes" :value="__('Notes')" />
                                 <x-textarea name="notes" rows="4" class="w-full">
-                                    {{ old('address') }}
+                                    {{ old('notes') }}
                                 </x-textarea>
                                 <x-input-error :messages="$errors->get('notes')" />
                             </div>

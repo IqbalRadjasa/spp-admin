@@ -34,6 +34,12 @@ class PaymentController extends Controller
             'notes' => 'nullable'
         ]);
 
+        if ($validated['amount_paid'] < $bill->amount || $validated['amount_paid'] > $bill->amount) {
+            return back()->withErrors([
+                'amount_paid' => 'The payment amount is incorrect'
+            ]);
+        }
+
         Payment::create([
             'bill_id' => $bill->id,
             'payment_method_id' => $validated['payment_method_id'],
@@ -48,6 +54,6 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('bills.index')
-            ->with('success', 'Pembayaran berhasil');
+            ->with('success', 'Payment successfull');
     }
 }

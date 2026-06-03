@@ -24,6 +24,7 @@ Alpine.start();
 document.addEventListener("DOMContentLoaded", () => {
     const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");
+    const overdueReportTable = document.querySelector("#overdueReportTable");
 
     if (studentsTable) {
         new DataTable(studentsTable);
@@ -31,6 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (billsTable) {
         new DataTable(billsTable, {
+            paging: false,
+            searchable: false,
+        });
+    }
+
+    if (overdueReportTable) {
+        new DataTable(overdueReportTable, {
             paging: false,
             searchable: false,
         });

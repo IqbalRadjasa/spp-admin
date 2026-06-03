@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
@@ -72,5 +73,10 @@ Route::middleware([
     Route::post('/payments/{bill}', [PaymentController::class, 'store'])
         ->name('payments.store');
 });
+
+Route::get('/reports/overdue-report', [
+    ReportController::class,
+    'overdueReport'
+])->name('reports.overdue-report');
 
 require __DIR__ . '/auth.php';

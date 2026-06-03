@@ -41,6 +41,10 @@
             <x-sidebar-link :href="route('bills.generate.form')" icon="ri-file-settings-line" :active="request()->routeIs('bills.generate.form')">
                 Generate Bills
             </x-sidebar-link>
+
+            <x-sidebar-link :href="route('reports.overdue-report')" icon="ri-book-2-line" :active="request()->routeIs('reports.overdue-report')">
+                Overdue Report
+            </x-sidebar-link>
         </nav>
 
     </aside>

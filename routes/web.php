@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardController;
 
 Route::redirect('/', '/login');
 
@@ -22,9 +23,7 @@ Route::middleware([
     'role:super_admin'
 ])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Student's Routes
     Route::resource('students', StudentController::class);

@@ -1,15 +1,26 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+    <div class="py-6">
+        <div class="flex items-center pb-6 justify-between">
+            <h1 class="font-semibold text-xl">Dashboard</h1>
+        </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
+                <div class="p-6">
+                    <div class="flex gap-2">
+                        <div class="w-1/4">
+                            <x-widget title="Total Students" :value="$total_students" icon="ri-graduation-cap-line" />
+                        </div>
+                        <div class="w-1/4">
+                            <x-widget title="Unpaid Bills" :value="$unpaid_bills" icon="ri-file-warning-line" />
+                        </div>
+                        <div class="w-1/4">
+                            <x-widget title="Payment This Month" :value="$payments_this_month" icon="ri-wallet-3-line" />
+                        </div>
+                        <div class="w-1/4">
+                            <x-widget title="Income This Month" :value="'Rp ' . shortNumber($income_this_month)" icon="ri-cash-line" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

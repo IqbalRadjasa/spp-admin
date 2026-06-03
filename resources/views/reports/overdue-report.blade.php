@@ -10,15 +10,15 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex mb-3">
                         <form method="GET">
-                            <x-text-input type="text" name="search" :value="request('search')"
+                            <x-form.text-input type="text" name="search" :value="request('search')"
                                 placeholder="Find a student..." />
 
-                            <x-text-input type="month" name="billing_period" :value="request('billing_period')"
+                            <x-form.text-input type="month" name="billing_period" :value="request('billing_period')"
                                 placeholder="2026-06" />
 
-                            <x-primary-button class="ms-2">
+                            <x-button.primary-button class="ms-2">
                                 {{ __('Filter') }}
-                            </x-primary-button>
+                            </x-button.primary-button>
                         </form>
                     </div>
 

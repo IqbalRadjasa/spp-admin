@@ -3,10 +3,10 @@
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">Student Records</h1>
 
-            <x-primary-link :href="route('students.create')">
+            <x-link-button.primary-link :href="route('students.create')">
                 <i class="ri-add-line"></i>
                 Add Student
-            </x-primary-link>
+            </x-link-button.primary-link>
         </div>
 
         <div class="">
@@ -32,9 +32,9 @@
                                     <td>{{ $student->class }}</td>
                                     <td>
                                         <div class="flex flex-row gap-2">
-                                            <x-secondary-link :href="route('students.edit', $student->id)">
+                                            <x-link-button.secondary-link :href="route('students.edit', $student->id)">
                                                 Edit
-                                            </x-secondary-link>
+                                            </x-link-button.secondary-link>
 
                                             <form action="{{ route('students.destroy', $student->id) }}" method="POST"
                                                 onsubmit="
@@ -47,9 +47,9 @@
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <x-danger-button>
+                                                <x-button.danger-button>
                                                     {{ __('Delete') }}
-                                                </x-danger-button>
+                                                </x-button.danger-button>
                                             </form>
                                         </div>
                                     </td>

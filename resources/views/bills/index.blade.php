@@ -10,10 +10,10 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex mb-3">
                         <form method="GET">
-                            <x-text-input type="text" name="search" :value="request('search')"
+                            <x-form.text-input type="text" name="search" :value="request('search')"
                                 placeholder="Find a student..." />
 
-                            <x-select-input name="status">
+                            <x-form.select-input name="status">
 
                                 <option value="">All</option>
 
@@ -25,14 +25,14 @@
                                     Unpaid
                                 </option>
 
-                            </x-select-input>
+                            </x-form.select-input>
 
-                            <x-text-input type="month" name="billing_period" :value="request('billing_period')"
+                            <x-form.text-input type="month" name="billing_period" :value="request('billing_period')"
                                 placeholder="2026-06" />
 
-                            <x-primary-button class="ms-2">
+                            <x-button.primary-button class="ms-2">
                                 {{ __('Filter') }}
-                            </x-primary-button>
+                            </x-button.primary-button>
                         </form>
                     </div>
 
@@ -63,9 +63,9 @@
 
                                     <td>
                                         @if ($bill->status == 'unpaid')
-                                            <x-secondary-link :href="route('payments.create', $bill->id)">
+                                            <x-link-button.secondary-link :href="route('payments.create', $bill->id)">
                                                 Pay
-                                            </x-secondary-link>
+                                            </x-link-button.secondary-link>
                                         @else
                                             Paid
                                         @endif

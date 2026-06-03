@@ -44,50 +44,55 @@
 
                         <div class="flex gap-4">
                             <div class="input-group w-1/2">
-                                <x-input-label for="name" :value="__('Payment Method')" />
-                                <select name="payment_method_id">
+                                <x-form.input-label for="name" :value="__('Payment Method')" />
+                                <x-form.select-input name="payment_method_id">
+
+                                    <option value="">All</option>
+
                                     @foreach ($paymentMethods as $method)
                                         <option value="{{ $method->id }}">
                                             {{ $method->name }}
                                         </option>
                                     @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('payment_method_id')" />
+
+                                </x-form.select-input>
+                                <x-form.input-error :messages="$errors->get('payment_method_id')" />
+
                             </div>
 
                             <div class="input-group w-1/2">
-                                <x-input-label for="paid_at" :value="__('Payment Date')" />
-                                <x-text-input id="paid_at" class="block mt-1 w-full" type="datetime-local"
+                                <x-form.input-label for="paid_at" :value="__('Payment Date')" />
+                                <x-form.text-input id="paid_at" class="block mt-1 w-full" type="datetime-local"
                                     name="paid_at" :value="old('paid_at')" required autofocus autocomplete="paid_at" />
-                                <x-input-error :messages="$errors->get('paid_at')" />
+                                <x-form.input-error :messages="$errors->get('paid_at')" />
                             </div>
                         </div>
 
                         <div class="flex gap-4 mt-3">
                             <div class="input-group w-1/2">
-                                <x-input-label for="amount_paid" :value="__('Total Amount')" />
-                                <x-text-input id="amount_paid" class="block mt-1 w-full" type="number"
+                                <x-form.input-label for="amount_paid" :value="__('Total Amount')" />
+                                <x-form.text-input id="amount_paid" class="block mt-1 w-full" type="number"
                                     name="amount_paid" :value="$bill->amount" required autofocus autocomplete="amount_paid"
                                     readonly />
-                                <x-input-error :messages="$errors->get('amount_paid')" />
+                                <x-form.input-error :messages="$errors->get('amount_paid')" />
                             </div>
 
                             <div class="input-group w-1/2">
-                                <x-input-label for="notes" :value="__('Notes')" />
-                                <x-textarea name="notes" rows="4" class="w-full">
+                                <x-form.input-label for="notes" :value="__('Notes')" />
+                                <x-form.textarea name="notes" rows="4" class="w-full">
                                     {{ old('notes') }}
-                                </x-textarea>
-                                <x-input-error :messages="$errors->get('notes')" />
+                                </x-form.textarea>
+                                <x-form.input-error :messages="$errors->get('notes')" />
                             </div>
                         </div>
 
                         <div class="flex justify-end mt-6 gap-2">
-                            <x-secondary-link :href="url()->previous()">
+                            <x-link-button.secondary-link :href="url()->previous()">
                                 Back
-                            </x-secondary-link>
-                            <x-primary-button>
+                            </x-link-button.secondary-link>
+                            <x-button.primary-button>
                                 {{ __('Save Payment') }}
-                            </x-primary-button>
+                            </x-button.primary-button>
                         </div>
                     </form>
                 </div>

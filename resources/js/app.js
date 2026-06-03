@@ -1,6 +1,7 @@
 import "./bootstrap";
 
 import Alpine from "alpinejs";
+import collapse from "@alpinejs/collapse";
 import { DataTable } from "simple-datatables";
 import {
     toastSuccess,
@@ -10,7 +11,9 @@ import {
     errorAlert,
 } from "./helpers/sweetalert";
 
+Alpine.plugin(collapse);
 window.Alpine = Alpine;
+Alpine.start();
 
 window.toastError = toastError;
 window.toastSuccess = toastSuccess;

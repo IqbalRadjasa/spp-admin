@@ -19,6 +19,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@alpinejs/collapse": "^3.15.12",
         "remixicon": "^4.9.1",
         "simple-datatables": "^10.2.0",
         "sweetalert2": "^11.26.25"

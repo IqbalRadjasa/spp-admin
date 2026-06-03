@@ -1,0 +1,72 @@
+@props([
+    'title',
+    'icon' => null,
+    'active' => false
+])
+
+<div
+    x-data="{
+        open: {{ $active ? 'true' : 'false' }}
+    }"
+    class="space-y-2"
+>
+
+    {{-- Parent Menu --}}
+    <button
+        @click="open = !open"
+        type="button"
+        class="
+            w-full
+            flex
+            items-center
+            justify-between
+            px-4
+            py-3
+            rounded-lg
+            transition
+            {{ $active
+                ? 'bg-gray-700 text-white'
+                : 'text-gray-700 hover:bg-gray-200'
+            }}
+        "
+    >
+
+        <div class="flex items-center gap-3">
+
+            {{-- Icon --}}
+            @if($icon)
+                <i class="{{ $icon }}"></i>
+            @endif
+
+            {{-- Title --}}
+            <span x-show="sidebarOpen">
+                {{ $title }}
+            </span>
+
+        </div>
+
+        {{-- Arrow --}}
+        <i
+            x-show="sidebarOpen"
+            class="
+                ri-arrow-down-s-line
+                transition-transform
+                duration-300
+            "
+            :class="open ? 'rotate-180' : ''"
+        ></i>
+
+    </button>
+
+    {{-- Submenu --}}
+    <div
+        x-show="open && sidebarOpen"
+        x-collapse
+        class="ml-6 space-y-2"
+    >
+
+        {{ $slot }}
+
+    </div>
+
+</div>

@@ -42,9 +42,13 @@
                 Generate Bills
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('reports.overdue-report')" icon="ri-book-2-line" :active="request()->routeIs('reports.overdue-report')">
+            <x-sidebar-dropdown title="Reports" icon="ri-book-2-line" :active="request()->routeIs('reports.*')">
+
+                <x-sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
                 Overdue Report
-            </x-sidebar-link>
+                </x-sidebar-dropdown-link>
+
+            </x-sidebar-dropdown>
         </nav>
 
     </aside>

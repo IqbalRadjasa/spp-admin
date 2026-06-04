@@ -8,11 +8,6 @@
                 <h1 class="font-bold text-xl text-white bg-green-500 py-1 px-2 rounded-md">{{ rupiah($totalIncome) }}
                 </h1>
             </div>
-            {{-- <div class="flex flex-col text-right">
-                <h1 class="font-semibold text-xl">Total Income</h1>
-                <h1 class="font-bold text-xl text-white bg-green-500 py-1 px-2 rounded-md">{{ rupiah($totalIncome) }}
-                </h1>
-            </div> --}}
         </div>
 
         <div class="">

@@ -3,6 +3,11 @@
 
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">Overdue Report</h1>
+            <div class="flex gap-2 items-center">
+                <h1 class="font-semibold text-xl">Total Outstanding:</h1>
+                <h1 class="font-bold text-xl text-white bg-red-500 py-1 px-2 rounded-md">{{ rupiah($totalOutstanding) }}
+                </h1>
+            </div>
         </div>
 
         <div class="">
@@ -43,7 +48,7 @@
                                     <td>{{ rupiah($bill->amount) }}</td>
 
                                     <td><span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-600 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
+                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
                                     </td>
                                 </tr>
                             @endforeach

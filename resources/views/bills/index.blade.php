@@ -58,7 +58,7 @@
                                     <td>{{ number_format($bill->amount) }}</td>
 
                                     <td><span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-600 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
+                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
                                     </td>
 
                                     <td>

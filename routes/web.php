@@ -74,9 +74,21 @@ Route::middleware([
         ->name('payments.store');
 });
 
+// Reports
 Route::get('/reports/overdue-report', [
     ReportController::class,
     'overdueReport'
 ])->name('reports.overdue-report');
+
+Route::get('/reports/payment-report', [
+    ReportController::class,
+    'paymentReport'
+])->name('reports.payment-report');
+
+
+
+
+
+
 
 require __DIR__ . '/auth.php';

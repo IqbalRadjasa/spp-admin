@@ -31,7 +31,7 @@
                                 Nominal:
                                 <br>
                                 <span class="font-semibold">
-                                    Rp {{ number_format($bill->amount) }}
+                                    {{ rupiah($bill->amount) }}
                                 </span>
                             </p>
                         </div>

@@ -45,7 +45,11 @@
             <x-sidebar.sidebar-dropdown title="Reports" icon="ri-book-2-line" :active="request()->routeIs('reports.*')">
 
                 <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
-                Overdue Report
+                    Overdue Report
+                </x-sidebar.sidebar-dropdown-link>
+
+                <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report')">
+                    Payment Report
                 </x-sidebar.sidebar-dropdown-link>
 
             </x-sidebar.sidebar-dropdown>

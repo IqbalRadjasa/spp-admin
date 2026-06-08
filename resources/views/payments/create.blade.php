@@ -45,19 +45,16 @@
                         <div class="flex gap-4">
                             <div class="input-group w-1/2">
                                 <x-form.input-label for="name" :value="__('Payment Method')" />
-                                <x-form.select-input name="payment_method_id">
+                                <div class="flex gap-4 mt-1">
 
-                                    <option value="">All</option>
+                                    <x-form.radio id="cash" name="payment_method_id" label="Cash" value="1"
+                                        :checked="old('payment_method_id') == 1" />
 
-                                    @foreach ($paymentMethods as $method)
-                                        <option value="{{ $method->id }}">
-                                            {{ $method->name }}
-                                        </option>
-                                    @endforeach
+                                    <x-form.radio id="transfer" name="payment_method_id" label="Transfer"
+                                        value="2" :checked="old('payment_method_id') == 2" />
 
-                                </x-form.select-input>
+                                </div>
                                 <x-form.input-error :messages="$errors->get('payment_method_id')" />
-
                             </div>
 
                             <div class="input-group w-1/2">

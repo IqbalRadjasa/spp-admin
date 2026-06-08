@@ -68,10 +68,6 @@ class PaymentController extends Controller
         return redirect()
             ->route('payments.receipt', $payment)
             ->with('success', 'Payment successful');
-
-        // return redirect()
-        //     ->route('bills.index')
-        //     ->with('success', 'Payment successful');
     }
 
     public function receipt(Payment $payment)

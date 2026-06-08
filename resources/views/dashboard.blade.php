@@ -9,16 +9,16 @@
                 <div class="p-6">
                     <div class="flex gap-2">
                         <div class="w-1/4">
-                            <x-widget title="Total Students" :value="$total_students" icon="ri-graduation-cap-line" />
+                            <x-widget title="Total Students" :value="$totalStudents" icon="ri-graduation-cap-line" />
                         </div>
                         <div class="w-1/4">
-                            <x-widget title="Unpaid Bills" :value="$unpaid_bills" icon="ri-file-warning-line" />
+                            <x-widget title="Unpaid Bills" :value="$unpaidBills" icon="ri-file-warning-line" />
                         </div>
                         <div class="w-1/4">
-                            <x-widget title="Payment This Month" :value="$payments_this_month" icon="ri-wallet-3-line" />
+                            <x-widget title="Payment This Month" :value="$paymentThisMonth" icon="ri-wallet-3-line" />
                         </div>
                         <div class="w-1/4">
-                            <x-widget title="Income This Month" :value="'Rp ' . shortNumber($income_this_month)" icon="ri-cash-line" />
+                            <x-widget title="Income This Month" :value="'Rp ' . shortNumber($incomeThisMonth)" icon="ri-cash-line" />
                         </div>
                     </div>
                 </div>

@@ -47,6 +47,7 @@
                                 <th>Date</th>
                                 <th>Method</th>
                                 <th>Nominal</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -60,6 +61,12 @@
                                     <td>{{ $payment->paymentMethod->name }}</td>
 
                                     <td>{{ rupiah($payment->amount_paid) }}</td>
+
+                                    <td>
+                                        <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
+                                            Print Receipt
+                                        </x-link-button.primary-link>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

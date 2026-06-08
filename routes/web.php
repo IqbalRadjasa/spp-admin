@@ -25,29 +25,9 @@ Route::middleware([
 ])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Student's Routes
-    Route::resource('students', StudentController::class);
-
-    // Biil's Routes
-    Route::get('/bills/generate', [BillController::class, 'generateForm'])
-        ->name('bills.generate.form');
-
-    Route::post('/bills/generate', [BillController::class, 'generateBills'])
-        ->name('bills.generate');
-
-    Route::get('/bills', [BillController::class, 'index'])
-        ->name('bills.index');
-
-    // Payment's Routes
-    Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
-        ->name('payments.create');
-
-    Route::post('/payments/{bill}', [PaymentController::class, 'store'])
-        ->name('payments.store');
 });
 
-// TU Staff's Routes
+// All can access Routes
 Route::middleware([
     'auth',
     'role:super_admin,tu_staff'
@@ -70,25 +50,20 @@ Route::middleware([
     Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
         ->name('payments.create');
 
-    Route::post('/payments/{bill}', [PaymentController::class, 'store'])
+    Route::post('/bill/{bill}/payments', [PaymentController::class, 'store'])
         ->name('payments.store');
 });
 
 // Reports
-Route::get('/reports/overdue-report', [
-    ReportController::class,
-    'overdueReport'
-])->name('reports.overdue-report');
+Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])
+    ->name('reports.overdue-report');
 
-Route::get('/reports/payment-report', [
-    ReportController::class,
-    'paymentReport'
-])->name('reports.payment-report');
+Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
+    ->name('reports.payment-report');
 
-
-
-
-
+//Receipt
+Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
+    ->name('payments.receipt');
 
 
 require __DIR__ . '/auth.php';

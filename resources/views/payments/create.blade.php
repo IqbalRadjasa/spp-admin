@@ -39,7 +39,7 @@
 
                     <hr class="my-5 border-1 border-dashed border-gray-400">
 
-                    <form action="{{ route('payments.store', $bill->id) }}" method="POST">
+                    <form action="{{ route('payments.store', $bill) }}" method="POST">
                         @csrf
 
                         <div class="flex gap-4">

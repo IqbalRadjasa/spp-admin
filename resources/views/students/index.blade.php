@@ -3,8 +3,7 @@
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">Student Records</h1>
 
-            <x-link-button.primary-link :href="route('students.create')">
-                <i class="ri-add-line"></i>
+            <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line">
                 Add Student
             </x-link-button.primary-link>
         </div>

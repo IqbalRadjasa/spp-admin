@@ -7,6 +7,11 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 
+use App\Exports\PaymentsExport;
+
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+
 class ReportController extends Controller
 {
     public function overdueReport(Request $request)
@@ -54,9 +59,9 @@ class ReportController extends Controller
             'paymentMethod'
         ]);
 
-        if ($request->monthly_payment) {
+        if ($request->month) {
 
-            $date = explode('-', $request->monthly_payment);
+            $date = explode('-', $request->month);
 
             $year = $date[0];
             $month = $date[1];
@@ -65,11 +70,11 @@ class ReportController extends Controller
                 ->whereMonth('paid_at', $month);
         }
 
-        if ($request->payment_method_id) {
+        if ($request->payment_method) {
 
             $query->where(
                 'payment_method_id',
-                $request->payment_method_id
+                $request->payment_method
             );
         }
 
@@ -96,6 +101,34 @@ class ReportController extends Controller
         return view(
             'reports.payment-report',
             compact('payments', 'totalIncome', 'paymentMethods')
+        );
+    }
+
+    public function exportPayments(Request $request)
+    {
+        $fileName = 'payments-report';
+
+        if ($request->month) {
+
+            $fileName .= '-' . $request->month;
+        }
+
+        if ($request->payment_method) {
+
+            $paymentMethod = PaymentMethod::find(
+                $request->payment_method
+            );
+
+            $fileName .= '-' . Str::slug(
+                $paymentMethod->name
+            );
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(
+            new PaymentsExport($request),
+            $fileName
         );
     }
 }

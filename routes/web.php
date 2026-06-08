@@ -61,6 +61,9 @@ Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport']
 Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
     ->name('reports.payment-report');
 
+Route::get('/reports/payments/export', [ReportController::class, 'exportPayments'])
+    ->name('reports.payments.export');
+
 //Receipt
 Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
     ->name('payments.receipt');

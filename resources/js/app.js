@@ -1,8 +1,24 @@
 import "./bootstrap";
 
 import Alpine from "alpinejs";
+
+Alpine.plugin(collapse);
+window.Alpine = Alpine;
+Alpine.start();
+
+import ApexCharts from "apexcharts";
+window.ApexCharts = ApexCharts;
+
+import {
+    renderMonthlyIncomeChart,
+    renderBillStatusChart,
+    renderPaymentMethodChart,
+} from "./charts/dashboard";
+
 import collapse from "@alpinejs/collapse";
+
 import { DataTable } from "simple-datatables";
+
 import {
     toastSuccess,
     toastError,
@@ -11,18 +27,12 @@ import {
     errorAlert,
 } from "./helpers/sweetalert";
 
-Alpine.plugin(collapse);
-window.Alpine = Alpine;
-Alpine.start();
-
 window.toastError = toastError;
 window.toastSuccess = toastSuccess;
 
 window.errorAlert = errorAlert;
 window.successAlert = successAlert;
 window.confirmDelete = confirmDelete;
-
-Alpine.start();
 
 document.addEventListener("DOMContentLoaded", () => {
     const studentsTable = document.querySelector("#studentsTable");
@@ -45,6 +55,28 @@ document.addEventListener("DOMContentLoaded", () => {
             paging: false,
             searchable: false,
         });
+    }
+
+    if (window.dashboardChartData) {
+        renderMonthlyIncomeChart(
+            window.dashboardChartData.months,
+            window.dashboardChartData.totals
+        );
+    }
+
+    if (window.billStatusChartData) {
+        renderBillStatusChart(
+            window.billStatusChartData.paid,
+            window.billStatusChartData.unpaid
+        );
+    }
+
+    if (window.paymentMethodChartData) {
+        renderPaymentMethodChart(
+            window.paymentMethodChartData.labels,
+
+            window.paymentMethodChartData.totals
+        );
     }
 });
 

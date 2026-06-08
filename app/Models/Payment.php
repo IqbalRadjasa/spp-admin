@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'payment_code',
         'bill_id',

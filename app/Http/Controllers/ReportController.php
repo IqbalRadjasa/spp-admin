@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OverdueExport;
 use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 use App\Exports\PaymentsExport;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -19,11 +21,11 @@ class ReportController extends Controller
         $query = Bill::with('student')
             ->where('status', 'unpaid');
 
-        if ($request->billing_period) {
+        if ($request->month) {
 
             $query->where(
                 'billing_period',
-                $request->billing_period
+                $request->month
             );
         }
 
@@ -61,14 +63,15 @@ class ReportController extends Controller
 
         if ($request->month) {
 
-            $date = explode('-', $request->month);
-
-            $year = $date[0];
-            $month = $date[1];
-
-            $query->whereYear('paid_at', $year)
-                ->whereMonth('paid_at', $month);
+            $query->whereMonth(
+                'paid_at',
+                Carbon::parse(
+                    $request->month
+                )->month
+            );
+            // dd($query);
         }
+
 
         if ($request->payment_method) {
 
@@ -101,6 +104,23 @@ class ReportController extends Controller
         return view(
             'reports.payment-report',
             compact('payments', 'totalIncome', 'paymentMethods')
+        );
+    }
+
+    public function exportOverdue(Request $request)
+    {
+        $fileName = 'overdue-report';
+
+        if ($request->month) {
+
+            $fileName .= '-' . $request->month;
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(
+            new OverdueExport($request),
+            $fileName
         );
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Payment;
+use App\Models\Bill;
 
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PaymentsExport implements FromCollection, WithHeadings, ShouldAutoSize, WithStyles
+class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, WithStyles
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -27,71 +27,49 @@ class PaymentsExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 
     public function collection()
     {
-        $query =  Payment::with([
-            'bill.student',
-            'paymentMethod'
-        ]);
+        $query = Bill::with([
+            'student'
+        ])->where('status', 'unpaid');
+
 
         if ($this->request->month) {
-
-            $query->whereMonth(
-                'paid_at',
-                Carbon::parse(
-                    $this->request->month
-                )->month
-            );
+            $query->where('billing_period', $this->request->month);
         }
 
-        if ($this->request->payment_method) {
-
-            $query->where(
-                'payment_method_id',
-                $this->request->payment_method
-            );
-        }
 
         return $query
             ->get()
-            ->map(function ($payment) {
+            ->map(function ($bill) {
 
                 return [
 
-                    $payment->payment_code,
+                    $bill->student->name,
 
-                    $payment->bill->student->name,
+                    $bill->billing_period,
 
-                    $payment->bill->billing_period,
+                    rupiah($bill->amount),
 
-                    $payment->paymentMethod->name,
-
-                    Carbon::parse(
-                        $payment->paid_at
-                    )->format('d M Y'),
-
-                    rupiah(
-                        $payment->amount_paid
-                    )
+                    $bill->status
 
                 ];
             });
     }
 
+
     public function headings(): array
     {
         return [
-            'Payment Code',
             'Student Name',
             'Billing Period',
-            'Payment Method',
-            'Paid At',
-            'Amount'
+            'Amount',
+            'Status'
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         $sheet->getStyle(
-            'A1:F' . $sheet->getHighestRow()
+            'A1:D' . $sheet->getHighestRow()
         )
             ->getBorders()
             ->getAllBorders()

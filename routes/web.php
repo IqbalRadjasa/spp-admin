@@ -27,7 +27,7 @@ Route::middleware([
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// All can access Routes
+// Public Routes
 Route::middleware([
     'auth',
     'role:super_admin,tu_staff'
@@ -54,17 +54,22 @@ Route::middleware([
         ->name('payments.store');
 });
 
-// Reports
+// Report's Routes
 Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])
     ->name('reports.overdue-report');
 
 Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
     ->name('reports.payment-report');
 
+
+// Export's Routes
+Route::get('/reports/overdue/export', [ReportController::class, 'exportOverdue'])
+    ->name('reports.overdue.export');
+
 Route::get('/reports/payments/export', [ReportController::class, 'exportPayments'])
     ->name('reports.payments.export');
 
-//Receipt
+//Receipt's Routes
 Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
     ->name('payments.receipt');
 

@@ -13,18 +13,22 @@
         <div class="">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="flex mb-3">
+                    <div class="flex items-center justify-between mb-3">
                         <form method="GET">
                             <x-form.text-input type="text" name="search" :value="request('search')"
                                 placeholder="Find a student..." />
 
-                            <x-form.text-input type="month" name="billing_period" :value="request('billing_period')"
-                                placeholder="2026-06" />
+                            <x-form.text-input type="month" name="month" :value="request('month')"
+                                placeholder="e.g. 2026-06" />
 
                             <x-button.primary-button class="ms-2">
                                 {{ __('Filter') }}
                             </x-button.primary-button>
                         </form>
+
+                        <x-link-button.primary-link :href="route('reports.overdue.export', request()->query())" icon="ri-export-line">
+                            Export Excel
+                        </x-link-button.primary-link>
                     </div>
 
                     <table id="overdueReportTable" class="min-w-full">

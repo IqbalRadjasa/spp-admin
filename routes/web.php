@@ -52,26 +52,27 @@ Route::middleware([
 
     Route::post('/bill/{bill}/payments', [PaymentController::class, 'store'])
         ->name('payments.store');
+
+    // Report's Routes
+    Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])
+        ->name('reports.overdue-report');
+
+    Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
+        ->name('reports.payment-report');
+
+
+    // Export's Routes
+    Route::get('/reports/overdue/export', [ReportController::class, 'exportOverdue'])
+        ->name('reports.overdue.export');
+
+    Route::get('/reports/payments/export', [ReportController::class, 'exportPayments'])
+        ->name('reports.payments.export');
+
+    //Receipt's Routes
+    Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
+        ->name('payments.receipt');
 });
 
-// Report's Routes
-Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])
-    ->name('reports.overdue-report');
-
-Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
-    ->name('reports.payment-report');
-
-
-// Export's Routes
-Route::get('/reports/overdue/export', [ReportController::class, 'exportOverdue'])
-    ->name('reports.overdue.export');
-
-Route::get('/reports/payments/export', [ReportController::class, 'exportPayments'])
-    ->name('reports.payments.export');
-
-//Receipt's Routes
-Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
-    ->name('payments.receipt');
 
 
 require __DIR__ . '/auth.php';

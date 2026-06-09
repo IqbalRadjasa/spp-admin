@@ -2,6 +2,7 @@
 
 namespace App\Services\Notifications;
 
+use App\Models\Bill;
 use App\Models\Payment;
 
 use App\Services\Notifications\Channels\LogChannel;
@@ -18,7 +19,7 @@ class PaymentNotificationService
             $payment->bill->student;
 
         $message =
-        "🎓 *SPP Payment Confirmation*
+            "🎓 *SPP Payment Confirmation*
 
         Your tuition payment has been successfully received.
 
@@ -43,5 +44,38 @@ class PaymentNotificationService
 
         $this->logChannel->send($student->parent_phone, $message);
         $this->whatsAppChannel->send($student->parent_phone, $message);
+    }
+
+    public function sendOverdueReminder(Bill $bill)
+    {
+        $student = $bill->student;
+
+        $target = $student->parent_phone;
+
+        $message =
+            "⚠️ *SPP Payment Reminder*
+
+            Your tuition payment has not been completed.
+
+            ------------------------
+
+            👤 *Student Name*
+            {$student->name}
+
+            📅 *Billing Period*
+            {$bill->billing_period}
+
+            💰 *Amount*
+            " . rupiah($bill->amount) . "
+
+            ------------------------
+
+            Please complete the payment as soon as possible 🙏";
+
+        $this->logChannel
+            ->send($target, $message);
+
+        $this->whatsAppChannel
+            ->send($target, $message);
     }
 }

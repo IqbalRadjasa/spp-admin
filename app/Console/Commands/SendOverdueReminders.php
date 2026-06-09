@@ -30,6 +30,18 @@ class SendOverdueReminders extends Command
                 'student',
                 fn($query) => $query->whereNotNull('parent_phone')
             )
+            ->where(function ($query) {
+                $query
+                    ->whereNull(
+                        'last_reminded_at'
+                    )
+                    ->orWhere(
+                        'last_reminded_at',
+                        '<=',
+                        now()->subDays(7)
+                    );
+            })
+
             ->get();
 
         foreach ($bills as $bill) {

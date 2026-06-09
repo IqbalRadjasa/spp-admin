@@ -20,5 +20,9 @@ class SendOverdueReminderJob implements ShouldQueue
     public function handle(PaymentNotificationService $notificationService): void
     {
         $notificationService->sendOverdueReminder($this->bill);
+
+        $this->bill->update([
+            'last_reminded_at' => now()
+        ]);
     }
 }

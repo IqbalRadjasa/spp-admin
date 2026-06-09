@@ -28,3 +28,16 @@ if (!function_exists('rupiah')) {
         return 'Rp ' . number_format($amount, 0, ',', '.');
     }
 }
+
+if (!function_exists('normalizePhone')) {
+    function normalizePhone(string $phone): string
+    {
+
+        if (str_starts_with($phone, '08')) {
+            return '62' .
+                substr($phone, 1);
+        }
+
+        return $phone;
+    }
+}

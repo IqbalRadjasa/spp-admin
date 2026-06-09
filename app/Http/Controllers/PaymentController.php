@@ -7,6 +7,11 @@ use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 
+use App\Jobs\SendPaymentNotificationJob;
+
+use App\Services\Notifications\PaymentNotificationService;
+
+
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -25,7 +30,7 @@ class PaymentController extends Controller
         ));
     }
 
-    public function store(Request $request, Bill $bill)
+    public function store(Request $request, Bill $bill, PaymentNotificationService $notificationService)
     {
         $validated = $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
@@ -65,9 +70,14 @@ class PaymentController extends Controller
         $bill->update([
             'status' => 'paid'
         ]);
+
+
+        // Queue Notification
+        SendPaymentNotificationJob::dispatch($payment);
+
         return redirect()
             ->route('payments.receipt', $payment)
-            ->with('success', 'Payment successful');
+            ->with('success', 'Payment successful!');
     }
 
     public function receipt(Payment $payment)

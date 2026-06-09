@@ -31,16 +31,21 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'name' => 'required',
             'nis' => 'required|unique:students',
             'class' => 'required',
-            'parent_phone' => 'required'
+            'parent_phone' => 'required|string|max:20',
         ]);
 
         try {
-
-            Student::create($validated);
+            Student::create([
+                'name' => $validated['name'],
+                'nis' => $validated['nis'],
+                'class' => $validated['class'],
+                'parent_phone' => normalizePhone($validated['parent_phone']),
+            ]);
 
             return redirect()
                 ->route('students.index')
@@ -78,11 +83,16 @@ class StudentController extends Controller
             'name' => 'required',
             'nis' => 'required|unique:students,nis,' . $student->id,
             'class' => 'required',
-            'parent_phone' => 'required'
+            'parent_phone' => 'required|string|max:20',
         ]);
 
         try {
-            $student->update($validated);
+            $student->update([
+                'name' => $validated['name'],
+                'nis' => $validated['nis'],
+                'class' => $validated['class'],
+                'parent_phone' => normalizePhone($validated['parent_phone']),
+            ]);
 
             return redirect()
                 ->route('students.index')

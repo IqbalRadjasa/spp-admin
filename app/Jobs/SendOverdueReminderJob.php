@@ -21,20 +21,26 @@ class SendOverdueReminderJob implements ShouldQueue
     {
         $notificationService->sendOverdueReminder($this->bill);
 
-        $this->bill->update([
-            'last_reminded_at' => now()
-        ]);
-
         $this->bill->increment(
             'reminder_attempts'
         );
 
-        $this->bill->refresh();
+        $bill = $this->bill->fresh();
 
-        if ($this->bill->reminder_attempts >= 3) {
-            $this->bill->update([
-                'escalation_status' => 'escalated'
-            ]);
+        $data = [
+
+            'last_reminded_at'
+            => now()
+
+        ];
+
+        if (
+            $bill->reminder_attempts >= 3
+        ) {
+
+            $data['escalation_status'] = 'escalated';
         }
+
+        $bill->update($data);
     }
 }

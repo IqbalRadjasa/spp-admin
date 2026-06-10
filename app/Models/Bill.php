@@ -11,7 +11,10 @@ class Bill extends Model
         'student_id',
         'billing_period',
         'amount',
-        'status'
+        'status',
+        'last_reminded_at',
+        'escalation_status',
+        'escalation_notes'
     ];
 
     public function student()
@@ -23,5 +26,10 @@ class Bill extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function escalationNotes()
+    {
+        return $this->hasMany(BillEscalationNote::class);
     }
 }

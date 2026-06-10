@@ -58,42 +58,59 @@
 
                                     <td>{{ rupiah($bill->amount) }}</td>
 
-                                    <td><span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ titleCase($bill->status) }}</span>
+                                    <td>
+                                        <span
+                                            class="{{ $bill->status == 'paid' ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} py-1 px-2 text-sm font-semibold rounded-md">
+                                            {{ titleCase($bill->status) }}
+                                        </span>
                                     </td>
 
                                     <td>
-
                                         @switch($bill->escalation_status)
                                             @case('resolved')
                                                 <span
-                                                
-                                                    class="bg-green-600 py-1 px-2 text-white text-sm font-semibold rounded-md">
+                                                    class="bg-green-100 text-green-500 font-semibold py-1 px-2 text-sm rounded-md">
                                                     {{ titleCase($bill->escalation_status) }}
                                                 </span>
                                             @break
 
                                             @case('escalated')
-                                                <span class="bg-red-500 py-1 px-2 text-white text-sm font-semibold rounded-md">
+                                                <span
+                                                    class="bg-red-100 text-red-500 font-semibold py-1 px-2 text-sm rounded-md">
                                                     {{ titleCase($bill->escalation_status) }}
                                                 </span>
                                             @break
 
                                             @default
-                                                <span class="py-1 px-2 text-sm font-semibold rounded-md">
+                                                <span
+                                                    class="bg-gray-100 text-gray-700 font-semibold py-1 px-2 text-sm rounded-md">
                                                     {{ titleCase($bill->escalation_status) }}
                                                 </span>
                                         @endswitch
                                     </td>
 
                                     <td>
-                                        @if ($bill->status == 'unpaid')
-                                            <x-link-button.secondary-link :href="route('payments.create', $bill->id)">
-                                                Pay
-                                            </x-link-button.secondary-link>
-                                        @else
-                                            Paid
-                                        @endif
+                                        <x-dropdown align="right" width="48">
+                                            <x-slot name="trigger">
+
+                                                <button class="px-4 py-2 bg-gray-200 rounded">
+                                                    <i class="ri-list-unordered"></i>
+                                                </button>
+
+                                            </x-slot>
+
+                                            <x-slot name="content">
+                                                <x-dropdown-link href="{{ route('bills.detail', $bill->id) }}">
+                                                    View Detail
+                                                </x-dropdown-link>
+
+                                                @if ($bill->status == 'unpaid')
+                                                    <x-dropdown-link href="{{ route('payments.create', $bill->id) }}">
+                                                        Pay
+                                                    </x-dropdown-link>
+                                                @endif
+                                            </x-slot>
+                                        </x-dropdown>
                                     </td>
                                 </tr>
                             @endforeach

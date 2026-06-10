@@ -36,6 +36,31 @@ class BillController extends Controller
         return view('bills.index', compact('bills'));
     }
 
+    public function detail(Bill $bill)
+    {
+        return view('bills.detail', compact('bill'));
+    }
+
+    public function storeEscalationNote(Request $request, Bill $bill)
+    {
+        $validated =
+            $request->validate([
+                'note' => 'required|string'
+            ]);
+
+        $bill
+            ->escalationNotes()
+            ->create([
+                'user_id' => auth()->id(),
+                'note' => $validated['note']
+            ]);
+
+        return back()->with(
+            'success',
+            'Escalation note added.'
+        );
+    }
+
     public function generateForm()
     {
         return view('bills.generate');

@@ -51,8 +51,11 @@
 
                                     <td>{{ rupiah($bill->amount) }}</td>
 
-                                    <td><span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
+                                    <td>
+                                        <span
+                                            class="{{ $bill->status == 'paid' ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} py-1 px-2 text-sm font-semibold rounded-md">
+                                            {{ titleCase($bill->status) }}
+                                        </span>
                                     </td>
                                 </tr>
                             @endforeach

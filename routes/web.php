@@ -37,14 +37,21 @@ Route::middleware([
     Route::resource('students', StudentController::class);
 
     // Biil's Routes
+    Route::get('/bills', [BillController::class, 'index'])
+        ->name('bills.index');
+
     Route::get('/bills/generate', [BillController::class, 'generateForm'])
         ->name('bills.generate.form');
+
+    Route::get('/bills/{bill}/detail', [BillController::class, 'detail'])
+        ->name('bills.detail');
+
+    Route::post('/bills/{bill}/escalation-notes', [BillController::class, 'storeEscalationNote'])
+        ->name('bills.escalation-notes.store');
 
     Route::post('/bills/generate', [BillController::class, 'generateBills'])
         ->name('bills.generate');
 
-    Route::get('/bills', [BillController::class, 'index'])
-        ->name('bills.index');
 
     // Payment's Routes
     Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])

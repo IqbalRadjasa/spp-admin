@@ -6,7 +6,8 @@
 <div x-data="{ sidebarOpen: true }" class="flex min-h-screen">
 
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'w-60' : 'w-16'" class="sidebar transition-all duration-100">
+    <aside :class="sidebarOpen ? 'w-60' : 'w-16'"
+        class="sidebar sticky top-0 h-screen overflow-y-auto transition-all duration-100">
 
         <!-- Header -->
         <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">

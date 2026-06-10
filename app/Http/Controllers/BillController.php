@@ -26,9 +26,7 @@ class BillController extends Controller
         }
 
         if ($request->search) {
-
             $query->whereHas('student', function ($q) use ($request) {
-
                 $q->where('name', 'like', '%' . $request->search . '%');
             });
         }
@@ -56,7 +54,6 @@ class BillController extends Controller
         $students = Student::all();
 
         foreach ($students as $student) {
-
             Bill::firstOrCreate(
                 [
                     'student_id' => $student->id,

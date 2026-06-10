@@ -68,7 +68,10 @@ class PaymentController extends Controller
         ]);
 
         $bill->update([
-            'status' => 'paid'
+            'status' => 'paid',
+            'reminder_attempts' => 0,
+            'last_reminded_at' => null,
+            'escalation_status' => 'resolved'
         ]);
 
 

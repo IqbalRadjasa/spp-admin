@@ -26,9 +26,17 @@ class SendOverdueReminders extends Command
                 '<',
                 now()->format('Y-m')
             )
+            ->where(
+                'reminder_attempts',
+                '<',
+                3
+            )
             ->whereHas(
                 'student',
-                fn($query) => $query->whereNotNull('parent_phone')
+                fn($query) =>
+                $query->whereNotNull(
+                    'parent_phone'
+                )
             )
             ->where(function ($query) {
                 $query
@@ -41,7 +49,10 @@ class SendOverdueReminders extends Command
                         now()->subDays(7)
                     );
             })
-
+            ->where(
+                'escalation_status',
+                'normal'
+            )
             ->get();
 
         foreach ($bills as $bill) {

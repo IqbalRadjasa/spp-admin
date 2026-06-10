@@ -23,8 +23,8 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
         $paymentMethodDistribution = Payment::selectRaw('
-        payment_methods.name as method,
-        COUNT(payments.id) as total')
+            payment_methods.name as method,
+            COUNT(payments.id) as total')
             ->join(
                 'payment_methods',
                 'payments.payment_method_id',
@@ -35,19 +35,20 @@ class DashboardController extends Controller
             ->get();
         $paymentMethodLabels = $paymentMethodDistribution->pluck('method');
         $paymentMethodTotals = $paymentMethodDistribution->pluck('total');
-        $recentPayments = Payment::with([
-            'bill.student',
-            'paymentMethod'
-        ])
+        $recentPayments = Payment::with(['bill.student', 'paymentMethod'])
             ->latest('paid_at')
             ->take(5)
             ->get();
+        $escalatedBills = Bill::where(
+            'escalation_status', 'escalated'
+        )->count();
 
         return view('dashboard', [
             'paidBills' => $paidBills,
             'unpaidBills' => $unpaidBills,
             'totalStudents' => $totalStudents,
             'monthlyIncome' => $monthlyIncome,
+            'escalatedBills' => $escalatedBills,
             'recentPayments' => $recentPayments,
             'incomeThisMonth' => $incomeThisMonth,
             'paymentThisMonth' => $paymentThisMonth,

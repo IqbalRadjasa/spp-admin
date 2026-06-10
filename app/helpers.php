@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 if (!function_exists('shortNumber')) {
 
     function shortNumber($number)
@@ -39,5 +41,13 @@ if (!function_exists('normalizePhone')) {
         }
 
         return $phone;
+    }
+}
+
+if(!function_exists('titleCase')){
+    function titleCase(string $text){
+        $text = Str::title($text);
+
+        return $text;
     }
 }

@@ -44,6 +44,7 @@
                                 <th>Period</th>
                                 <th>Nominal</th>
                                 <th>Status</th>
+                                <th>Escalation Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -58,7 +59,31 @@
                                     <td>{{ rupiah($bill->amount) }}</td>
 
                                     <td><span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ $bill->status }}</span>
+                                            class="{{ $bill->status == 'paid' ? 'bg-green-600 py-1 px-2' : 'bg-red-500 py-1 px-2' }} text-white text-sm font-semibold rounded-md">{{ titleCase($bill->status) }}</span>
+                                    </td>
+
+                                    <td>
+
+                                        @switch($bill->escalation_status)
+                                            @case('resolved')
+                                                <span
+                                                
+                                                    class="bg-green-600 py-1 px-2 text-white text-sm font-semibold rounded-md">
+                                                    {{ titleCase($bill->escalation_status) }}
+                                                </span>
+                                            @break
+
+                                            @case('escalated')
+                                                <span class="bg-red-500 py-1 px-2 text-white text-sm font-semibold rounded-md">
+                                                    {{ titleCase($bill->escalation_status) }}
+                                                </span>
+                                            @break
+
+                                            @default
+                                                <span class="py-1 px-2 text-sm font-semibold rounded-md">
+                                                    {{ titleCase($bill->escalation_status) }}
+                                                </span>
+                                        @endswitch
                                     </td>
 
                                     <td>

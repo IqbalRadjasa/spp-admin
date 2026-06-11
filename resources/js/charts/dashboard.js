@@ -15,7 +15,7 @@ export function renderMonthlyIncomeChart(months, totals) {
             },
         },
 
-        colors: ["#3B82F6"],
+        colors: ["#273142"],
 
         plotOptions: {
             bar: {
@@ -66,7 +66,7 @@ export function renderBillStatusChart(paid, unpaid) {
             height: 280,
         },
         series: [paid, unpaid],
-        colors: ["#4d7eff", "#22c55e"],
+        colors: ["#273142", "#9ca3af"],
         labels: ["Paid", "Unpaid"],
         legend: {
             position: "bottom",
@@ -103,7 +103,7 @@ export function renderPaymentMethodChart(labels, totals) {
                 show: false,
             },
         },
-        colors: ["#4d7eff", "#22c55e"],
+        colors: ["#273142", "#9ca3af"],
         labels: labels,
         series: totals,
         legend: {

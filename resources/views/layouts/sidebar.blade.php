@@ -3,11 +3,11 @@
     $inactive = 'hover:bg-gray-200';
 @endphp
 
-<div x-data="{ sidebarOpen: true }" class="flex min-h-screen">
+<div class="flex min-h-screen">
 
     <!-- Sidebar -->
     <aside :class="sidebarOpen ? 'w-60' : 'w-16'"
-        class="sidebar sticky top-0 h-screen overflow-y-auto transition-all duration-100">
+        class="sidebar sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
 
         <!-- Header -->
         <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">
@@ -24,37 +24,42 @@
 
         <!-- Menu -->
         <nav class="mt-4 space-y-2">
-
-            @if (auth()->user()->isSuperAdmin())
-                <x-sidebar.sidebar-link :href="route('dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('dashboard')">
-                    Dashboard
-                </x-sidebar.sidebar-link>
-            @endif
-
-            <x-sidebar.sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
-                Student Records
-            </x-sidebar.sidebar-link>
-
-            <x-sidebar.sidebar-link :href="route('bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('bills.index')">
-                List Bills
-            </x-sidebar.sidebar-link>
-
-            <x-sidebar.sidebar-link :href="route('bills.generate.form')" icon="ri-file-settings-line" :active="request()->routeIs('bills.generate.form')">
-                Generate Bills
-            </x-sidebar.sidebar-link>
-
-            <x-sidebar.sidebar-dropdown title="Reports" icon="ri-book-2-line" :active="request()->routeIs('reports.*')">
-
-                <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
-                    Overdue Report
-                </x-sidebar.sidebar-dropdown-link>
-
-                <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report')">
-                    Payment Report
-                </x-sidebar.sidebar-dropdown-link>
-
-            </x-sidebar.sidebar-dropdown>
+            @include('components.sidebar.menu')
         </nav>
 
     </aside>
+</div>
+
+<aside x-cloak x-show="mobileSidebarOpen" x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="-translate-x-full"
+    class="
+        fixed
+        top-0
+        left-0
+        h-screen
+        w-64
+        bg-white
+        z-50
+        md:hidden
+        overflow-y-auto
+    ">
+    <div class="flex items-center justify-between p-4 border-b">
+        <span class="font-bold text-lg">
+            SPP Admin
+        </span>
+
+        <button @click="mobileSidebarOpen = false" class="text-2xl">
+            ✕
+        </button>
+
+    </div>
+    <nav class="mt-4 space-y-2">
+        @include('components.sidebar.menu')
+    </nav>
+</aside>
+
+<div x-cloak x-show="mobileSidebarOpen" x-transition.opacity class="fixed inset-0 bg-black/50 z-40 md:hidden"
+    @click="mobileSidebarOpen = false">
 </div>

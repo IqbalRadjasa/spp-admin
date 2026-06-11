@@ -2,6 +2,11 @@
 
     <div class="ml-auto flex relative h-full cursor-pointer">
 
+        <button class="md:hidden" @click="mobileSidebarOpen = true">
+            <i class="ri-menu-line text-2xl"></i>
+        </button>
+
+
         {{-- Theme Toggle --}}
         <div class="flex items-center">
             <button class="px-3 py-2 rounded bg-gray-200">

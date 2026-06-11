@@ -20,7 +20,7 @@
 <body class="font-sans antialiased dashboard-main" data-success="{{ session('success') }}"
     data-error="{{ session('error') }}">
 
-    <div class="flex min-h-screen">
+    <div x-data="{ sidebarOpen: true, mobileSidebarOpen: false }" class="flex min-h-screen">
 
         <!-- Sidebar -->
         @include('layouts.sidebar')

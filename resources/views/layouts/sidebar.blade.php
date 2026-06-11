@@ -23,7 +23,7 @@
         </div>
 
         <!-- Menu -->
-        <nav class="mt-4 space-y-2">
+        <nav class="mt-4 space-y-2" @click="!sidebarOpen && (sidebarOpen = true)">
             @include('components.sidebar.menu')
         </nav>
 

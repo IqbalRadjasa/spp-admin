@@ -90,7 +90,7 @@
                                     </td>
 
                                     <td>
-                                        <x-dropdown align="right" width="48">
+                                        <x-dropdown.dropdown align="right" width="48">
                                             <x-slot name="trigger">
 
                                                 <button class="px-4 py-2 bg-gray-200 rounded">
@@ -100,17 +100,19 @@
                                             </x-slot>
 
                                             <x-slot name="content">
-                                                <x-dropdown-link href="{{ route('bills.detail', $bill->id) }}">
+                                                <x-dropdown.dropdown-link
+                                                    href="{{ route('bills.detail', $bill->id) }}">
                                                     View Detail
-                                                </x-dropdown-link>
+                                                </x-dropdown.dropdown-link>
 
                                                 @if ($bill->status == 'unpaid')
-                                                    <x-dropdown-link href="{{ route('payments.create', $bill->id) }}">
+                                                    <x-dropdown.dropdown-link
+                                                        href="{{ route('payments.create', $bill->id) }}">
                                                         Pay
-                                                    </x-dropdown-link>
+                                                    </x-dropdown.dropdown-link>
                                                 @endif
                                             </x-slot>
-                                        </x-dropdown>
+                                        </x-dropdown.dropdown>
                                     </td>
                                 </tr>
                             @endforeach

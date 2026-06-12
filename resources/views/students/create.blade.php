@@ -11,29 +11,29 @@
                     <form action="{{ route('students.store') }}" method="POST">
                         @csrf
 
-                        <div class="flex gap-4">
-                            <div class="input-group w-1/4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="input-group">
                                 <x-form.input-label for="name" :value="__('Name')" />
                                 <x-form.text-input id="name" class="block mt-1 w-full" type="text"
                                     name="name" :value="old('name')" required autofocus autocomplete="name" />
                                 <x-form.input-error :messages="$errors->get('name')" />
                             </div>
 
-                            <div class="input-group w-1/4">
+                            <div class="input-group">
                                 <x-form.input-label for="nis" :value="__('NIS')" />
                                 <x-form.text-input id="nis" class="block mt-1 w-full" type="text"
                                     name="nis" :value="old('nis')" required autofocus autocomplete="nis" />
                                 <x-form.input-error :messages="$errors->get('nis')" />
                             </div>
 
-                            <div class="input-group w-1/4">
+                            <div class="input-group">
                                 <x-form.input-label for="class" :value="__('Class')" />
                                 <x-form.text-input id="class" class="block mt-1 w-full" type="text"
                                     name="class" :value="old('class')" required autofocus autocomplete="class" />
                                 <x-form.input-error :messages="$errors->get('class')" />
                             </div>
 
-                            <div class="input-group w-1/4">
+                            <div class="input-group">
                                 <x-form.input-label for="parent_phone" :value="__('Parent Phone')" />
                                 <x-form.text-input id="parent_phone" class="block mt-1 w-full" type="text"
                                     name="parent_phone" :value="old('parent_phone')" required autofocus

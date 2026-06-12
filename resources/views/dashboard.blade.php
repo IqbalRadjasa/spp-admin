@@ -14,40 +14,26 @@
             <h1 class="font-semibold text-xl">Dashboard</h1>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
             <div class="p-6">
-                <div class="flex gap-2 mb-5">
-                    <div class="w-1/3">
-                        <x-widget title="Total Students" :value="$totalStudents" icon="ri-graduation-cap-line" />
-                    </div>
-                    <div class="w-1/3">
-                        <x-widget title="Unpaid Bills" :value="$unpaidBills" icon="ri-file-warning-line" />
-                    </div>
-                    <div class="w-1/3">
-                        <x-widget title="Payment This Month" :value="$paymentThisMonth" icon="ri-wallet-3-line" />
-                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+                    <x-widget title="Total Students" :value="$totalStudents" icon="ri-graduation-cap-line" />
+                    <x-widget title="Unpaid Bills" :value="$unpaidBills" icon="ri-file-warning-line" />
+                    <x-widget title="Payment This Month" :value="$paymentThisMonth" icon="ri-wallet-3-line" />
                 </div>
-                <div class="flex gap-2 mb-10">
-                    <div class="w-1/2">
-                        <x-widget title="Income This Month" :value="'Rp ' . shortNumber($incomeThisMonth)" icon="ri-cash-line" />
-                    </div>
-                    <div class="w-1/2">
-                        <x-widget title="Escalated Bills" :value="$escalatedBills" icon="ri-alarm-warning-line" />
-                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
+                    <x-widget title="Income This Month" :value="'Rp ' . shortNumber($incomeThisMonth)" icon="ri-cash-line" />
+                    <x-widget title="Escalated Bills" :value="$escalatedBills" icon="ri-alarm-warning-line" />
                 </div>
 
-                <div class="flex mb-10">
-                    <div class="w-1/2">
-                        <div class="rounded-xl shadow-sm">
-                            <h2 class="font-bold text-lg">Paid & Unpaid Bills</h2>
-                            <div id="bill-status-chart"></div>
-                        </div>
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-10">
+                    <div class="rounded-xl shadow-sm">
+                        <h2 class="font-bold text-lg">Paid & Unpaid Bills</h2>
+                        <div id="bill-status-chart"></div>
                     </div>
-                    <div class="w-1/2">
-                        <div class="rounded-xl shadow-sm">
-                            <h2 class="font-bold text-lg">Payment Method Distribution</h2>
-                            <div id="payment-method-chart"></div>
-                        </div>
+                    <div class="rounded-xl shadow-sm">
+                        <h2 class="font-bold text-lg">Payment Method Distribution</h2>
+                        <div id="payment-method-chart"></div>
                     </div>
                 </div>
 
@@ -68,7 +54,7 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b">
-                                    <th class="text-left py-3">
+                                    <th class="hidden md:table-cell">
                                         Payment Code
                                     </th>
                                     <th class="text-left py-3">
@@ -88,7 +74,7 @@
                             <tbody>
                                 @forelse ($recentPayments as $payment)
                                     <tr class="border-b">
-                                        <td class="py-3">
+                                        <td class="hidden md:table-cell py-3">
                                             {{ $payment->payment_code }}
                                         </td>
                                         <td class="py-3">

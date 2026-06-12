@@ -20,19 +20,15 @@
 <body class="font-sans antialiased dashboard-main" data-success="{{ session('success') }}"
     data-error="{{ session('error') }}">
 
-    <div x-data="{ sidebarOpen: true, mobileSidebarOpen: false }" class="flex min-h-screen">
+    <div x-data="{ sidebarOpen: true, mobileSidebarOpen: false }" class="flex h-screen">
 
-        <!-- Sidebar -->
         @include('layouts.sidebar')
 
-        <!-- Main Content -->
-        <div class="flex-1">
+        <div class="flex-1 flex flex-col overflow-hidden">
 
-            <!-- Topbar -->
             @include('layouts.header')
 
-            <!-- Page Content -->
-            <main class="p-6">
+            <main class="flex-1 overflow-y-auto p-6">
                 {{ $slot }}
             </main>
 

@@ -3,32 +3,30 @@
     $inactive = 'hover:bg-gray-200';
 @endphp
 
-<div class="flex min-h-screen">
 
-    <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'w-60' : 'w-16'"
-        class="sidebar sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
+<!-- Sidebar -->
+<aside :class="sidebarOpen ? 'w-60' : 'w-16'"
+    class="sidebar sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
 
-        <!-- Header -->
-        <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">
+    <!-- Header -->
+    <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="h-16 flex items-center px-4">
 
-            <span x-show="sidebarOpen" class="font-bold text-lg">
-                SPP Admin
-            </span>
+        <span x-show="sidebarOpen" class="font-bold text-lg">
+            SPP Admin
+        </span>
 
-            <button @click="sidebarOpen = !sidebarOpen">
-                ☰
-            </button>
+        <button @click="sidebarOpen = !sidebarOpen">
+            ☰
+        </button>
 
-        </div>
+    </div>
 
-        <!-- Menu -->
-        <nav class="mt-4 space-y-2" @click="!sidebarOpen && (sidebarOpen = true)">
-            @include('components.sidebar.menu')
-        </nav>
+    <!-- Menu -->
+    <nav class="mt-4 space-y-2" @click="!sidebarOpen && (sidebarOpen = true)">
+        @include('components.sidebar.menu')
+    </nav>
 
-    </aside>
-</div>
+</aside>
 
 <aside x-cloak x-show="mobileSidebarOpen" x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"

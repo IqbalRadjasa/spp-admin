@@ -40,11 +40,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const overdueReportTable = document.querySelector("#overdueReportTable");
 
     if (studentsTable) {
-        new DataTable(studentsTable);
+        new DataTable(studentsTable, {
+            responsive: true,
+            paging: false,
+            searchable: false,
+        });
     }
 
     if (billsTable) {
         new DataTable(billsTable, {
+            responsive: true,
             paging: false,
             searchable: false,
         });
@@ -52,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (overdueReportTable) {
         new DataTable(overdueReportTable, {
+            responsive: true,
             paging: false,
             searchable: false,
         });

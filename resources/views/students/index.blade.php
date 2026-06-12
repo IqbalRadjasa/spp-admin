@@ -1,18 +1,27 @@
 <x-app-layout>
     <div class="py-6">
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Student Records</h1>
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
+            <h1 class="font-semibold text-xl">
+                Student Records
+            </h1>
 
-            <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line">
+            <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
                 Add Student
             </x-link-button.primary-link>
         </div>
 
         <div class="">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <table id="studentsTable" class="min-w-full">
+            <div class="bg-white overflow-x-auto shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <form method="GET" class="flex flex-col md:flex-row gap-3 mb-6">
+                        <x-form.text-input type="text" name="search" :value="request('search')"
+                            placeholder="Find a student..." class="w-full md:w-80" />
 
+                        <x-button.primary-button>
+                            {{ __('Filter') }}
+                        </x-button.primary-button>
+                    </form>
+                    <table id="studentsTable" class="min-w-full min-w-[700px]">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -30,7 +39,7 @@
                                     <td>{{ $student->nis }}</td>
                                     <td>{{ $student->class }}</td>
                                     <td>
-                                        <div class="flex flex-row gap-2">
+                                        <div class="flex flex-wrap gap-2">
                                             <x-link-button.secondary-link :href="route('students.edit', $student->id)">
                                                 Edit
                                             </x-link-button.secondary-link>
@@ -58,6 +67,7 @@
                         </tbody>
 
                     </table>
+                    {{ $students->links() }}
                 </div>
             </div>
         </div>

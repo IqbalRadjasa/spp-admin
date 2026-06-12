@@ -10,17 +10,18 @@
             </x-link-button.primary-link>
         </div>
 
-        <div class="">
-            <div class="bg-white overflow-x-auto shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form method="GET" class="flex flex-col md:flex-row gap-3 mb-6">
-                        <x-form.text-input type="text" name="search" :value="request('search')"
-                            placeholder="Find a student..." class="w-full md:w-80" />
+        <div class="bg-white shadow-sm rounded-lg">
+            <div class="p-6">
+                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
+                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
+                        class="w-full md:w-80" />
 
-                        <x-button.primary-button>
-                            {{ __('Filter') }}
-                        </x-button.primary-button>
-                    </form>
+                    <x-button.primary-button class="w-full md:w-auto">
+                        Filter
+                    </x-button.primary-button>
+                </form>
+
+                <div class="overflow-x-auto mb-3">
                     <table id="studentsTable" class="min-w-full min-w-[700px]">
                         <thead>
                             <tr>
@@ -67,8 +68,9 @@
                         </tbody>
 
                     </table>
-                    {{ $students->links() }}
                 </div>
+
+                {{ $students->links() }}
             </div>
         </div>
     </div>

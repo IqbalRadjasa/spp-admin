@@ -5,38 +5,31 @@
             <h1 class="font-semibold text-xl">List Bills</h1>
         </div>
 
-        <div class="">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex mb-3">
-                        <form method="GET">
-                            <x-form.text-input type="text" name="search" :value="request('search')"
-                                placeholder="Find a student..." />
+        <div class="bg-white shadow-sm rounded-lg">
+            <div class="p-6">
+                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
+                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
+                        class="w-full md:w-80" />
 
-                            <x-form.select-input name="status">
+                    <x-form.select-input name="status">
+                        <option value="">All</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>
+                            Paid
+                        </option>
+                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>
+                            Unpaid
+                        </option>
+                    </x-form.select-input>
 
-                                <option value="">All</option>
+                    <x-form.text-input type="month" name="billing_period" :value="request('billing_period')" placeholder="2026-06" />
 
-                                <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>
-                                    Paid
-                                </option>
+                    <x-button.primary-button class="w-full md:w-auto">
+                        Filter
+                    </x-button.primary-button>
+                </form>
 
-                                <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>
-                                    Unpaid
-                                </option>
-
-                            </x-form.select-input>
-
-                            <x-form.text-input type="month" name="billing_period" :value="request('billing_period')"
-                                placeholder="2026-06" />
-
-                            <x-button.primary-button class="ms-2">
-                                {{ __('Filter') }}
-                            </x-button.primary-button>
-                        </form>
-                    </div>
-
-                    <table id="billsTable" class="min-w-full">
+                <div class="overflow-x-auto mb-3">
+                    <table id="billsTable" class="min-w-full min-w-[700px]">
                         <thead>
 
                             <tr>
@@ -118,8 +111,9 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $bills->links() }}
                 </div>
+
+                {{ $bills->links() }}
             </div>
         </div>
     </div>

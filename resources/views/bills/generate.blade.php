@@ -5,52 +5,50 @@
             <h1 class="font-semibold text-xl">Generate Bills</h1>
         </div>
 
-        <div class="">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('bills.generate') }}" method="POST">
-                        @csrf
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="p-6">
+                <form action="{{ route('bills.generate') }}" method="POST">
+                    @csrf
 
-                        <div class="flex gap-4">
-                            <div class="input-group w-1/3">
-                                <div class="flex items-center justify-between">
-                                    <x-form.input-label for="billing_period" :value="__('Billing Period')" />
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <div class="flex items-center justify-between">
+                                <x-form.input-label for="billing_period" :value="__('Billing Period')" />
 
-                                    <span class="text-sm text-gray-400">
-                                        Example: 2026-01
-                                    </span>
-                                </div>
-                                <x-form.text-input id="billing_period" class="block mt-1 w-full" type="month"
-                                    name="billing_period" :value="old('billing_period')" required autofocus
-                                    autocomplete="billing_period" />
-                                <x-form.input-error :messages="$errors->get('billing_period')" />
+                                <span class="text-sm text-gray-400">
+                                    Example: 2026-01
+                                </span>
                             </div>
-
-                            <div class="input-group w-1/3">
-                                <div class="flex items-center justify-between">
-                                    <x-form.input-label for="amount" :value="__('Nominal SPP')" />
-
-                                    <span class="text-sm text-gray-400">
-                                        Example: 1500000
-                                    </span>
-                                </div>
-                                <x-form.text-input id="amount" class="block mt-1 w-full" type="number"
-                                    name="amount" :value="old('amount')" required autofocus autocomplete="amount" />
-                                <x-form.input-error :messages="$errors->get('amount')" />
-                            </div>
+                            <x-form.text-input id="billing_period" class="block mt-1 w-full" type="month"
+                                name="billing_period" :value="old('billing_period')" required autofocus
+                                autocomplete="billing_period" />
+                            <x-form.input-error :messages="$errors->get('billing_period')" />
                         </div>
 
-                        <div class="flex justify-end mt-6 gap-2">
-                            <x-link-button.secondary-link :href="route('bills.index')">
-                                Go to list bills
-                            </x-link-button.secondary-link>
-                            <x-button.primary-button>
-                                {{ __('Generate') }}
-                            </x-button.primary-button>
-                        </div>
-                    </form>
+                        <div class="input-group">
+                            <div class="flex items-center justify-between">
+                                <x-form.input-label for="amount" :value="__('Nominal SPP')" />
 
-                </div>
+                                <span class="text-sm text-gray-400">
+                                    Example: 1500000
+                                </span>
+                            </div>
+                            <x-form.text-input id="amount" class="block mt-1 w-full" type="number" name="amount"
+                                :value="old('amount')" required autofocus autocomplete="amount" />
+                            <x-form.input-error :messages="$errors->get('amount')" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row md:justify-end gap-2 mt-6">
+                        <x-link-button.secondary-link :href="route('bills.index')">
+                            Go to list bills
+                        </x-link-button.secondary-link>
+                        <x-button.primary-button>
+                            {{ __('Generate') }}
+                        </x-button.primary-button>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

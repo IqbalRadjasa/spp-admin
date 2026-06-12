@@ -2,11 +2,15 @@
     <div class="py-6">
 
         <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Add Student</h1>
+            <h1 class="font-semibold text-xl">Edit Student</h1>
+
+            <x-link-button.secondary-link :href="url()->previous()">
+                Back
+            </x-link-button.secondary-link>
         </div>
 
         <div class="">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
                     <form action="{{ route('students.update', $student->id) }}" method="POST">
                         @csrf
@@ -43,10 +47,7 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-end mt-6 gap-2">
-                            <x-link-button.secondary-link :href="url()->previous()">
-                                Back
-                            </x-link-button.secondary-link>
+                        <div class="flex flex-col md:flex-row md:justify-end gap-2 mt-6">
                             <x-button.primary-button>
                                 {{ __('Update') }}
                             </x-button.primary-button>

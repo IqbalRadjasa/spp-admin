@@ -3,6 +3,10 @@
 
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">SPP Payment</h1>
+
+            <x-link-button.secondary-link :href="url()->previous()">
+                Back
+            </x-link-button.secondary-link>
         </div>
 
         <div class="bg-white overflow-hidden shadow-sm border-4 border-double border-gray-400">
@@ -80,10 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end mt-6 gap-2">
-                        <x-link-button.secondary-link :href="url()->previous()">
-                            Back
-                        </x-link-button.secondary-link>
+                    <div class="flex flex-col md:flex-row md:justify-end gap-2 mt-6">
                         <x-button.primary-button>
                             {{ __('Save Payment') }}
                         </x-button.primary-button>

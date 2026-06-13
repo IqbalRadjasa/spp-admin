@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");
     const overdueReportTable = document.querySelector("#overdueReportTable");
+    const paymentReportTable = document.querySelector("#paymentReportTable");
 
     if (studentsTable) {
         new DataTable(studentsTable, {
@@ -57,6 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (overdueReportTable) {
         new DataTable(overdueReportTable, {
+            responsive: true,
+            paging: false,
+            searchable: false,
+        });
+    }
+
+    if (paymentReportTable) {
+        new DataTable(paymentReportTable, {
             responsive: true,
             paging: false,
             searchable: false,

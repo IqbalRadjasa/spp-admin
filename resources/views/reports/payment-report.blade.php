@@ -1,50 +1,62 @@
 <x-app-layout>
     <div class="py-6">
 
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Payment Report</h1>
-            <div class="flex gap-2 items-center">
-                <h1 class="font-semibold text-xl">Total Income:</h1>
-                <h1 class="font-bold text-xl text-white bg-green-500 py-1 px-2 rounded-md">{{ rupiah($totalIncome) }}
-                </h1>
+        <div class="flex flex-col sm:flex-row md:items-center md:justify-between pb-6 gap-2">
+            <h1 class="font-semibold text-xl">
+                Payment Report
+            </h1>
+
+            <div
+                class=" flex items-center gap-3 px-4 py-3 rounded-lg border border-green-200 bg-green-50 w-full sm:w-auto">
+                <i class="ri-arrow-up-circle-line text-3xl text-green-500"></i>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Total Income
+                    </p>
+
+                    <p class="font-bold text-lg text-green-600">
+                        {{ rupiah($totalIncome) }}
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div class="">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex items-center justify-between mb-3">
-                        <form method="GET">
-                            <x-form.text-input type="text" name="search" :value="request('search')"
-                                placeholder="Find a student..." />
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
+                    <form method="GET" class="flex flex-col lg:flex-row lg:flex-wrap gap-3">
+                        <x-form.text-input type="text" name="search" :value="request('search')"
+                            placeholder="Find a student..." />
 
-                            <x-form.text-input type="month" name="month" :value="request('month')"
-                                placeholder="e.g. 2026-06" />
+                        <x-form.text-input type="month" name="month" :value="request('month')" placeholder="e.g. 2026-06" />
 
-                            <x-form.select-input name="payment_method">
+                        <x-form.select-input name="payment_method">
 
-                                <option value="">All</option>
+                            <option value="">All</option>
 
-                                @foreach ($paymentMethods as $method)
-                                    <option value="{{ $method->id }}"
-                                        {{ request('payment_method') == $method->id ? 'selected' : '' }}>
-                                        {{ $method->name }}
-                                    </option>
-                                @endforeach
+                            @foreach ($paymentMethods as $method)
+                                <option value="{{ $method->id }}"
+                                    {{ request('payment_method') == $method->id ? 'selected' : '' }}>
+                                    {{ $method->name }}
+                                </option>
+                            @endforeach
 
-                            </x-form.select-input>
+                        </x-form.select-input>
 
-                            <x-button.primary-button class="ms-2">
-                                {{ __('Filter') }}
-                            </x-button.primary-button>
-                        </form>
+                        <x-button.primary-button>
+                            {{ __('Filter') }}
+                        </x-button.primary-button>
+                    </form>
 
-                        <x-link-button.primary-link :href="route('reports.payments.export', request()->query())" icon="ri-export-line">
-                            Export Excel
-                        </x-link-button.primary-link>
-                    </div>
+                    <x-link-button.primary-link :href="route('reports.payments.export', request()->query())" icon="ri-export-line">
+                        Export Excel
+                    </x-link-button.primary-link>
+                </div>
 
-                    <table id="overdueReportTable" class="min-w-full">
+
+                <div class="overflow-x-auto mb-3">
+                    <table id="paymentReportTable" class="min-w-full min-w-[700px]">
                         <thead>
 
                             <tr>
@@ -76,8 +88,8 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $payments->links() }}
                 </div>
+                {{ $payments->links() }}
             </div>
         </div>
     </div>

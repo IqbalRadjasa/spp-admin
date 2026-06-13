@@ -1,12 +1,22 @@
 <x-app-layout>
     <div class="py-6">
+        <div class="flex items-center justify-between pb-6">
+            <h1 class="font-semibold text-xl">
+                Overdue Report
+            </h1>
 
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Overdue Report</h1>
-            <div class="flex gap-2 items-center">
-                <h1 class="font-semibold text-xl">Total Outstanding:</h1>
-                <h1 class="font-bold text-xl text-white bg-red-500 py-1 px-2 rounded-md">{{ rupiah($totalOutstanding) }}
-                </h1>
+            <div class=" flex items-center gap-3 px-4 py-3 rounded-lg border border-red-200 bg-red-50">
+                <i class="ri-arrow-down-circle-line text-3xl text-red-500"></i>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Total Outstanding
+                    </p>
+
+                    <p class="font-bold text-lg text-red-600">
+                        {{ rupiah($totalOutstanding) }}
+                    </p>
+                </div>
             </div>
         </div>
 

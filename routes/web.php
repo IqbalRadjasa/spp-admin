@@ -8,6 +8,7 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SchoolSettingController;
 
@@ -41,7 +42,7 @@ Route::middleware([
 
             Route::resource('majors', MajorController::class);
 
-            // Route::resource('classrooms', ClassroomController::class);
+            Route::resource('classrooms', ClassroomController::class);
         });
 });
 

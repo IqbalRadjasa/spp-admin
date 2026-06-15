@@ -34,4 +34,8 @@
      <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
          Majors
      </x-sidebar.sidebar-dropdown-link>
+
+     <x-sidebar.sidebar-dropdown-link :href="route('settings.classrooms.index')" :active="request()->routeIs('settings.classrooms.*')">
+         Classrooms
+     </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>

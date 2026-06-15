@@ -15,6 +15,8 @@ import {
     renderPaymentMethodChart,
 } from "./charts/dashboard";
 
+import { initializeClassroomPreview } from "./classroom/classroom-preview";
+
 import collapse from "@alpinejs/collapse";
 
 import { DataTable } from "simple-datatables";
@@ -35,10 +37,15 @@ window.successAlert = successAlert;
 window.confirmDelete = confirmDelete;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // For Classroom Create Form
+    initializeClassroomPreview();
+
     const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");
     const overdueReportTable = document.querySelector("#overdueReportTable");
     const paymentReportTable = document.querySelector("#paymentReportTable");
+    const majorsTable = document.querySelector("#majorsTable");
+    const classroomsTable = document.querySelector("#classroomsTable");
 
     if (studentsTable) {
         new DataTable(studentsTable, {
@@ -66,6 +73,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (paymentReportTable) {
         new DataTable(paymentReportTable, {
+            responsive: true,
+            paging: false,
+            searchable: false,
+        });
+    }
+
+    if (majorsTable) {
+        new DataTable(majorsTable, {
+            responsive: true,
+            paging: false,
+            searchable: false,
+        });
+    }
+
+    if (classroomsTable) {
+        new DataTable(classroomsTable, {
             responsive: true,
             paging: false,
             searchable: false,

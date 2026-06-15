@@ -2,10 +2,10 @@
     <div class="py-6">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
             <h1 class="font-semibold text-xl">
-                Majors
+                Classrooms
             </h1>
 
-            <x-link-button.primary-link :href="route('settings.majors.create')" icon="ri-add-line" class="">
+            <x-link-button.primary-link :href="route('settings.classrooms.create')" icon="ri-add-line" class="">
                 Add Major
             </x-link-button.primary-link>
         </div>
@@ -22,28 +22,30 @@
                 </form> --}}
 
                 <div class="overflow-x-auto mb-3">
-                    <table id="majorsTable" class="min-w-full min-w-[700px]">
+                    <table id="classroomsTable" class="min-w-full min-w-[700px]">
                         <thead>
                             <tr>
+                                <th>Level</th>
                                 <th>Name</th>
-                                <th>Code</th>
+                                <th>Major</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
 
-                            @foreach ($majors as $major)
+                            @foreach ($classrooms as $classroom)
                                 <tr>
-                                    <td>{{ $major->name }}</td>
-                                    <td>{{ $major->code }}</td>
+                                    <td>{{ $classroom->level }}</td>
+                                    <td>{{ $classroom->display_name }}</td>
+                                    <td>{{ $classroom->major->name }}</td>
                                     <td>
                                         <div class="flex flex-wrap gap-2">
-                                            <x-link-button.secondary-link :href="route('settings.majors.edit', $major->id)">
+                                            <x-link-button.secondary-link :href="route('settings.classrooms.edit', $classroom->id)">
                                                 Edit
                                             </x-link-button.secondary-link>
 
-                                            <form action="{{ route('settings.majors.destroy', $major->id) }}"
+                                            <form action="{{ route('settings.classrooms.destroy', $classroom->id) }}"
                                                 method="POST"
                                                 onsubmit="
                                                     event.preventDefault();
@@ -69,7 +71,7 @@
                     </table>
                 </div>
 
-                {{ $majors->links() }}
+                {{ $classrooms->links() }}
             </div>
         </div>
     </div>

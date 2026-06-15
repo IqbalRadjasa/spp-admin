@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\SchoolSetting;
+
 use Illuminate\Support\Str;
 
 if (!function_exists('shortNumber')) {
@@ -44,10 +46,25 @@ if (!function_exists('normalizePhone')) {
     }
 }
 
-if(!function_exists('titleCase')){
-    function titleCase(string $text){
+if (!function_exists('titleCase')) {
+    function titleCase(string $text)
+    {
         $text = Str::title($text);
 
         return $text;
+    }
+}
+
+if (!function_exists('classroomLevels')) {
+    function classroomLevels()
+    {
+        $educationLevel = SchoolSetting::first()->education_level;
+
+        return match ($educationLevel) {
+            'SD' => [1, 2, 3, 4, 5, 6],
+            'SMP' => [7, 8, 9],
+            'SMA', 'SMK' => [10, 11, 12],
+            default => []
+        };
     }
 }

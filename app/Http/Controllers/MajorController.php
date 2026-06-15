@@ -12,7 +12,14 @@ class MajorController extends Controller
      */
     public function index()
     {
-        //
+        $query = Major::query();
+
+        $majors = $query
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        return view('settings.majors.index', compact('majors'));
     }
 
     /**
@@ -20,7 +27,7 @@ class MajorController extends Controller
      */
     public function create()
     {
-        //
+        return view('settings.majors.create');
     }
 
     /**
@@ -28,7 +35,27 @@ class MajorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+            'code' => 'required|unique:majors,code'
+        ]);
+
+        try {
+            Major::create([
+                'name' => $validated['name'],
+                'code' => $validated['code'],
+            ]);
+
+            return redirect()
+                ->route('settings.majors.index')
+                ->with('success', 'Data created successfully!');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create data!');
+        }
     }
 
     /**
@@ -44,7 +71,7 @@ class MajorController extends Controller
      */
     public function edit(Major $major)
     {
-        //
+        return view('settings.majors.edit', compact('major'));
     }
 
     /**
@@ -52,7 +79,27 @@ class MajorController extends Controller
      */
     public function update(Request $request, Major $major)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+            'code' => 'required|unique:majors,code'
+        ]);
+
+        try {
+            $major->update([
+                'name' => $validated['name'],
+                'code' => $validated['code'],
+            ]);
+
+            return redirect()
+                ->route('settings.majors.index')
+                ->with('success', 'Data updated successfully!');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to update data!');
+        }
     }
 
     /**
@@ -60,6 +107,16 @@ class MajorController extends Controller
      */
     public function destroy(Major $major)
     {
-        //
+        $major->delete();
+
+        try {
+            return redirect()
+                ->route('settings.majors.index')
+                ->with('success', 'Data deleted successfully!');
+        } catch (\Exception $th) {
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to detele data!');
+        }
     }
 }

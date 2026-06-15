@@ -8,8 +8,7 @@
         <div class="">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('settings.school-settings.update') }}" method="POST"
-                        enctype="multipart/form-data">
+                    <form action="{{ route('settings.school.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

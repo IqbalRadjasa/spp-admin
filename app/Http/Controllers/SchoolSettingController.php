@@ -44,7 +44,6 @@ class SchoolSettingController extends Controller
     {
 
         $setting = SchoolSetting::first();
-        // dd($setting->education_level == 'SMK');
 
         return view('settings.school', compact('setting'));
     }

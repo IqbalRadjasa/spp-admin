@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
@@ -27,11 +28,21 @@ Route::middleware([
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/settings/school', [SchoolSettingController::class, 'edit'])
-        ->name('settings.school-settings.edit');
+    Route::prefix('settings')
+        ->name('settings.')
+        ->group(function () {
 
-    Route::put('/settings/school', [SchoolSettingController::class, 'update'])
-        ->name('settings.school-settings.update');
+            // School Setting Routes
+            Route::get('/school', [SchoolSettingController::class, 'edit'])
+                ->name('school.edit');
+
+            Route::put('/school/update', [SchoolSettingController::class, 'update'])
+                ->name('school.update');
+
+            Route::resource('majors', MajorController::class);
+
+            // Route::resource('classrooms', ClassroomController::class);
+        });
 });
 
 // Public Routes

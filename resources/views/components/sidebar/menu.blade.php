@@ -27,7 +27,11 @@
  </x-sidebar.sidebar-dropdown>
 
  <x-sidebar.sidebar-dropdown title="Settings" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
-     <x-sidebar.sidebar-dropdown-link :href="route('settings.school-settings.edit')" :active="request()->routeIs('settings.school-settings.edit')">
+     <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
          School
+     </x-sidebar.sidebar-dropdown-link>
+
+     <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
+         Majors
      </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>

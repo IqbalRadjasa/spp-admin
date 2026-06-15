@@ -17,7 +17,6 @@
  </x-sidebar.sidebar-link>
 
  <x-sidebar.sidebar-dropdown title="Reports" icon="ri-book-2-line" :active="request()->routeIs('reports.*')">
-
      <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
          Overdue Report
      </x-sidebar.sidebar-dropdown-link>
@@ -25,5 +24,10 @@
      <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report')">
          Payment Report
      </x-sidebar.sidebar-dropdown-link>
+ </x-sidebar.sidebar-dropdown>
 
+ <x-sidebar.sidebar-dropdown title="Settings" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
+     <x-sidebar.sidebar-dropdown-link :href="route('settings.school-settings.edit')" :active="request()->routeIs('settings.school-settings.edit')">
+         School
+     </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>

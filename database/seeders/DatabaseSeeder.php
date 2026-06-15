@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            SchoolSettingSeeder::class
+        ]);
+
+        $this->call([
             PaymentMethodSeeder::class,
         ]);
     }

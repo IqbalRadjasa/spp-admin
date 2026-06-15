@@ -8,6 +8,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SchoolSettingController;
 
 Route::redirect('/', '/login');
 
@@ -18,13 +19,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// User Admin's Routes
+// Admin's Routes
 Route::middleware([
     'auth',
     'role:super_admin'
 ])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/settings/school', [SchoolSettingController::class, 'edit'])
+        ->name('settings.school-settings.edit');
+
+    Route::put('/settings/school', [SchoolSettingController::class, 'update'])
+        ->name('settings.school-settings.update');
 });
 
 // Public Routes

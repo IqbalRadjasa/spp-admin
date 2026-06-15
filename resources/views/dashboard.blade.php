@@ -51,10 +51,10 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="min-w-full min-w-[1200px] text-sm">
                             <thead>
                                 <tr class="border-b">
-                                    <th class="hidden md:table-cell">
+                                    <th class="text-left py-3">
                                         Payment Code
                                     </th>
                                     <th class="text-left py-3">
@@ -74,7 +74,7 @@
                             <tbody>
                                 @forelse ($recentPayments as $payment)
                                     <tr class="border-b">
-                                        <td class="hidden md:table-cell py-3">
+                                        <td class=" py-3">
                                             {{ $payment->payment_code }}
                                         </td>
                                         <td class="py-3">

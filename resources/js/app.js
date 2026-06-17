@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // For Classroom Create Form
     initializeClassroomPreview();
 
-    // For Student Table Filter
+    // For Student Table and Create Form Filter
     initializeStudentFilter();
 
     const studentsTable = document.querySelector("#studentsTable");

@@ -60,8 +60,8 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $classrooms = Classroom::all();
         $majors = Major::all();
+        $classrooms = Classroom::all();
         $schoolSetting = SchoolSetting::first();
 
         return view('students.create', compact('classrooms', 'majors', 'schoolSetting'));
@@ -72,7 +72,6 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         $validated = $request->validate([
             'name' => 'required',
             'nis' => 'required|unique:students',
@@ -111,9 +110,11 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
+        $majors = Major::all();
         $classrooms = Classroom::all();
+        $schoolSetting = SchoolSetting::first();
 
-        return view('students.edit', compact('student', 'classrooms'));
+        return view('students.edit', compact('student', 'classrooms', 'schoolSetting', 'majors'));
     }
 
     /**

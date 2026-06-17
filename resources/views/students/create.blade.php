@@ -4,7 +4,7 @@
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">Add Student</h1>
 
-            <x-link-button.secondary-link :href="url()->previous()">
+            <x-link-button.secondary-link :href="route('students.index')">
                 Back
             </x-link-button.secondary-link>
         </div>

@@ -88,7 +88,7 @@
         </div>
     </div>
     <script>
-        window.selectedClassroom =
-            "{{ request('classroom') }}";
+        window.selectedClassroom = "{{ request('classroom') }}";
+        window.selectedMajor = "";
     </script>
 </x-app-layout>

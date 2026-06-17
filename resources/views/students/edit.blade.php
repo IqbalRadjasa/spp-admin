@@ -4,7 +4,7 @@
         <div class="flex items-center pb-6 justify-between">
             <h1 class="font-semibold text-xl">Edit Student</h1>
 
-            <x-link-button.secondary-link :href="url()->previous()">
+            <x-link-button.secondary-link :href="route('students.index')">
                 Back
             </x-link-button.secondary-link>
         </div>
@@ -12,7 +12,7 @@
         <div class="">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('students.update', $student->id) }}" method="POST">
+                    <form action="{{ route('students.update', $student->id) }}" method="POST" id="student-edit-form">
                         @csrf
                         @method('PUT')
 
@@ -31,17 +31,30 @@
                                 <x-form.input-error :messages="$errors->get('nis')" />
                             </div>
 
-                            <div class="input-group">
-                                <x-form.input-label for="classroom" :value="__('Classroom')" />
-                                <x-form.select-input id="classroom" name="classroom_id" class="mt-1">
-                                    @foreach ($classrooms as $classroom)
-                                        <option value="{{ $classroom->id }}" @selected(old('classroom_id', $student->classroom_id) == $classroom->id)>
-                                            {{ $classroom->display_name }}
-                                        </option>
-                                    @endforeach
-                                </x-form.select-input>
-                                <x-form.input-error :messages="$errors->get('classroom')" />
-                            </div>
+
+                            @if ($schoolSetting->education_level === 'SMK' || $schoolSetting->education_level === 'SMA')
+                                <div class="input-group">
+                                    <x-form.input-label for="major_id" :value="__('Majors')" />
+                                    <x-form.select-input name="major_id" id="major-filter" class="mt-1">
+                                        <option value="">Select Major</option>
+
+                                        @foreach ($majors as $major)
+                                            <option value="{{ $major->id }}" @selected($student->classroom->major_id == $major->id)>
+                                                {{ $major->name }}
+                                            </option>
+                                        @endforeach
+                                    </x-form.select-input>
+                                    <x-form.input-error :messages="$errors->get('major_id')" />
+                                </div>
+
+                                <div class="input-group">
+                                    <x-form.input-label for="classroom_id" :value="__('Classroom')" />
+                                    <x-form.select-input name="classroom_id" id="classroom-filter" class="mt-1"
+                                        data-placeholder="Select Classroom" required>
+                                    </x-form.select-input>
+                                    <x-form.input-error :messages="$errors->get('classroom_id')" />
+                                </div>
+                            @endif
 
                             <div class="input-group">
                                 <x-form.input-label for="parent_phone" :value="__('Parent Phone')" />
@@ -62,4 +75,7 @@
             </div>
         </div>
     </div>
+    <script>
+        window.selectedClassroom = "{{ $student->classroom_id }}";
+    </script>
 </x-app-layout>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classroom;
 use App\Models\Major;
+use App\Models\SchoolSetting;
 use App\Models\Student;
 
 use Illuminate\Http\Request;
@@ -60,8 +61,10 @@ class StudentController extends Controller
     public function create()
     {
         $classrooms = Classroom::all();
+        $majors = Major::all();
+        $schoolSetting = SchoolSetting::first();
 
-        return view('students.create', compact('classrooms'));
+        return view('students.create', compact('classrooms', 'majors', 'schoolSetting'));
     }
 
     /**
@@ -69,14 +72,13 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request);
         $validated = $request->validate([
             'name' => 'required',
             'nis' => 'required|unique:students',
             'classroom_id' => 'required',
             'parent_phone' => 'required|string|max:20',
         ]);
-
 
         try {
             Student::create([

@@ -30,17 +30,28 @@
                                 <x-form.input-error :messages="$errors->get('nis')" />
                             </div>
 
-                            <div class="input-group">
-                                <x-form.input-label for="classroom" :value="__('Classroom')" />
-                                <x-form.select-input id="classroom" name="classroom_id" class="mt-1">
-                                    @foreach ($classrooms as $classroom)
-                                        <option value="{{ $classroom->id }}">
-                                            {{ $classroom->display_name }}
-                                        </option>
-                                    @endforeach
-                                </x-form.select-input>
-                                <x-form.input-error :messages="$errors->get('classroom')" />
-                            </div>
+                            @if ($schoolSetting->education_level === 'SMK' || $schoolSetting->education_level === 'SMA')
+                                <div class="input-group">
+                                    <x-form.input-label for="major_id" :value="__('Majors')" />
+                                    <x-form.select-input name="major_id" id="major-filter" class="mt-1">
+                                        <option value="">Select Major</option>
+
+                                        @foreach ($majors as $major)
+                                            <option value="{{ $major->id }}" @selected(old('major_id') == $major->id)>
+                                                {{ $major->name }}
+                                            </option>
+                                        @endforeach
+                                    </x-form.select-input>
+                                    <x-form.input-error :messages="$errors->get('major_id')" />
+                                </div>
+
+                                <div class="input-group">
+                                    <x-form.input-label for="classroom_id" :value="__('Classroom')" />
+                                    <x-form.select-input name="classroom_id" id="classroom-filter" class="mt-1" data-placeholder="Select Classroom">
+                                    </x-form.select-input>
+                                    <x-form.input-error :messages="$errors->get('classroom_id')" />
+                                </div>
+                            @endif
 
                             <div class="input-group">
                                 <x-form.input-label for="parent_phone" :value="__('Parent Phone')" />

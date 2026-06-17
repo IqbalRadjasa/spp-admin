@@ -26,8 +26,7 @@
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input name="classroom" id="classroom-filter">
-                        <option value="">All</option>
+                    <x-form.select-input name="classroom" id="classroom-filter" data-placeholder="All">
                     </x-form.select-input>
 
                     <x-button.primary-button class="w-full md:w-auto">

@@ -2,13 +2,18 @@ export function initializeStudentFilter() {
     const majorFilter = $("#major-filter");
 
     const classroomFilter = $("#classroom-filter");
+    const placeholder = classroomFilter.data("placeholder");
 
     const selectedClassroom = window.selectedClassroom;
 
     function loadClassrooms(majorId) {
         classroomFilter.empty();
 
-        classroomFilter.append('<option value="">All</option>');
+        classroomFilter.append(
+            `<option value="">
+                ${placeholder}
+            </option>`
+        );
 
         if (!majorId) {
             classroomFilter.prop("disabled", true);

@@ -33,7 +33,7 @@
                                 <tr>
                                     <td class="font-semibold pr-4 md:pr-10 pb-3 whitespace-nowrap">Class</td>
                                     <td class="pr-5 pb-3">:</td>
-                                    <td class="pb-3">{{ $bill->student->class }}</td>
+                                    <td class="pb-3">{{ $bill->student->classroom->display_name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-semibold pr-4 md:pr-10 pb-3 whitespace-nowrap">Parent's Phone</td>

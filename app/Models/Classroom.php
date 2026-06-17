@@ -13,6 +13,10 @@ class Classroom extends Model
         'level'
     ];
 
+    protected $appends = [
+        'display_name'
+    ];
+
     public function major()
     {
         return $this->belongsTo(Major::class);

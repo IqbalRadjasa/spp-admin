@@ -49,26 +49,9 @@ class StudentController extends Controller
 
         $majors = Major::all();
 
-        $classrooms = Classroom::query()
-            ->with('major')
-            ->when(
-                $request->major,
-                function ($query) use ($request) {
-                    $query->where(
-                        'major_id',
-                        $request->major
-                    );
-                }
-            )
-            ->orderBy('level')
-            ->orderBy('name')
-            ->get();
-
-        // dd($classrooms);
-
         return view(
             'students.index',
-            compact('students', 'majors', 'classrooms')
+            compact('students', 'majors')
         );
     }
     /**

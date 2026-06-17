@@ -1,27 +1,47 @@
 export function initializeStudentFilter() {
-    const majorFilter = document.querySelector("#major-filter");
+    const majorFilter = $("#major-filter");
 
-    const classroomFilter = document.querySelector("#classroom-filter");
+    const classroomFilter = $("#classroom-filter");
 
-    if (!majorFilter || !classroomFilter) {
-        return;
+    const selectedClassroom = window.selectedClassroom;
+
+    function loadClassrooms(majorId) {
+        classroomFilter.empty();
+
+        classroomFilter.append('<option value="">All</option>');
+
+        if (!majorId) {
+            classroomFilter.prop("disabled", true);
+
+            return;
+        }
+
+        classroomFilter.prop("disabled", false);
+
+        $.get(`/classrooms/by-major/${majorId}`, function (data) {
+            data.forEach((classroom) => {
+                const selected =
+                    String(classroom.id) === String(selectedClassroom)
+                        ? "selected"
+                        : "";
+
+                classroomFilter.append(
+                    `
+                            <option
+                                value="${classroom.id}"
+                                ${selected}
+                            >
+                                ${classroom.display_name}
+                            </option>
+                            `
+                );
+            });
+        });
     }
 
-    function toggleClassroom() {
-        if (!majorFilter.value) {
-            classroomFilter.style.display = "none";
-
-            classroomFilter.value = "";
-        } else {
-            classroomFilter.style.display = "block";
-        }
-    }
-
-    toggleClassroom();
-
-    majorFilter.addEventListener("change", function () {
-        if (!this.value) {
-            classroomFilter.value = "";
-        }
+    majorFilter.on("change", function () {
+        loadClassrooms($(this).val());
     });
+
+    loadClassrooms(majorFilter.val());
 }

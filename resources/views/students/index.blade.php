@@ -26,14 +26,8 @@
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input name="classroom" id="classroom-filter" :disabled="!request('major')">
+                    <x-form.select-input name="classroom" id="classroom-filter">
                         <option value="">All</option>
-
-                        @foreach ($classrooms as $classroom)
-                            <option value="{{ $classroom->id }}" @selected(request('classroom') == $classroom->id)>
-                                {{ $classroom->display_name }}
-                            </option>
-                        @endforeach
                     </x-form.select-input>
 
                     <x-button.primary-button class="w-full md:w-auto">
@@ -95,7 +89,7 @@
         </div>
     </div>
     <script>
-        window.classrooms =
-            @json($classrooms);
+        window.selectedClassroom =
+            "{{ request('classroom') }}";
     </script>
 </x-app-layout>

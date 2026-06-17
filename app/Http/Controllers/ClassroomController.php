@@ -175,4 +175,14 @@ class ClassroomController extends Controller
                 ->with('error', 'Failed to detele data!');
         }
     }
+
+    public function byMajor(Major $major)
+    {
+        return response()->json(
+            $major->classrooms()
+                ->orderBy('level')
+                ->orderBy('name')
+                ->get()
+        );
+    }
 }

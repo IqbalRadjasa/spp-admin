@@ -97,6 +97,10 @@ Route::middleware([
     //Receipt's Routes
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
         ->name('payments.receipt');
+
+
+    // Filter Routes
+    Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);
 });
 
 

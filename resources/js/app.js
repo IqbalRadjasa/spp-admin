@@ -6,6 +6,10 @@ Alpine.plugin(collapse);
 window.Alpine = Alpine;
 Alpine.start();
 
+import $ from "jquery";
+window.$ = $;
+window.jQuery = $;
+
 import ApexCharts from "apexcharts";
 window.ApexCharts = ApexCharts;
 

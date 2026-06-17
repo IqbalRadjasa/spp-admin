@@ -16,6 +16,7 @@ import {
 } from "./charts/dashboard";
 
 import { initializeClassroomPreview } from "./classroom/classroom-preview";
+import { initializeStudentFilter } from "./student/student-filter";
 
 import collapse from "@alpinejs/collapse";
 
@@ -39,6 +40,9 @@ window.confirmDelete = confirmDelete;
 document.addEventListener("DOMContentLoaded", () => {
     // For Classroom Create Form
     initializeClassroomPreview();
+
+    // For Student Table Filter
+    initializeStudentFilter();
 
     const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classroom;
+use App\Models\Major;
 use App\Models\Student;
 
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Student::query();
+        $query = Student::with(['classroom.major']);
 
         if ($request->search) {
 
@@ -25,14 +26,49 @@ class StudentController extends Controller
             );
         }
 
+        if ($request->major) {
+            $query->whereHas(
+                'classroom.major',
+                function ($q) use ($request) {
+                    $q->where(
+                        'id',
+                        $request->major
+                    );
+                }
+            );
+        }
+
+        if ($request->classroom) {
+            $query->where('classroom_id', $request->classroom);
+        }
+
         $students = $query
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
+        $majors = Major::all();
+
+        $classrooms = Classroom::query()
+            ->with('major')
+            ->when(
+                $request->major,
+                function ($query) use ($request) {
+                    $query->where(
+                        'major_id',
+                        $request->major
+                    );
+                }
+            )
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get();
+
+        // dd($classrooms);
+
         return view(
             'students.index',
-            compact('students')
+            compact('students', 'majors', 'classrooms')
         );
     }
     /**
@@ -95,7 +131,7 @@ class StudentController extends Controller
         return view('students.edit', compact('student', 'classrooms'));
     }
 
-    /** 
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Student $student)

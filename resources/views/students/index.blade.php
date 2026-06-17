@@ -16,6 +16,26 @@
                     <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
                         class="w-full md:w-80" />
 
+                    <x-form.select-input name="major" id="major-filter">
+                        <option value="">All</option>
+
+                        @foreach ($majors as $major)
+                            <option value="{{ $major->id }}" @selected(request('major') == $major->id)>
+                                {{ $major->name }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
+
+                    <x-form.select-input name="classroom" id="classroom-filter" :disabled="!request('major')">
+                        <option value="">All</option>
+
+                        @foreach ($classrooms as $classroom)
+                            <option value="{{ $classroom->id }}" @selected(request('classroom') == $classroom->id)>
+                                {{ $classroom->display_name }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
+
                     <x-button.primary-button class="w-full md:w-auto">
                         Filter
                     </x-button.primary-button>
@@ -74,4 +94,8 @@
             </div>
         </div>
     </div>
+    <script>
+        window.classrooms =
+            @json($classrooms);
+    </script>
 </x-app-layout>

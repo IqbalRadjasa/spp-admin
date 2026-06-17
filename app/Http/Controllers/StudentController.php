@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classroom;
 use App\Models\Student;
 
 use Illuminate\Http\Request;
@@ -39,7 +40,9 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return view('students.create');
+        $classrooms = Classroom::all();
+
+        return view('students.create', compact('classrooms'));
     }
 
     /**
@@ -51,15 +54,16 @@ class StudentController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'nis' => 'required|unique:students',
-            'class' => 'required',
+            'classroom_id' => 'required',
             'parent_phone' => 'required|string|max:20',
         ]);
+
 
         try {
             Student::create([
                 'name' => $validated['name'],
                 'nis' => $validated['nis'],
-                'class' => $validated['class'],
+                'classroom_id' => $validated['classroom_id'],
                 'parent_phone' => normalizePhone($validated['parent_phone']),
             ]);
 
@@ -67,7 +71,6 @@ class StudentController extends Controller
                 ->route('students.index')
                 ->with('success', 'Data created successfully!');
         } catch (\Exception $e) {
-
             return redirect()
                 ->back()
                 ->withInput()
@@ -87,10 +90,12 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        return view('students.edit', compact('student'));
+        $classrooms = Classroom::all();
+
+        return view('students.edit', compact('student', 'classrooms'));
     }
 
-    /**
+    /** 
      * Update the specified resource in storage.
      */
     public function update(Request $request, Student $student)
@@ -98,7 +103,7 @@ class StudentController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'nis' => 'required|unique:students,nis,' . $student->id,
-            'class' => 'required',
+            'classroom_id' => 'required',
             'parent_phone' => 'required|string|max:20',
         ]);
 
@@ -106,7 +111,7 @@ class StudentController extends Controller
             $student->update([
                 'name' => $validated['name'],
                 'nis' => $validated['nis'],
-                'class' => $validated['class'],
+                'classroom_id' => $validated['classroom_id'],
                 'parent_phone' => normalizePhone($validated['parent_phone']),
             ]);
 

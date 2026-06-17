@@ -38,7 +38,7 @@
                                 <tr>
                                     <td>{{ $student->name }}</td>
                                     <td>{{ $student->nis }}</td>
-                                    <td>{{ $student->class }}</td>
+                                    <td>{{ $student->classroom?->display_name }}</td>
                                     <td>
                                         <div class="flex flex-wrap gap-2">
                                             <x-link-button.secondary-link :href="route('students.edit', $student->id)">

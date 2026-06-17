@@ -32,10 +32,15 @@
                             </div>
 
                             <div class="input-group">
-                                <x-form.input-label for="class" :value="__('Class')" />
-                                <x-form.text-input id="class" class="block mt-1 w-full" type="text"
-                                    name="class" :value="$student->class" required autofocus autocomplete="class" />
-                                <x-form.input-error :messages="$errors->get('class')" />
+                                <x-form.input-label for="classroom" :value="__('Classroom')" />
+                                <x-form.select-input id="classroom" name="classroom_id" class="mt-1">
+                                    @foreach ($classrooms as $classroom)
+                                        <option value="{{ $classroom->id }}" @selected(old('classroom_id', $student->classroom_id) == $classroom->id)>
+                                            {{ $classroom->display_name }}
+                                        </option>
+                                    @endforeach
+                                </x-form.select-input>
+                                <x-form.input-error :messages="$errors->get('classroom')" />
                             </div>
 
                             <div class="input-group">

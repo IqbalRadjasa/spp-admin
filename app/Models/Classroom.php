@@ -18,6 +18,11 @@ class Classroom extends Model
         return $this->belongsTo(Major::class);
     }
 
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
+
     public function getDisplayNameAttribute()
     {
         $parts = [

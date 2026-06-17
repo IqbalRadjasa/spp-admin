@@ -12,12 +12,17 @@ class Student extends Model
     protected $fillable = [
         'name',
         'nis',
-        'class',
+        'classroom_id',
         'parent_phone'
     ];
 
     public function bills()
     {
         return $this->hasMany(Bill::class);
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
     }
 }

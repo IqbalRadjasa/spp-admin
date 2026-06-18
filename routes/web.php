@@ -77,7 +77,7 @@ Route::middleware([
 
 
     // Payment's Routes
-    Route::get('/payments/{bill}/create', [PaymentController::class, 'create'])
+    Route::get('/bills/payments/{bill}/create', [PaymentController::class, 'create'])
         ->name('payments.create');
 
     Route::post('/bill/{bill}/payments', [PaymentController::class, 'store'])

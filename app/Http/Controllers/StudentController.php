@@ -93,7 +93,7 @@ class StudentController extends Controller
                 'created',
                 'student',
                 $student->id,
-                'Created student ' .
+                'Created Student ' .
                     $student->name
             );
 
@@ -151,7 +151,7 @@ class StudentController extends Controller
                 'updated',
                 'student',
                 $student->id,
-                'Updated student ' .
+                'Updated Student ' .
                     $student->name
             );
 
@@ -180,7 +180,7 @@ class StudentController extends Controller
                 'deleted',
                 'student',
                 $student->id,
-                'Deleted student ' .
+                'Deleted Student ' .
                     $student->name
             );
 

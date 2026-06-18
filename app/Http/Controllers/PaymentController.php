@@ -7,12 +7,12 @@ use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 
+use App\Services\ActivityLogService;
+
 use App\Jobs\SendPaymentNotificationJob;
 
-use App\Services\Notifications\PaymentNotificationService;
-
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -30,7 +30,7 @@ class PaymentController extends Controller
         ));
     }
 
-    public function store(Request $request, Bill $bill, PaymentNotificationService $notificationService)
+    public function store(Request $request, Bill $bill, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
@@ -58,22 +58,35 @@ class PaymentController extends Controller
             '-' .
             str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
-        $payment = Payment::create([
-            'payment_code' => $paymentCode,
-            'bill_id' => $bill->id,
-            'payment_method_id' => $validated['payment_method_id'],
-            'paid_at' => $validated['paid_at'],
-            'amount_paid' => $validated['amount_paid'],
-            'notes' => $validated['notes']
-        ]);
+        $payment = null;
 
-        $bill->update([
-            'status' => 'paid',
-            'reminder_attempts' => 0,
-            'last_reminded_at' => null,
-            'escalation_status' => 'resolved'
-        ]);
+        DB::transaction(
+            function () use (&$payment, $paymentCode, $bill, $validated, $activityLog) {
+                $payment = Payment::create([
+                    'payment_code' => $paymentCode,
+                    'bill_id' => $bill->id,
+                    'payment_method_id' => $validated['payment_method_id'],
+                    'paid_at' => $validated['paid_at'],
+                    'amount_paid' => $validated['amount_paid'],
+                    'notes' => $validated['notes']
+                ]);
 
+                $bill->update([
+                    'status' => 'paid',
+                    'reminder_attempts' => 0,
+                    'last_reminded_at' => null,
+                    'escalation_status' => 'resolved'
+                ]);
+
+                $activityLog->log(
+                    'payment',
+                    'bill',
+                    $bill->id,
+                    'Bill Payment ' .
+                        $payment['payment_code']
+                );
+            }
+        );
 
         // Queue Notification
         SendPaymentNotificationJob::dispatch($payment);

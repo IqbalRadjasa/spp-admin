@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Bill;
 
+use App\Services\ActivityLogService;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -66,7 +68,7 @@ class BillController extends Controller
         return view('bills.generate');
     }
 
-    public function generateBills(Request $request)
+    public function generateBills(Request $request, ActivityLogService $activityLog)
     {
         DB::enableQueryLog();
 
@@ -75,24 +77,34 @@ class BillController extends Controller
             'amount' => 'required|integer|min:1'
         ]);
 
-
         $students = Student::all();
 
-        foreach ($students as $student) {
-            Bill::firstOrCreate(
-                [
-                    'student_id' => $student->id,
-                    'billing_period' => $validated['billing_period']
-                ],
-                [
-                    'amount' => $validated['amount'],
-                    'status' => 'unpaid'
-                ]
-            );
-        }
-        // dd(DB::getQueryLog());
-
         try {
+            DB::transaction(
+                function () use ($validated, $students, $activityLog) {
+                    foreach ($students as $student) {
+                        Bill::firstOrCreate(
+                            [
+                                'student_id' => $student->id,
+                                'billing_period' => $validated['billing_period']
+                            ],
+                            [
+                                'amount' => $validated['amount'],
+                                'status' => 'unpaid'
+                            ]
+                        );
+                    }
+
+                    $activityLog->log(
+                        'generate bills',
+                        'bill',
+                        null,
+                        'Bills Generated ' .
+                            $validated['billing_period']
+                    );
+                }
+            );
+
             return redirect()
                 ->back()
                 ->with('success', 'Bill successfully generated!');

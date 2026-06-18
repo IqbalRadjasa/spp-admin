@@ -21,6 +21,7 @@ import {
 
 import { initializeClassroomPreview } from "./classroom/classroom-preview";
 import { initializeStudentFilter } from "./student/student-filter";
+import { initializeAcademicYears } from "./academic-years/academic-years";
 
 import collapse from "@alpinejs/collapse";
 
@@ -47,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // For Student Table and Create Form Filter
     initializeStudentFilter();
+
+    // For Create Academic Year Form
+    initializeAcademicYears();
 
     const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");

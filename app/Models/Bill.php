@@ -32,4 +32,9 @@ class Bill extends Model
     {
         return $this->hasMany(BillEscalationNote::class);
     }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class);
+    }
 }

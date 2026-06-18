@@ -37,6 +37,10 @@
          School
      </x-sidebar.sidebar-dropdown-link>
 
+     <x-sidebar.sidebar-dropdown-link :href="route('settings.academic-years.index')" :active="request()->routeIs('settings.academic-years.index')">
+         Academic Years
+     </x-sidebar.sidebar-dropdown-link>
+
      <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
          Majors
      </x-sidebar.sidebar-dropdown-link>

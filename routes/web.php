@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\SchoolSettingController;
 
 Route::redirect('/', '/login');
@@ -44,6 +45,8 @@ Route::middleware([
             Route::resource('majors', MajorController::class);
 
             Route::resource('classrooms', ClassroomController::class);
+
+            Route::resource('academic-years', AcademicYearController::class);
         });
 
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])

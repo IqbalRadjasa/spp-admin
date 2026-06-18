@@ -12,7 +12,8 @@ class ActivityLogController extends Controller
         $activityLogs = ActivityLog::query()
             ->with('user')
             ->latest()
-            ->paginate(5);
+            ->paginate(5)
+            ->withQueryString();
 
         return view('activity-logs', compact('activityLogs'));
     }

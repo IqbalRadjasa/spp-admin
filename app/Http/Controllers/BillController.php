@@ -33,7 +33,10 @@ class BillController extends Controller
             });
         }
 
-        $bills = $query->latest()->paginate(5);
+        $bills = $query
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view('bills.index', compact('bills'));
     }

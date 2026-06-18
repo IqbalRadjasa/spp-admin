@@ -69,7 +69,6 @@ class ReportController extends Controller
                     $request->month
                 )->month
             );
-            // dd($query);
         }
 
 

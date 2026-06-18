@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\BillController;
@@ -8,8 +7,10 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\SchoolSettingController;
 
 Route::redirect('/', '/login');
@@ -44,6 +45,9 @@ Route::middleware([
 
             Route::resource('classrooms', ClassroomController::class);
         });
+
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+        ->name('activity-logs.index');
 });
 
 // Public Routes

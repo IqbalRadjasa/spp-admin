@@ -26,6 +26,10 @@
      </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>
 
+ <x-sidebar.sidebar-link :href="route('activity-logs.index')" icon="ri-chat-history-line" :active="request()->routeIs('activity-logs.index')">
+     Activity Logs
+ </x-sidebar.sidebar-link>
+
  <x-sidebar.sidebar-dropdown title="Settings" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
      <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
          School

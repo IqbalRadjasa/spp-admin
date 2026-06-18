@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Classroom;
 use App\Models\Major;
-use App\Models\SchoolSetting;
 use App\Models\Student;
+use App\Models\Classroom;
+use App\Models\SchoolSetting;
+
+use App\Services\ActivityLogService;
 
 use Illuminate\Http\Request;
 
@@ -70,7 +72,7 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'name' => 'required',
@@ -80,12 +82,20 @@ class StudentController extends Controller
         ]);
 
         try {
-            Student::create([
+            $student = Student::create([
                 'name' => $validated['name'],
                 'nis' => $validated['nis'],
                 'classroom_id' => $validated['classroom_id'],
                 'parent_phone' => normalizePhone($validated['parent_phone']),
             ]);
+
+            $activityLog->log(
+                'created',
+                'student',
+                $student->id,
+                'Created student ' .
+                    $student->name
+            );
 
             return redirect()
                 ->route('students.index')
@@ -120,7 +130,7 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Student $student)
+    public function update(Request $request, Student $student, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'name' => 'required',
@@ -137,6 +147,15 @@ class StudentController extends Controller
                 'parent_phone' => normalizePhone($validated['parent_phone']),
             ]);
 
+            $activityLog->log(
+                'updated',
+                'student',
+                $student->id,
+                'Updated student ' .
+                    $student->name
+            );
+
+
             return redirect()
                 ->route('students.index')
                 ->with('success', 'Data updated successfully!');
@@ -152,11 +171,19 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Student $student)
+    public function destroy(Student $student, ActivityLogService $activityLog)
     {
-        $student->delete();
-
         try {
+            $student->delete();
+
+            $activityLog->log(
+                'deleted',
+                'student',
+                $student->id,
+                'Deleted student ' .
+                    $student->name
+            );
+
             return redirect()
                 ->route('students.index')
                 ->with('success', 'Data deleted successfully!');

@@ -48,9 +48,12 @@
                                                 onsubmit="
                                                     event.preventDefault();
 
-                                                    confirmDelete(() => {
-                                                        this.submit();
-                                                    });
+                                                   confirmAction( () => this.submit(),
+                                                        {
+                                                            text: 'This major will be permanently deleted.',
+                                                            confirmButtonText: 'Delete'
+                                                        }
+                                                    );
                                                 ">
                                                 @csrf
                                                 @method('DELETE')

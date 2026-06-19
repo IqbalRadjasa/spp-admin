@@ -55,3 +55,19 @@ export function confirmDelete(callback) {
         }
     });
 }
+export function confirmAction(callback, options = {}) {
+    Swal.fire({
+        title: options.title ?? "Confirm Action?",
+        text: options.text ?? "Are you sure?",
+        icon: options.icon ?? "warning",
+        showCancelButton: true,
+        confirmButtonColor: options.confirmButtonColor ?? "#dc2626",
+        cancelButtonColor: options.cancelButtonColor ?? "#6b7280",
+        confirmButtonText: options.confirmButtonText ?? "Confirm",
+        cancelButtonText: options.cancelButtonText ?? "Cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            callback();
+        }
+    });
+}

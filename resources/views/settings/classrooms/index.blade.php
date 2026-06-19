@@ -50,9 +50,12 @@
                                                 onsubmit="
                                                     event.preventDefault();
 
-                                                    confirmDelete(() => {
-                                                        this.submit();
-                                                    });
+                                                   confirmAction( () => this.submit(),
+                                                        {
+                                                            text: 'This classroom will be permanently deleted.',
+                                                            confirmButtonText: 'Delete'
+                                                        }
+                                                    );
                                                 ">
                                                 @csrf
                                                 @method('DELETE')

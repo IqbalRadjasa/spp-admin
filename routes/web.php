@@ -51,6 +51,12 @@ Route::middleware([
 
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])
         ->name('activity-logs.index');
+
+    // Get Academic Year
+    Route::get('/academic-years/getAcademicYear/{academicYear}', [AcademicYearController::class, 'getAcademicYear']);
+
+    // Activate Academic Year
+    Route::put('/academic-years/activateAcademicYear/{academicYear}', [AcademicYearController::class, 'activateAcademicYear'])->name('settings.academic-years.activateAcademicYear');
 });
 
 // Public Routes

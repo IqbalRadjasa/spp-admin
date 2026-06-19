@@ -31,6 +31,7 @@ import {
     toastSuccess,
     toastError,
     confirmDelete,
+    confirmAction,
     successAlert,
     errorAlert,
 } from "./helpers/sweetalert";
@@ -41,6 +42,7 @@ window.toastSuccess = toastSuccess;
 window.errorAlert = errorAlert;
 window.successAlert = successAlert;
 window.confirmDelete = confirmDelete;
+window.confirmAction = confirmAction;
 
 document.addEventListener("DOMContentLoaded", () => {
     // For Classroom Create Form

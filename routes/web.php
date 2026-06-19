@@ -57,6 +57,10 @@ Route::middleware([
 
     // Activate Academic Year
     Route::put('/academic-years/activateAcademicYear/{academicYear}', [AcademicYearController::class, 'activateAcademicYear'])->name('settings.academic-years.activateAcademicYear');
+
+
+    Route::get('/students/promotion', [StudentController::class, 'studentPromotion'])
+        ->name('students.promotion');
 });
 
 // Public Routes

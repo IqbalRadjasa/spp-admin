@@ -4,9 +4,23 @@
      </x-sidebar.sidebar-link>
  @endif
 
- <x-sidebar.sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
+ <x-sidebar.sidebar-dropdown title="Students" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
+     <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+         Student Records
+     </x-sidebar.sidebar-dropdown-link>
+
+     <x-sidebar.sidebar-dropdown-link :href="route('students.promotion')" :active="request()->routeIs('students.promotion')">
+          Student Promotion
+     </x-sidebar.sidebar-dropdown-link>
+ </x-sidebar.sidebar-dropdown>
+
+ {{-- <x-sidebar.sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
      Student Records
  </x-sidebar.sidebar-link>
+
+ <x-sidebar.sidebar-link :href="route('students.promotion')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.promotion')">
+     Student Promotions
+ </x-sidebar.sidebar-link> --}}
 
  <x-sidebar.sidebar-dropdown title="Bills" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*', 'payments.create')">
      <x-sidebar.sidebar-dropdown-link :href="route('bills.index')" :active="request()->routeIs('bills.index', 'bills.detail', 'payments.create')">

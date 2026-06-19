@@ -13,7 +13,8 @@ class Student extends Model
         'name',
         'nis',
         'classroom_id',
-        'parent_phone'
+        'parent_phone',
+        'status'
     ];
 
     public function bills()

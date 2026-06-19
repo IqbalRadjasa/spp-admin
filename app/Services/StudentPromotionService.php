@@ -37,9 +37,7 @@ class StudentPromotionService
             ->with('classroom.major')
             ->where('status', 'active');
 
-
         if ($search) {
-
             $query->where(
                 'name',
                 'like',
@@ -63,9 +61,28 @@ class StudentPromotionService
             $query->where('classroom_id', $classroom);
         }
 
+        $summaryStudents = (clone $query)->get();
+
         $students = $query
             ->paginate(5)
             ->withQueryString();
+
+
+        $promoteCount = 0;
+        $graduateCount = 0;
+        $totalStudents = $summaryStudents->count();
+
+        foreach ($summaryStudents as $student) {
+
+            $nextClassroom =
+                $this->findNextClassroom($student);
+
+            if ($nextClassroom) {
+                $promoteCount++;
+            } else {
+                $graduateCount++;
+            }
+        }
 
         $students->getCollection()->transform(
             function ($student) {
@@ -82,6 +99,14 @@ class StudentPromotionService
             }
         );
 
-        return $students;
+        return [
+            'students' => $students,
+
+            'summary' => [
+                'total_students' => $totalStudents,
+                'promote_count' => $promoteCount,
+                'graduate_count' => $graduateCount,
+            ]
+        ];
     }
 }

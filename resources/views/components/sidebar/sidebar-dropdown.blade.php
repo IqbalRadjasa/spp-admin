@@ -1,13 +1,18 @@
 @props(['title', 'icon' => null, 'active' => false])
 
 <div x-data="{
+    active: {{ $active ? 'true' : 'false' }},
     open: {{ $active ? 'true' : 'false' }}
-    }" x-effect="
+}"
+    x-effect="
         if (!sidebarOpen) {
-            open = false
+            open = false;
         }
-    "
-    class="space-y-2">
+
+        if (sidebarOpen && active) {
+            open = true;
+        }
+    ">
 
     {{-- Parent Menu --}}
     <button

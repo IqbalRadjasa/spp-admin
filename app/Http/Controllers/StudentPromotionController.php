@@ -15,10 +15,17 @@ class StudentPromotionController extends Controller
      */
     public function index(Request $request, StudentPromotionService $service)
     {
-        $promotions = $service->getPromotionPreview($request?->search, $request?->major, $request?->classroom);
+        $data  = $service->getPromotionPreview($request?->search, $request?->major, $request?->classroom);
         $majors = Major::all();
 
-        return view('student-promotion.index', compact('promotions', 'majors'));
+        return view(
+            'student-promotion.index',
+            [
+                'majors' => $majors,
+                'promotions' => $data['students'],
+                'summary' => $data['summary'],
+            ]
+        );
     }
 
     /**

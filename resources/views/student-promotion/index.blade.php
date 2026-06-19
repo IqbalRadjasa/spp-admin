@@ -1,9 +1,60 @@
 <x-app-layout>
     <div class="py-6">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between pb-6 gap-2">
             <h1 class="font-semibold text-xl">
                 Student Promotions
             </h1>
+
+            <div class="flex flex-col lg:flex-row lg:items-center gap-2">
+                <h1 class="text-sm">
+                    Preview Scope:
+                </h1>
+
+                <div
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 w-full sm:w-auto">
+                    <i class="ri-user-3-line text-3xl text-gray-500"></i>
+
+                    <div>
+                        <p class="text-xs text-gray-500">
+                            Total Students
+                        </p>
+
+                        <p class="font-bold text-lg text-gray-600">
+                            {{ $summary['total_students'] }}
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-yellow-200 bg-yellow-50 w-full sm:w-auto">
+                    <i class="ri-award-fill text-3xl text-yellow-500"></i>
+
+                    <div>
+                        <p class="text-xs text-gray-500">
+                            Will Promote
+                        </p>
+
+                        <p class="font-bold text-lg text-yellow-600">
+                            {{ $summary['promote_count'] }}
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-green-200 bg-green-50 w-full sm:w-auto">
+                    <i class="ri-graduation-cap-line text-3xl text-green-500"></i>
+
+                    <div>
+                        <p class="text-xs text-gray-500">
+                            Will Graduate
+                        </p>
+
+                        <p class="font-bold text-lg text-green-600">
+                            {{ $summary['graduate_count'] }}
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             {{-- <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
                 Add Student

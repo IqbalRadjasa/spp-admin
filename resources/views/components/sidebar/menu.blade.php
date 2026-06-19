@@ -4,14 +4,15 @@
      </x-sidebar.sidebar-link>
  @endif
 
- <x-sidebar.sidebar-dropdown title="Students" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
+ <x-sidebar.sidebar-dropdown title="Students" icon="ri-graduation-cap-line" :active="request()->routeIs('students*')">
      <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
          Student Records
      </x-sidebar.sidebar-dropdown-link>
-
-     <x-sidebar.sidebar-dropdown-link :href="route('students.promotion')" :active="request()->routeIs('students.promotion')">
-          Student Promotion
-     </x-sidebar.sidebar-dropdown-link>
+     @if (auth()->user()->isSuperAdmin())
+         <x-sidebar.sidebar-dropdown-link :href="route('students-promotion.index')" :active="request()->routeIs('students-promotion.*')">
+             Student Promotion
+         </x-sidebar.sidebar-dropdown-link>
+     @endif
  </x-sidebar.sidebar-dropdown>
 
  {{-- <x-sidebar.sidebar-link :href="route('students.index')" icon="ri-graduation-cap-line" :active="request()->routeIs('students.*')">
@@ -42,24 +43,28 @@
      </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>
 
- <x-sidebar.sidebar-link :href="route('activity-logs.index')" icon="ri-chat-history-line" :active="request()->routeIs('activity-logs.index')">
-     Activity Logs
- </x-sidebar.sidebar-link>
+ @if (auth()->user()->isSuperAdmin())
+     <x-sidebar.sidebar-link :href="route('activity-logs.index')" icon="ri-chat-history-line" :active="request()->routeIs('activity-logs.index')">
+         Activity Logs
+     </x-sidebar.sidebar-link>
+ @endif
 
- <x-sidebar.sidebar-dropdown title="Settings" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
-     <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
-         School
-     </x-sidebar.sidebar-dropdown-link>
+ @if (auth()->user()->isSuperAdmin())
+     <x-sidebar.sidebar-dropdown title="Settings" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
+         <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
+             School
+         </x-sidebar.sidebar-dropdown-link>
 
-     <x-sidebar.sidebar-dropdown-link :href="route('settings.academic-years.index')" :active="request()->routeIs('settings.academic-years.index')">
-         Academic Years
-     </x-sidebar.sidebar-dropdown-link>
+         <x-sidebar.sidebar-dropdown-link :href="route('settings.academic-years.index')" :active="request()->routeIs('settings.academic-years.index')">
+             Academic Years
+         </x-sidebar.sidebar-dropdown-link>
 
-     <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
-         Majors
-     </x-sidebar.sidebar-dropdown-link>
+         <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
+             Majors
+         </x-sidebar.sidebar-dropdown-link>
 
-     <x-sidebar.sidebar-dropdown-link :href="route('settings.classrooms.index')" :active="request()->routeIs('settings.classrooms.*')">
-         Classrooms
-     </x-sidebar.sidebar-dropdown-link>
- </x-sidebar.sidebar-dropdown>
+         <x-sidebar.sidebar-dropdown-link :href="route('settings.classrooms.index')" :active="request()->routeIs('settings.classrooms.*')">
+             Classrooms
+         </x-sidebar.sidebar-dropdown-link>
+     </x-sidebar.sidebar-dropdown>
+ @endif

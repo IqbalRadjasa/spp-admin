@@ -8,7 +8,6 @@ use App\Models\Classroom;
 use App\Models\SchoolSetting;
 
 use App\Services\ActivityLogService;
-use App\Services\StudentPromotionService;
 
 use Illuminate\Http\Request;
 
@@ -193,13 +192,5 @@ class StudentController extends Controller
                 ->back()
                 ->with('error', 'Failed to detele data!');
         }
-    }
-
-    public function studentPromotion(Request $request, StudentPromotionService $service)
-    {
-        $promotions = $service->getPromotionPreview($request?->search, $request?->major, $request?->classroom);
-        $majors = Major::all();
-
-        return view('students.promotion', compact('promotions', 'majors'));
     }
 }

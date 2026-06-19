@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\SchoolSettingController;
+use App\Http\Controllers\studentPromotionController;
 
 Route::redirect('/', '/login');
 
@@ -58,9 +59,8 @@ Route::middleware([
     // Activate Academic Year
     Route::put('/academic-years/activateAcademicYear/{academicYear}', [AcademicYearController::class, 'activateAcademicYear'])->name('settings.academic-years.activateAcademicYear');
 
-
-    Route::get('/students/promotion', [StudentController::class, 'studentPromotion'])
-        ->name('students.promotion');
+    // Student Promotion's Routes
+    Route::resource('students-promotion', StudentPromotionController::class);
 });
 
 // Public Routes

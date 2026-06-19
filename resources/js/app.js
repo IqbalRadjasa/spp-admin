@@ -54,12 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // For Create Academic Year Form
     initializeAcademicYears();
 
-    const studentsTable = document.querySelector("#studentsTable");
     const billsTable = document.querySelector("#billsTable");
+    const majorsTable = document.querySelector("#majorsTable");
+    const academicYearsTable = document.querySelector("#academicYearsTable");
+    const studentsTable = document.querySelector("#studentsTable");
+    const classroomsTable = document.querySelector("#classroomsTable");
     const overdueReportTable = document.querySelector("#overdueReportTable");
     const paymentReportTable = document.querySelector("#paymentReportTable");
-    const majorsTable = document.querySelector("#majorsTable");
-    const classroomsTable = document.querySelector("#classroomsTable");
 
     if (studentsTable) {
         new DataTable(studentsTable, {
@@ -103,6 +104,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (classroomsTable) {
         new DataTable(classroomsTable, {
+            responsive: true,
+            paging: false,
+            searchable: false,
+        });
+    }
+
+    if (academicYearsTable) {
+        new DataTable(academicYearsTable, {
             responsive: true,
             paging: false,
             searchable: false,

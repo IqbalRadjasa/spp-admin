@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AcademicYear;
 use App\Models\SchoolSetting;
 
 use Illuminate\Support\Str;
@@ -66,5 +67,15 @@ if (!function_exists('classroomLevels')) {
             'SMA', 'SMK' => [10, 11, 12],
             default => []
         };
+    }
+}
+
+if (!function_exists('activeAcademicYear')) {
+    function activeAcademicYear()
+    {
+        return AcademicYear::where(
+            'is_active',
+            true
+        )->first();
     }
 }

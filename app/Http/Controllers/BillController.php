@@ -80,6 +80,15 @@ class BillController extends Controller
             'amount' => 'required|integer|min:1'
         ]);
 
+        $exists = Bill::where('billing_period', $validated['billing_period'])->exists();
+
+        if ($exists) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Billing period has been registered.');
+        }
+
         $students = Student::all();
 
         try {
@@ -89,6 +98,7 @@ class BillController extends Controller
                         Bill::firstOrCreate(
                             [
                                 'student_id' => $student->id,
+                                'academic_year_id' => activeAcademicYear()->id,
                                 'billing_period' => $validated['billing_period']
                             ],
                             [

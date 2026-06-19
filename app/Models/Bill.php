@@ -9,6 +9,7 @@ class Bill extends Model
 
     protected $fillable = [
         'student_id',
+        'academic_year_id',
         'billing_period',
         'amount',
         'status',

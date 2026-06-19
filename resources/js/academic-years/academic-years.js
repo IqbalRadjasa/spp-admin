@@ -1,6 +1,10 @@
 import Swal from "sweetalert2";
 
 export function initializeAcademicYears() {
+    if ($("#academicYearsTable").length === 0) {
+        return;
+    }
+
     $("#create-academic-year-form")[0].reset();
     $("#edit-academic-year-form")[0].reset();
 

@@ -14,7 +14,7 @@
         <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6">
                 <div class="overflow-x-auto mb-3">
-                    <table id="classroomsTable" class="min-w-full min-w-[700px]">
+                    <table id="academicYearsTable" class="min-w-full min-w-[700px]">
                         <thead>
                             <tr>
                                 <th>Name</th>

@@ -3,19 +3,19 @@
 <div
     {{ $attributes->merge([
         'class' => '
-                    border-2
-                    border-gray-300
-                    rounded-md
-                    py-6
-                    px-4
-                    shadow-md
-                ',
+                        border-2
+                        border-gray-300
+                        rounded-md
+                        py-6
+                        px-4
+                        shadow-md
+                    ',
     ]) }}>
 
     <div class="flex">
         <div class="flex-col w-2/3">
             {{-- Header --}}
-            <div class="header">
+            <div>
                 <span class="text-lg font-semibold">
                     {{ $title }}
                 </span>

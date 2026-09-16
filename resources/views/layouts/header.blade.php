@@ -18,7 +18,7 @@
         <x-dropdown.dropdown align="right" width="48">
             <x-slot name="trigger">
                 <button @click="openProfile = !openProfile"
-                    class="flex items-center px-3 py-2 rounded-[8px] bg-[var(--bg-color)] not-active ml-5">
+                    class="flex items-center px-3 py-2 rounded-[8px] bg-[#F2F2F2] not-active ml-5">
 
                     <svg class="w-4 transition" viewBox="0 0 20 20">
                         <path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="2" fill="#113F67" />

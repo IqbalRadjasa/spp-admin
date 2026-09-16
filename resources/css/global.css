@@ -271,7 +271,7 @@
 }
 
 .dashboard-main {
-    background-color: var(--bg-color);
+    background-color: rgb(252, 236, 216, 0.4);
 }
 
 .sidebar {

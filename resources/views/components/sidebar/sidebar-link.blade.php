@@ -1,11 +1,11 @@
 @props([
     'active' => false,
-    'icon' => null
+    'icon' => null,
 ])
 
-<a
-    {{ $attributes->merge([
-        'class' => '
+<a {{ $attributes->merge([
+    'class' =>
+        '
             flex
             items-center
             gap-3
@@ -13,16 +13,15 @@
             py-3
             rounded-lg
             transition
-            ' . ($active
-                ? 'bg-gray-700 text-white'
-                : 'text-gray-700 hover:bg-gray-200')
-        ])
-    }}
-    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
->
+            ' .
+        ($active
+            ? 'bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 to-black text-white'
+            : 'text-black hover:bg-[#91AC67]/30'),
+]) }}
+    :class="sidebarOpen ? 'justify-start' : 'justify-center'">
 
     {{-- Icon --}}
-    @if($icon)
+    @if ($icon)
         <span class="text-lg">
             <i class="{{ $icon }}"></i>
         </span>

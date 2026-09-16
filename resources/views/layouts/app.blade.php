@@ -17,23 +17,18 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased dashboard-main" data-success="{{ session('success') }}"
-    data-error="{{ session('error') }}">
-
+<body class="antialiased dashboard-main" data-success="{{ session('success') }}" data-error="{{ session('error') }}">
     <div x-data="{ sidebarOpen: true, mobileSidebarOpen: false }" class="flex h-screen">
 
         @include('layouts.sidebar')
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-
+        <div class="flex min-w-0 flex-1 flex-col">
             @include('layouts.header')
 
-            <main class="flex-1 overflow-y-auto p-6">
+            <main class="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6">
                 {{ $slot }}
             </main>
-
         </div>
-
     </div>
 </body>
 

@@ -33,7 +33,7 @@
             py-3
             rounded-lg
             transition
-            {{ $active ? 'bg-gray-700 text-white' : 'text-gray-700 hover:bg-gray-200' }}
+            {{ $active ? 'bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 to-black text-white' : 'text-black hover:bg-[#91AC67]/30' }}
         "
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 
@@ -41,7 +41,9 @@
 
             {{-- Icon --}}
             @if ($icon)
-                <i class="{{ $icon }}"></i>
+                <span class="text-lg">
+                    <i class="{{ $icon }}"></i>
+                </span>
             @endif
 
             {{-- Title --}}
@@ -63,7 +65,7 @@
     </button>
 
     {{-- Submenu --}}
-    <div x-show="open && sidebarOpen" x-collapse class="ml-6 space-y-2">
+    <div x-show="open && sidebarOpen" x-collapse class="ml-6 space-y-2 mt-2">
 
         {{ $slot }}
 

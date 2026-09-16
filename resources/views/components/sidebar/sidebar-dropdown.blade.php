@@ -33,7 +33,7 @@
             py-3
             rounded-lg
             transition
-            {{ $active ? 'bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 to-black text-white' : 'text-black hover:bg-[#91AC67]/30' }}
+            {{ $active ? 'bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 text-white' : 'text-black hover:bg-[#91AC67]/30' }}
         "
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 

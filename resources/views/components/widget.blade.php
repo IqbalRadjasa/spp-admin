@@ -3,16 +3,16 @@
 <div
     {{ $attributes->merge([
         'class' => '
-                        border-2
-                        border-gray-300
-                        rounded-md
-                        py-6
-                        px-4
-                        shadow-md
-                    ',
+                bg-[#91AC67]
+                rounded-xl
+                py-6
+                px-4
+                shadow-md
+                shadow-[#91AC67]/50
+            ',
     ]) }}>
 
-    <div class="flex">
+    <div class="flex text-white">
         <div class="flex-col w-2/3">
             {{-- Header --}}
             <div>

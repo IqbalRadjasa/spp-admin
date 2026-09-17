@@ -26,4 +26,13 @@ class Student extends Model
     {
         return $this->belongsTo(Classroom::class);
     }
+
+    public function getInitialsAttribute(): string
+    {
+        return \Illuminate\Support\Str::of($this->name)
+            ->explode(' ')
+            ->map(fn($word) => $word[0] ?? '')
+            ->take(2)
+            ->join('');
+    }
 }

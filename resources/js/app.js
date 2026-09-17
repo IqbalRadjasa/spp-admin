@@ -57,18 +57,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const billsTable = document.querySelector("#billsTable");
     const majorsTable = document.querySelector("#majorsTable");
     const academicYearsTable = document.querySelector("#academicYearsTable");
-    const studentsTable = document.querySelector("#studentsTable");
+    // const studentsTable = document.querySelector("#studentsTable");
     const classroomsTable = document.querySelector("#classroomsTable");
     const overdueReportTable = document.querySelector("#overdueReportTable");
     const paymentReportTable = document.querySelector("#paymentReportTable");
 
-    if (studentsTable) {
-        new DataTable(studentsTable, {
-            responsive: true,
-            paging: false,
-            searchable: false,
-        });
-    }
+    // if (studentsTable) {
+    //     new DataTable(studentsTable, {
+    //         responsive: true,
+    //         paging: false,
+    //         searchable: false,
+    //     });
+    // }
 
     if (billsTable) {
         new DataTable(billsTable, {

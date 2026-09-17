@@ -3,14 +3,17 @@
     class="bg-white sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
 
     <!-- Header -->
-    <div :class="sidebarOpen ? 'justify-between' : 'justify-center'" class="flex h-16 items-center px-4">
+    {{-- <div :class="sidebarOpen ? 'justify-between' : 'justify-center'"
+        class="flex h-16 items-center px-4 bg-[#91AC67] text-white"> --}}
+    <div :class="sidebarOpen ? 'justify-between' : 'justify-center'"
+        class="flex h-16 items-center px-4 bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 text-white">
 
         <span x-show="sidebarOpen" class="font-bold text-lg">
             SPP Admin
         </span>
 
         <button type="button" @click.stop="sidebarOpen = !sidebarOpen"
-            class="flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-gray-100">
+            class="flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-gray-100 hover:text-[#91AC67]">
             <i class="ri-layout-left-2-line text-xl"></i>
         </button>
 

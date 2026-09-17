@@ -66,7 +66,7 @@ export function renderBillStatusChart(paid, unpaid) {
             height: 280,
         },
         series: [paid, unpaid],
-        colors: ["#6E3511", "#91AC67"],
+        colors: ["#597928", "#6E3511"],
         labels: ["Paid", "Unpaid"],
         legend: {
             position: "bottom",
@@ -103,7 +103,7 @@ export function renderPaymentMethodChart(labels, totals) {
                 show: false,
             },
         },
-        colors: ["#6E3511", "#91AC67"],
+        colors: ["#597928", "#6E3511"],
         labels: labels,
         series: totals,
         legend: {

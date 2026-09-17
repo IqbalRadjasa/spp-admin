@@ -3,13 +3,13 @@
 <div
     {{ $attributes->merge([
         'class' => '
-                bg-[#91AC67]
-                rounded-xl
-                py-6
-                px-4
-                shadow-md
-                shadow-[#91AC67]/50
-            ',
+                    bg-[#91AC67]
+                    rounded-xl
+                    py-6
+                    px-4
+                    shadow-md
+                    shadow-[#91AC67]/50
+                ',
     ]) }}>
 
     <div class="flex text-white">

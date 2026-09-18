@@ -79,7 +79,7 @@
                                 <th class="py-3.5 px-5 font-semibold">Name</th>
                                 <th class="py-3.5 px-5 font-semibold">NIS</th>
                                 <th class="py-3.5 px-5 font-semibold">Class</th>
-                                <th class="py-3.5 px-5 font-semibold text-right">Action</th>
+                                <th class="py-3.5 px-5 font-semibold">Action</th>
                             </tr>
                         </thead>
 
@@ -116,25 +116,24 @@
 
                                     <!-- Right-aligned Actions -->
                                     <td class="py-4 px-5 whitespace-nowrap">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <x-dropdown.dropdown align="right" width="48">
-                                                <x-slot name="trigger">
+                                        <x-dropdown.dropdown align="right" width="48">
+                                            <x-slot name="trigger">
 
-                                                    <button class="px-4 py-2 bg-gray-200 rounded">
-                                                        <i class="ri-list-unordered"></i>
-                                                    </button>
+                                                <button class="px-4 py-2 bg-gray-200 rounded">
+                                                    <i class="ri-list-unordered"></i>
+                                                </button>
 
-                                                </x-slot>
+                                            </x-slot>
 
-                                                <x-slot name="content">
-                                                    <x-dropdown.dropdown-link
-                                                        href="{{ route('students.edit', $student->id) }}">
-                                                        Edit
-                                                    </x-dropdown.dropdown-link>
+                                            <x-slot name="content">
+                                                <x-dropdown.dropdown-link
+                                                    href="{{ route('students.edit', $student->id) }}">
+                                                    Edit
+                                                </x-dropdown.dropdown-link>
 
-                                                    <form action="{{ route('students.destroy', $student->id) }}"
-                                                        method="POST"
-                                                        onsubmit="
+                                                <form action="{{ route('students.destroy', $student->id) }}"
+                                                    method="POST"
+                                                    onsubmit="
                                                 event.preventDefault();
                                                 confirmAction( () => this.submit(),
                                                     {
@@ -144,17 +143,16 @@
                                                     }
                                                 );
                                             ">
-                                                        @csrf
-                                                        @method('DELETE')
+                                                    @csrf
+                                                    @method('DELETE')
 
-                                                        <x-dropdown.dropdown-button type="submit"
-                                                            class="text-[#C0524E]">
-                                                            Delete
-                                                        </x-dropdown.dropdown-button>
-                                                    </form>
-                                                </x-slot>
-                                            </x-dropdown.dropdown>
-                                        </div>
+                                                    <x-dropdown.dropdown-button type="submit"
+                                                        class="text-[#C0524E]/100">
+                                                        Delete
+                                                    </x-dropdown.dropdown-button>
+                                                </form>
+                                            </x-slot>
+                                        </x-dropdown.dropdown>
                                     </td>
                                 </tr>
                             @endforeach

@@ -4,7 +4,7 @@
      </x-sidebar.sidebar-link>
  @endif
 
- <x-sidebar.sidebar-dropdown title="Students" icon="ri-graduation-cap-line" :active="request()->routeIs('students*')">
+ <x-sidebar.sidebar-dropdown title="Students" icon="ri-group-line" :active="request()->routeIs('students*')">
      <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
          Student Records
      </x-sidebar.sidebar-dropdown-link>

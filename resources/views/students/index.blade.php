@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-6">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
+        <div class="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between pb-6">
             <h1 class="font-bold text-2xl uppercase">
                 Student Records
             </h1>
@@ -8,6 +8,46 @@
             <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
                 Add Student
             </x-link-button.primary-link>
+        </div>
+
+        <div x-data="{ open: false }" class="mb-6">
+            {{-- Grid Wrapper --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                {{-- Always Visible: Grand Total --}}
+                <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Students" value="{{ $totalStudents }}"
+                    icon="ri-group-fill" />
+
+                {{-- Always Visible: First 2 Majors --}}
+                @foreach ($majorSummaries->take(2) as $summary)
+                    <x-widget-summary title="{{ $summary->name }}" value="{{ $summary->students_count }}" />
+                @endforeach
+
+                {{-- Collapsible Container: Remaining Majors --}}
+                @if ($majorSummaries->count() > 2)
+                    <template x-if="true">
+                        <div x-show="open" x-collapse x-cloak class="contents">
+                            @foreach ($majorSummaries->skip(2) as $summary)
+                                <x-widget-summary title="{{ $summary->name }}" value="{{ $summary->students_count }}" />
+                            @endforeach
+                        </div>
+                    </template>
+                @endif
+
+            </div>
+
+            {{-- Toggle Button (Only shows if more than 2 majors exist) --}}
+            @if ($majorSummaries->count() > 2)
+                <div class="mt-3 flex justify-center">
+                    <button @click="open = !open" type="button"
+                        class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-[#597928] bg-[#FCECD8]/60 hover:bg-[#FCECD8] border border-[#91AC67]/30 rounded-full transition-all duration-200 shadow-2xs">
+                        <span
+                            x-text="open ? 'Show Less Majors' : 'Show All Majors ({{ $majorSummaries->count() - 2 }} More)'"></span>
+                        <i class="ri-arrow-down-s-line text-sm transition-transform duration-200"
+                            :class="{ 'rotate-180': open }"></i>
+                    </button>
+                </div>
+            @endif
         </div>
 
         <div class="bg-white shadow-sm rounded-xl">
@@ -77,27 +117,43 @@
                                     <!-- Right-aligned Actions -->
                                     <td class="py-4 px-5 whitespace-nowrap">
                                         <div class="flex items-center justify-end gap-2">
-                                            <x-link-button.secondary-link :href="route('students.edit', $student->id)">
-                                                Edit
-                                            </x-link-button.secondary-link>
+                                            <x-dropdown.dropdown align="right" width="48">
+                                                <x-slot name="trigger">
 
-                                            <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                                onsubmit="
-                                    event.preventDefault();
-                                    confirmAction( () => this.submit(),
-                                        {
-                                            text: 'This student will be deleted.',
-                                            confirmButtonText: 'Delete'
-                                        }
-                                    );
-                                ">
-                                                @csrf
-                                                @method('DELETE')
+                                                    <button class="px-4 py-2 bg-gray-200 rounded">
+                                                        <i class="ri-list-unordered"></i>
+                                                    </button>
 
-                                                <x-button.danger-button>
-                                                    {{ __('Delete') }}
-                                                </x-button.danger-button>
-                                            </form>
+                                                </x-slot>
+
+                                                <x-slot name="content">
+                                                    <x-dropdown.dropdown-link
+                                                        href="{{ route('students.edit', $student->id) }}">
+                                                        Edit
+                                                    </x-dropdown.dropdown-link>
+
+                                                    <form action="{{ route('students.destroy', $student->id) }}"
+                                                        method="POST"
+                                                        onsubmit="
+                                                event.preventDefault();
+                                                confirmAction( () => this.submit(),
+                                                    {
+                                                        text: 'This student will be deleted.',
+                                                        confirmButtonText: 'Delete',
+                                                        confirmButtonColor: '#C0524E'
+                                                    }
+                                                );
+                                            ">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <x-dropdown.dropdown-button type="submit"
+                                                            class="text-[#C0524E]">
+                                                            Delete
+                                                        </x-dropdown.dropdown-button>
+                                                    </form>
+                                                </x-slot>
+                                            </x-dropdown.dropdown>
                                         </div>
                                     </td>
                                 </tr>

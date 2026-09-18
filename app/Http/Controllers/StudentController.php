@@ -45,6 +45,10 @@ class StudentController extends Controller
             $query->where('classroom_id', $request->classroom);
         }
 
+        // SUMMARY
+        $totalStudents = (clone $query)->count();
+        $majorSummaries = Major::withCount(['students'])->get();
+
         $students = $query
             ->latest()
             ->paginate(5)
@@ -52,9 +56,10 @@ class StudentController extends Controller
 
         $majors = Major::all();
 
+
         return view(
             'students.index',
-            compact('students', 'majors')
+            compact('students', 'majors', 'majorSummaries', 'totalStudents')
         );
     }
     /**

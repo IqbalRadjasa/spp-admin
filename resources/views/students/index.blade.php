@@ -71,93 +71,55 @@
                     </x-button.primary-button>
                 </form>
 
-                <div class="overflow-x-auto mb-3 rounded-lg border border-stone-200/60 shadow-sm bg-white">
-                    <table id="studentsTabl" class="w-full text-left text-sm border-collapse">
-                        <thead>
-                            <tr
-                                class="bg-[#FCECD8]/50 text-stone-700 uppercase text-xs tracking-wider border-b border-stone-200/80">
-                                <th class="py-3.5 px-5 font-semibold">Name</th>
-                                <th class="py-3.5 px-5 font-semibold">NIS</th>
-                                <th class="py-3.5 px-5 font-semibold">Class</th>
-                                <th class="py-3.5 px-5 font-semibold">Action</th>
-                            </tr>
-                        </thead>
+                <x-table :headers="['Name', 'NIS', 'Class', 'Action']" :empty="$students->isEmpty()">
+                    @foreach ($students as $student)
+                        <x-table.tr>
+                            {{-- Name with Avatar --}}
+                            <x-table.td>
+                                <x-table.avatar-cell :initials="$student->initials" :name="$student->name" />
+                            </x-table.td>
 
-                        <!-- Table Body -->
-                        <tbody class="divide-y divide-stone-100 text-stone-700">
-                            @foreach ($students as $student)
-                                <tr class="hover:bg-stone-50/80 transition-colors duration-150">
-                                    <!-- Name with Avatar Circle -->
-                                    <td class="py-4 px-5 whitespace-nowrap font-medium text-stone-900">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-[#91AC67]/20 text-[#597928] flex items-center justify-center font-bold text-xs uppercase">
-                                                {{ $student->initials }}
-                                            </div>
-                                            <span>{{ $student->name }}</span>
-                                        </div>
-                                    </td>
+                            {{-- NIS Code Pill --}}
+                            <x-table.td>
+                                <x-table.code-pill>{{ $student->nis }}</x-table.code-pill>
+                            </x-table.td>
 
-                                    <!-- NIS as Monospace Code Pill -->
-                                    <td class="py-4 px-5 whitespace-nowrap">
-                                        <span
-                                            class="font-mono text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-md border border-stone-200/50">
-                                            {{ $student->nis }}
-                                        </span>
-                                    </td>
+                            {{-- Classroom Badge --}}
+                            <x-table.td>
+                                <x-table.badge variant="olive">
+                                    {{ $student->classroom?->display_name ?? 'N/A' }}
+                                </x-table.badge>
+                            </x-table.td>
 
-                                    <!-- Class as Badge -->
-                                    <td class="py-4 px-5 whitespace-nowrap">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#91AC67]/15 text-[#597928]">
-                                            {{ $student->classroom?->display_name ?? 'N/A' }}
-                                        </span>
-                                    </td>
+                            {{-- Action Dropdown --}}
+                            <x-table.td>
+                                <x-dropdown.dropdown align="right" width="48">
+                                    <x-slot name="trigger">
+                                        <button type="button"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg text-stone-500 hover:bg-stone-100 hover:text-stone-800 transition-colors">
+                                            <i class="ri-more-2-fill text-lg"></i>
+                                        </button>
+                                    </x-slot>
 
-                                    <!-- Right-aligned Actions -->
-                                    <td class="py-4 px-5 whitespace-nowrap">
-                                        <x-dropdown.dropdown align="right" width="48">
-                                            <x-slot name="trigger">
+                                    <x-slot name="content">
+                                        <x-dropdown.dropdown-link href="{{ route('students.edit', $student->id) }}">
+                                            Edit
+                                        </x-dropdown.dropdown-link>
 
-                                                <button class="px-4 py-2 bg-gray-200 rounded">
-                                                    <i class="ri-list-unordered"></i>
-                                                </button>
-
-                                            </x-slot>
-
-                                            <x-slot name="content">
-                                                <x-dropdown.dropdown-link
-                                                    href="{{ route('students.edit', $student->id) }}">
-                                                    Edit
-                                                </x-dropdown.dropdown-link>
-
-                                                <form action="{{ route('students.destroy', $student->id) }}"
-                                                    method="POST"
-                                                    onsubmit="
-                                                event.preventDefault();
-                                                confirmAction( () => this.submit(),
-                                                    {
-                                                        text: 'This student will be deleted.',
-                                                        confirmButtonText: 'Delete',
-                                                        confirmButtonColor: '#C0524E'
-                                                    }
-                                                );
-                                            ">
-                                                    @csrf
-                                                    @method('DELETE')
-
-                                                    <x-dropdown.dropdown-button type="submit" class="text-[#C0524E]">
-                                                        Delete
-                                                    </x-dropdown.dropdown-button>
-                                                </form>
-                                            </x-slot>
-                                        </x-dropdown.dropdown>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                        <form action="{{ route('students.destroy', $student->id) }}" method="POST"
+                                            onsubmit="event.preventDefault(); confirmAction(() => this.submit(), { text: 'This student will be deleted.', confirmButtonText: 'Delete', confirmButtonColor: '#C0524E' });">
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-dropdown.dropdown-button type="submit" class="text-[#C0524E]">
+                                                Delete
+                                            </x-dropdown.dropdown-button>
+                                        </form>
+                                    </x-slot>
+                                </x-dropdown.dropdown>
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
                 {{ $students->links('vendor.pagination.default') }}
             </div>
         </div>

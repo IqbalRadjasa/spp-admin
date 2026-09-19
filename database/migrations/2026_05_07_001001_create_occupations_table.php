@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bills', function (Blueprint $table) {
-            $table->unsignedTinyInteger(
-                'reminder_attempts'
-            )->default(0);
+        Schema::create('occupations', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('code')->nullable()->unique();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 
@@ -23,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bills', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('occupations');
     }
 };

@@ -13,19 +13,15 @@ return new class extends Migration
     {
         Schema::create('bill_escalation_notes', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId(
                 'bill_id'
             )->constrained()
                 ->cascadeOnDelete();
-
             $table->foreignId(
                 'user_id'
             )->constrained()
                 ->cascadeOnDelete();
-
             $table->text('note');
-
             $table->timestamps();
         });
     }

@@ -13,20 +13,15 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('student_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
+            $table->foreignId('academic_year_id')->nullable()->constrained('academic_years')->nullOnDelete();
+            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->string('billing_period');
-
             $table->unique(['student_id', 'billing_period']);
-
             $table->integer('amount');
-
-            $table->enum('status', ['unpaid', 'paid'])
-                ->default('unpaid');
-
+            $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
+            $table->timestamp('last_reminded_at')->nullable();
+            $table->unsignedTinyInteger('reminder_attempts')->default(0);
+            $table->enum('escalation_status', ['normal', 'escalated', 'resolved'])->default('normal');
             $table->timestamps();
         });
     }

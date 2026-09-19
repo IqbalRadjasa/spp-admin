@@ -26,5 +26,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PaymentMethodSeeder::class,
         ]);
+
+        $this->call([
+            OccupationSeeder::class,
+        ]);
     }
 }

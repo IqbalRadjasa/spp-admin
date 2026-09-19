@@ -102,6 +102,10 @@
                                     </x-slot>
 
                                     <x-slot name="content">
+                                        <x-dropdown.dropdown-link href="{{ route('students.show', $student->id) }}">
+                                            Detail
+                                        </x-dropdown.dropdown-link>
+
                                         <x-dropdown.dropdown-link href="{{ route('students.edit', $student->id) }}">
                                             Edit
                                         </x-dropdown.dropdown-link>

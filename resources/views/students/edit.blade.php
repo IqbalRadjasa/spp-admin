@@ -1,12 +1,12 @@
 <x-app-layout>
-    <div class="py-6">
+    <div class="space-y-6 py-6">
 
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Edit Student</h1>
+        <div class="flex items-center justify-between">
+            <h1 class="font-semibold text-2xl uppercase">Edit Student</h1>
 
-            <x-link-button.secondary-link :href="route('students.index')">
+            {{-- <x-link-button.secondary-link :href="route('students.index')">
                 Back
-            </x-link-button.secondary-link>
+            </x-link-button.secondary-link> --}}
         </div>
 
         {{-- Form --}}

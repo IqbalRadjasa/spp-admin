@@ -1,12 +1,10 @@
 <!-- Sidebar -->
 <aside @click="if (!sidebarOpen) sidebarOpen = true" :class="sidebarOpen ? 'w-60' : 'w-16'"
-    class="bg-white sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
+    class="bg-stone-50/90 sticky top-0 h-screen overflow-y-auto transition-all duration-100 hidden md:block">
 
     <!-- Header -->
-    {{-- <div :class="sidebarOpen ? 'justify-between' : 'justify-center'"
-        class="flex h-16 items-center px-4 bg-[#91AC67] text-white"> --}}
     <div :class="sidebarOpen ? 'justify-between' : 'justify-center'"
-        class="flex h-16 items-center px-4 bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 text-white">
+        class="flex h-16 items-center px-4 bg-[#597928] text-white">
 
         <span x-show="sidebarOpen" class="font-bold text-lg">
             SPP Admin
@@ -38,12 +36,12 @@
         left-0
         h-screen
         w-64
-        bg-white
+        bg-stone-50
         z-50
         md:hidden
         overflow-y-auto
     ">
-    <div class="flex items-center justify-between p-4 border-b border-gray-300">
+    <div class="flex items-center justify-between p-4 bg-[#597928] border-b border-gray-300 text-white">
 
         <span class="font-bold text-lg">
             SPP Admin

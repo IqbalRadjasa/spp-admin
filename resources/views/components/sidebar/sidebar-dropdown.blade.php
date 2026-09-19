@@ -1,5 +1,11 @@
 @props(['title', 'icon' => null, 'active' => false])
 
+@php
+    $classes = $active
+        ? 'bg-[#FCECD8] text-[#597928] font-medium border-l-4 border-[#597928] shadow-2xs'
+        : 'text-stone-600 hover:bg-[#FCECD8]/50 hover:text-stone-900 font-medium border-l-4 border-transparent';
+@endphp
+
 <div x-data="{
     active: {{ $active ? 'true' : 'false' }},
     open: {{ $active ? 'true' : 'false' }}
@@ -14,61 +20,42 @@
         }
     ">
 
-    {{-- Parent Menu --}}
+    {{-- Parent Menu Button --}}
     <button
         @click="
             if (!sidebarOpen) {
                 sidebarOpen = true;
+                open = true;
                 return;
             }
-
             open = !open;
         "
         type="button"
-        class="
-            w-full
-            flex
-            items-center
-            px-4
-            py-3
-            rounded-lg
-            transition
-            {{ $active ? 'bg-gradient-to-r from-[#91AC67] via-[#91AC67]/90 to-[#91AC67]/60 text-white' : 'text-black hover:bg-[#91AC67]/30' }}
-        "
+        class="w-full flex items-center px-4 py-2.5 rounded-r-xl transition-all duration-200 {{ $classes }}"
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 
         <div class="flex items-center gap-3">
-
             {{-- Icon --}}
             @if ($icon)
-                <span class="text-lg">
+                <span class="text-lg transition-transform duration-200" :class="{ 'scale-110': open || active }">
                     <i class="{{ $icon }}"></i>
                 </span>
             @endif
 
             {{-- Title --}}
-            <span x-show="sidebarOpen">
+            <span x-show="sidebarOpen" class="text-sm">
                 {{ $title }}
             </span>
-
         </div>
 
-        {{-- Arrow --}}
-        <i x-show="sidebarOpen"
-            class="
-                ri-arrow-down-s-line
-                transition-transform
-                duration-300
-            "
-            :class="open && sidebarOpen ? 'rotate-180' : ''"></i>
-
+        {{-- Arrow Chevron --}}
+        <i x-show="sidebarOpen" class="ri-arrow-down-s-line text-lg transition-transform duration-300 text-stone-400"
+            :class="open && sidebarOpen ? 'rotate-180 text-[#597928]' : ''"></i>
     </button>
 
-    {{-- Submenu --}}
-    <div x-show="open && sidebarOpen" x-collapse class="ml-6 space-y-2 mt-2">
-
+    {{-- Submenu Container with Visual Tree Line --}}
+    <div x-show="open && sidebarOpen" x-collapse class="pl-4 ml-5 border-l-2 border-stone-200/70 space-y-1 mt-1">
         {{ $slot }}
-
     </div>
 
 </div>

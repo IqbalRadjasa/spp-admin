@@ -146,8 +146,7 @@
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    <x-dropdown.dropdown-button type="submit"
-                                                        class="text-[#C0524E]/100">
+                                                    <x-dropdown.dropdown-button type="submit" class="text-[#C0524E]">
                                                         Delete
                                                     </x-dropdown.dropdown-button>
                                                 </form>

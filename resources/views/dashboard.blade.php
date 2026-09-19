@@ -58,49 +58,50 @@
                 </div>
 
                 <div class="overflow-x-auto rounded-t-lg">
-                    <table class="min-w-full min-w-[1200px] text-sm">
-                        <thead class="bg-[#91AC67]">
-                            <tr class="border-b text-white">
-                                <th class="text-left py-3 px-4">
+                    <table class="min-w-full min-w-[1200px] text-left text-sm border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-[#FCECD8]/50 text-stone-700 uppercase text-xs tracking-wider border-b border-stone-200/80">
+                                <th class="py-3.5 px-5 font-semibold">
                                     Payment Code
                                 </th>
-                                <th class="text-left py-3 px-4">
+                                <th class="py-3.5 px-5 font-semibold">
                                     Student
                                 </th>
-                                <th class="text-left py-3 px-4">
+                                <th class="py-3.5 px-5 font-semibold">
                                     Method
                                 </th>
-                                <th class="text-left py-3 px-4">
+                                <th class="py-3.5 px-5 font-semibold">
                                     Amount
                                 </th>
-                                <th class="text-left py-3 px-4">
+                                <th class="py-3.5 px-5 font-semibold">
                                     Paid At
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-stone-100 text-stone-700">
                             @forelse ($recentPayments as $payment)
-                                <tr class="border-b">
-                                    <td class="py-3 px-4">
+                                <tr class="hover:bg-stone-50/80 transition-colors duration-150">
+                                    <td class="py-4 px-5 whitespace-nowrap font-medium text-stone-900">
                                         {{ $payment->payment_code }}
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-5 whitespace-nowrap">
                                         {{ $payment->bill->student->name }}
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-5 whitespace-nowrap">
                                         {{ $payment->paymentMethod->name }}
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-5 whitespace-nowrap">
                                         Rp
                                         {{ number_format($payment->amount_paid) }}
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-5 whitespace-nowrap">
                                         {{ $payment->paid_at->format('d M Y') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 px-4">
+                                    <td colspan="5" class="text-center py-4 px-5 whitespace-nowrap">
                                         No recent payments
                                     </td>
                                 </tr>

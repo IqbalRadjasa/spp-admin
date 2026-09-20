@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased dashboard-main" data-success="{{ session('success') }}" data-error="{{ session('error') }}">
+<body class="antialiased bg-[#FBF6EF]" data-success="{{ session('success') }}" data-error="{{ session('error') }}">
     <div x-data="{ sidebarOpen: true, mobileSidebarOpen: false }" class="flex h-screen">
 
         @include('layouts.sidebar')

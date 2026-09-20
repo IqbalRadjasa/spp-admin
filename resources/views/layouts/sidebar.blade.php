@@ -7,7 +7,7 @@
         class="flex h-16 items-center px-4 bg-gradient-to-r from-[#597928] to-[#91AC67] text-white">
 
         <span x-show="sidebarOpen" class="font-bold text-lg">
-            SPP Admin
+            SkolaPayd
         </span>
 
         <button type="button" @click.stop="sidebarOpen = !sidebarOpen"

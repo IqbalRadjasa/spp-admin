@@ -5,6 +5,7 @@
         @method('PUT')
     @endif
 
+
     {{-- Section 1: Student Information --}}
     @include('students.partials.student-information')
 
@@ -14,11 +15,11 @@
     {{-- Form Actions --}}
     <div class="flex items-center justify-end gap-3 pt-2">
         <x-link-button.secondary-link :href="route('students.index')">
-            {{ __('Cancel') }}
+            {{ __('Batal') }}
         </x-link-button.secondary-link>
 
         <x-button.primary-button class="bg-[#597928] hover:bg-[#597928]/90">
-            {{ $mode === 'create' ? 'Save Student' : 'Update Student' }}
+            {{ $mode === 'create' ? 'Simpan Siswa' : 'Perbarui Siswa' }}
         </x-button.primary-button>
     </div>
 </form>

@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Occupation extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'code',
+        'is_active'
+    ];
 }

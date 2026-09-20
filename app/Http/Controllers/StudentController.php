@@ -67,12 +67,10 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $start = microtime(true);
-
         $majors = Major::select('name', 'code')->get();
         $classrooms = Classroom::select('id', 'name')->get();
         $schoolSetting = SchoolSetting::first();
-        // dd('Queries executed in: ' . (microtime(true) - $start) . ' seconds');
+
         return view('students.create', compact('classrooms', 'majors', 'schoolSetting'));
     }
 

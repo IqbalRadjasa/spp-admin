@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OccupationController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\SchoolSettingController;
@@ -48,6 +49,8 @@ Route::middleware([
             Route::resource('classrooms', ClassroomController::class);
 
             Route::resource('academic-years', AcademicYearController::class);
+
+            Route::resource('occupations', OccupationController::class);
         });
 
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])

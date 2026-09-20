@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeStudentFilter();
 
     // For Create Academic Year Form
-    initializeAcademicYears();
+    // initializeAcademicYears();
 
     const billsTable = document.querySelector("#billsTable");
     const majorsTable = document.querySelector("#majorsTable");

@@ -6,7 +6,7 @@
             </h1>
 
             <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
-                Add Student
+                Tambah Siswa
             </x-link-button.primary-link>
         </div>
 

@@ -74,13 +74,13 @@
             <x-form.select-input name="occupation_id" id="occupation_id" x-ref="occupationSelect"
                 @change="checkOccupation()" class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
                 <option value="">Pilih Pekerjaan</option>
-                {{-- @foreach ($occupations as $occupation)
+                @foreach ($occupations as $occupation)
                     <option value="{{ $occupation->id }}"
-                        data-is-other="{{ strtolower($occupation->name) === 'other' || strtolower($occupation->name) === 'lainnya' ? 'true' : 'false' }}"
+                        data-is-other="{{ strtolower($occupation->name) === 'lainnya' ? 'true' : 'false' }}"
                         @selected(old('occupation_id', $mode === 'edit' && isset($parent) ? $parent->occupation_id : '') == $occupation->id)>
                         {{ $occupation->name }}
                     </option>
-                @endforeach --}}
+                @endforeach
             </x-form.select-input>
             <x-form.input-error :messages="$errors->get('occupation_id')" class="mt-1" />
         </div>
@@ -91,7 +91,7 @@
                 class="text-xs font-semibold text-stone-700" />
             <x-form.text-input id="occupation_custom"
                 class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" type="text"
-                name="occupation_custom" :value="old('occupation_custom', $mode === 'edit' && isset($parent) ? $parent->occupation_custom : '')" placeholder="e.g. Wiraswasta / Freelancer" />
+                name="occupation_custom" :value="old('occupation_custom', $mode === 'edit' && isset($parent) ? $parent->occupation_custom : '')" placeholder="Contoh: Wiraswasta / Freelancer" />
             <x-form.input-error :messages="$errors->get('occupation_custom')" class="mt-1" />
         </div>
 

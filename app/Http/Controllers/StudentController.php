@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Major;
 use App\Models\Student;
 use App\Models\Classroom;
+use App\Models\Occupation;
 use App\Models\SchoolSetting;
 
 use App\Services\ActivityLogService;
@@ -67,11 +68,17 @@ class StudentController extends Controller
      */
     public function create()
     {
+        $schoolSetting = SchoolSetting::first();
         $majors = Major::select('name', 'code')->get();
         $classrooms = Classroom::select('id', 'name')->get();
-        $schoolSetting = SchoolSetting::first();
+        $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
 
-        return view('students.create', compact('classrooms', 'majors', 'schoolSetting'));
+        return view('students.create', compact(
+            'classrooms',
+            'majors',
+            'schoolSetting',
+            'occupations'
+        ));
     }
 
     /**

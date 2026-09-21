@@ -69,7 +69,7 @@ class StudentController extends Controller
     public function create()
     {
         $schoolSetting = SchoolSetting::first();
-        $majors = Major::select('name', 'code')->get();
+        $majors = Major::select('id', 'name')->where('is_active', true)->orderBy('id', 'asc')->get();
         $classrooms = Classroom::select('id', 'name')->get();
         $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
 

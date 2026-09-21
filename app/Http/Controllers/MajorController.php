@@ -10,16 +10,32 @@ class MajorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = Major::query();
 
-        $majors = $query
-            ->latest()
+        $summary = [
+            'total'    => Major::count(),
+            'active'   => Major::where('is_active', true)->count(),
+            'inactive' => Major::where('is_active', false)->count(),
+        ];
+
+        $majors = Major::select('id', 'name', 'code', 'is_active')
+            ->when($request->filled('is_active'), function ($query) use ($request) {
+                $query->where('is_active', $request->boolean('is_active'));
+            })
+            ->when($request->filled('sort'), function ($query) use ($request) {
+                match ($request->sort) {
+                    'oldest' => $query->oldest(),
+                    'name'   => $query->orderBy('name', 'asc'),
+                    default  => $query->latest(),
+                };
+            }, function ($query) {
+                $query->latest();
+            })
             ->paginate(5)
             ->withQueryString();
 
-        return view('settings.majors.index', compact('majors'));
+        return view('settings.majors.index', compact('majors', 'summary'));
     }
 
     /**
@@ -36,14 +52,16 @@ class MajorController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'code' => 'required|unique:majors,code'
+            'name' => ['required', 'string',],
+            'code' => ['required', 'unique:majors,code'],
+            'is_active' => ['required', 'boolean'],
         ]);
 
         try {
             Major::create([
                 'name' => $validated['name'],
                 'code' => $validated['code'],
+                'is_active' => $validated['is_active'],
             ]);
 
             return redirect()
@@ -80,14 +98,16 @@ class MajorController extends Controller
     public function update(Request $request, Major $major)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'code' => 'required|unique:majors,code'
+            'name' => ['required', 'string',],
+            'code' => ['required', 'unique:majors,code'],
+            'is_active' => ['required', 'boolean'],
         ]);
 
         try {
             $major->update([
                 'name' => $validated['name'],
                 'code' => $validated['code'],
+                'is_active' => $validated['is_active'],
             ]);
 
             return redirect()

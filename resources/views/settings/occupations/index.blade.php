@@ -47,7 +47,7 @@
                 </form>
 
 
-                <x-table :headers="['Name', 'Code', 'Status', 'Action']" :empty="$occupations->isEmpty()">
+                <x-table :headers="['Nama', 'Kode', 'Status', 'Aksi']" :empty="$occupations->isEmpty()">
                     @foreach ($occupations as $occupation)
                         <x-table.tr>
 
@@ -105,7 +105,6 @@
                 {{ $occupations->links('vendor.pagination.default') }}
             </div>
         </div>
-
 
         {{-- Occupation Form Modal --}}
         <x-modal name="occupation-form-modal" maxWidth="md">

@@ -8,7 +8,8 @@ class Major extends Model
 {
     protected $fillable = [
         'name',
-        'code'
+        'code',
+        'is_active'
     ];
 
     public function classrooms()

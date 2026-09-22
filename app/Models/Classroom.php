@@ -9,8 +9,9 @@ class Classroom extends Model
 {
     protected $fillable = [
         'major_id',
-        'name',
-        'level'
+        'class_number',
+        'level',
+        'is_active'
     ];
 
     protected $appends = [
@@ -37,7 +38,7 @@ class Classroom extends Model
             $parts[] = $this->major->code;
         }
 
-        $parts[] = $this->name;
+        $parts[] = $this->class_number;
 
         return implode('-', $parts);
     }

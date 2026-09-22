@@ -40,9 +40,18 @@
                         </option>
                     </x-form.select-input>
 
-                    <x-button.primary-button class="w-full md:w-auto">
-                        Filter
+                    {{-- Submit Button --}}
+                    <x-button.primary-button type="submit" class="w-full md:w-auto bg-[#597928] hover:bg-[#6E3511]">
+                        <i class="ri-filter-3-line mr-1"></i> Filter
                     </x-button.primary-button>
+
+                    {{-- Reset Button (Only rendered when query parameters are active) --}}
+                    @if (request()->hasAny(['is_active', 'sort']))
+                        <a href="{{ route('settings.majors.index') }}"
+                            class="w-full md:w-auto text-center px-4 py-2 text-sm font-medium text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors">
+                            Reset
+                        </a>
+                    @endif
                 </form>
 
 

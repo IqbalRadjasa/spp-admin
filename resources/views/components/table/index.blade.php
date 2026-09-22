@@ -1,4 +1,4 @@
-@props(['headers' => [], 'empty' => false, 'emptyMessage' => 'No records found.'])
+@props(['headers' => [], 'empty' => false, 'emptyMessage' => 'Data tidak ditemukan.'])
 
 <div class="w-full overflow-x-auto rounded-lg border border-stone-200/80 bg-white shadow-2xs">
     <table class="w-full text-left text-sm border-collapse">

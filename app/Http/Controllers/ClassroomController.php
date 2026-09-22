@@ -14,16 +14,50 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = Classroom::with('major');
+        $schoolSetting = SchoolSetting::first();
+        $majors = Major::select('id', 'name', 'code')->where('is_active', true)->orderBy('id', 'asc')->get();
 
-        $classrooms = $query
-            ->latest()
+        // Global summary metrics
+        $summary = [
+            'total'    => Classroom::count(),
+            'active'   => Classroom::where('is_active', true)->count(),
+            'inactive' => Classroom::where('is_active', false)->count(),
+        ];
+
+        $classrooms = Classroom::with('major')
+            // 1. Filter by Level
+            ->when($request->filled('level'), function ($query) use ($request) {
+                $query->where('level', $request->level);
+            })
+            // 2. Filter by Major ID
+            ->when($request->filled('major_id'), function ($query) use ($request) {
+                $query->where('major_id', $request->major_id);
+            })
+            // 3. Filter by Active Status (Strict boolean check)
+            ->when($request->filled('is_active'), function ($query) use ($request) {
+                $query->where('is_active', $request->boolean('is_active'));
+            })
+            // 4. Sorting logic with fallback
+            ->when($request->filled('sort'), function ($query) use ($request) {
+                match ($request->sort) {
+                    'oldest' => $query->oldest(),
+                    'level'  => $query->orderBy('level', 'asc')->orderBy('class_number', 'asc'),
+                    default  => $query->latest(),
+                };
+            }, function ($query) {
+                $query->latest();
+            })
             ->paginate(5)
             ->withQueryString();
 
-        return view('settings.classrooms.index', compact('classrooms'));
+        return view('settings.classrooms.index', compact(
+            'classrooms',
+            'schoolSetting',
+            'majors',
+            'summary'
+        ));
     }
 
     /**
@@ -43,48 +77,37 @@ class ClassroomController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'level' => ['required'],
-            'major_id' => ['required'],
-            'name' => ['required']
+            'level' => ['required', 'integer', 'min:1', 'max:12'],
+            'major_id' => ['required', 'integer', Rule::exists('majors', 'id')],
+            'class_number' => [
+                'required',
+                'integer',
+                'min:1',
+                // Composite Unique Rule: level + major_id + class_number must be unique
+                Rule::unique('classrooms')->where(function ($query) use ($request) {
+                    return $query->where('level', $request->level)
+                        ->where('major_id', $request->major_id);
+                }),
+            ],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            // Custom Indonesian error message for the composite unique check
+            'class_number.unique' => 'Kombinasi Tingkat, Jurusan, dan Nomor Kelas ini sudah ada.',
+            'major_id.exists' => 'Jurusan yang dipilih tidak valid.',
         ]);
 
-        $exists = Classroom::query()
-            ->where(
-                'level',
-                $validated['level']
-            )
-            ->where(
-                'major_id',
-                $validated['major_id']
-            )
-            ->where(
-                'name',
-                $validated['name']
-            )
-            ->exists();
-
-        if ($exists) {
-            return back()
-                ->withErrors(['name' => 'This classroom already exists.'])
-                ->withInput();
-        }
-
         try {
-            Classroom::create([
-                'level' => $validated['level'],
-                'major_id' => $validated['major_id'],
-                'name' => $validated['name'],
-            ]);
+            Classroom::create($validated);
 
             return redirect()
                 ->route('settings.classrooms.index')
-                ->with('success', 'Data created successfully!');
+                ->with('success', 'Data berhasil dibuat!');
         } catch (\Exception $e) {
 
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to create data!');
+                ->with('error', 'Gagal membuat data!');
         }
     }
 
@@ -113,29 +136,22 @@ class ClassroomController extends Controller
     public function update(Request $request, Classroom $classroom)
     {
         $validated = $request->validate([
-            'level' => ['required'],
-            'major_id' => ['required'],
-            'name' => ['required']
+            'level' => ['required', 'integer'],
+            'major_id' => ['nullable', 'integer'],
+            'class_number' => ['required', 'integer'],
+            'is_active' => ['required', 'boolean']
         ]);
 
         $exists = Classroom::query()
-            ->where(
-                'level',
-                $validated['level']
-            )
-            ->where(
-                'major_id',
-                $validated['major_id']
-            )
-            ->where(
-                'name',
-                $validated['name']
-            )
+            ->where('id', '!=', $classroom->id)
+            ->where('level', $validated['level'])
+            ->where('major_id', $validated['major_id'] ?? null)
+            ->where('class_number', $validated['class_number'])
             ->exists();
 
         if ($exists) {
             return back()
-                ->withErrors(['name' => 'This classroom already exists.'])
+                ->withErrors(['class_number' => 'Kelas dengan kombinasi ini sudah ada.'])
                 ->withInput();
         }
 
@@ -143,18 +159,19 @@ class ClassroomController extends Controller
             $classroom->update([
                 'level' => $validated['level'],
                 'major_id' => $validated['major_id'],
-                'name' => $validated['name'],
+                'class_number' => $validated['class_number'],
+                'is_active' => $validated['is_active'],
             ]);
 
             return redirect()
                 ->route('settings.classrooms.index')
-                ->with('success', 'Data updated successfully!');
+                ->with('success', 'Data telah berhasil diperbarui!');
         } catch (\Exception $e) {
-
+            // dd($e);
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to update data!');
+                ->with('error', 'Gagal memperbarui data!');
         }
     }
 

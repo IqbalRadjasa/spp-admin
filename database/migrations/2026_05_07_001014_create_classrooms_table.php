@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('major_id')->constrained('majors')->restrictOnDelete();
-            $table->string('name')->unique();
-            $table->integer('level')->unique();
+            $table->integer('class_number');
+            $table->integer('level');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

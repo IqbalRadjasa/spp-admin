@@ -47,6 +47,11 @@ class User extends Authenticatable
         ];
     }
 
+    // public function student_parent()
+    // {
+    //     return $this->belongsTo(StudentParent::class);
+    // }
+
     public function isSuperAdmin()
     {
         return $this->role === 'super_admin';

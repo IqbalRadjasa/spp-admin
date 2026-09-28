@@ -7,7 +7,7 @@ use App\Models\Student;
 use App\Models\Classroom;
 use App\Models\Occupation;
 use App\Models\SchoolSetting;
-
+use App\Models\StudentParent;
 use App\Services\ActivityLogService;
 
 use Illuminate\Http\Request;
@@ -213,5 +213,35 @@ class StudentController extends Controller
                 ->back()
                 ->with('error', 'Failed to detele data!');
         }
+    }
+
+    public function searchParent(Request $request)
+    {
+        $query = $request->input('q');
+
+        if (blank($query)) {
+            return response()->json([]);
+        }
+
+        $parents = StudentParent::query()
+            ->with('user:id,email')
+            ->where('fullname', 'LIKE', "%{$query}%")
+            ->orWhere('phone', 'LIKE', "%{$query}%")
+            ->orWhereHas('user', function ($q) use ($query) {
+                $q->where('email', 'LIKE', "%{$query}%");
+            })
+            ->select('id', 'user_id', 'fullname', 'phone')
+            ->limit(10)
+            ->get()
+            ->map(function ($parent) {
+                return [
+                    'id' => $parent->id,
+                    'fullname' => $parent->fullname,
+                    'phone' => $parent->phone,
+                    'email' => $parent->user?->email ?? '-',
+                ];
+            });
+
+        return response()->json($parents);
     }
 }

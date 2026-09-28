@@ -73,6 +73,7 @@ Route::middleware([
 ])->group(function () {
 
     // Student's Routes
+    Route::get('/students/searchParent', [StudentController::class, 'searchParent'])->name('students.searchParent');
     Route::resource('students', StudentController::class);
 
     // Biil's Routes

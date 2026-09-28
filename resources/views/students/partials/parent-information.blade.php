@@ -23,27 +23,24 @@
 
         {{-- Full Name --}}
         <div class="input-group md:col-span-2">
-            <x-form.input-label for="parent_fullname" :value="__('Nama Lengkap Orant Tua / Wali')" class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="parent_fullname"
-                class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" type="text"
-                name="parent_fullname" :value="old('parent_fullname', $mode === 'edit' && isset($parent) ? $parent->fullname : '')" placeholder="Contoh: Budi Santoso" />
+            <x-form.input-label for="parent_fullname" :value="__('Nama Lengkap')" class="text-xs font-semibold text-stone-700" />
+            <x-form.text-input id="parent_fullname" class="block mt-1" type="text" name="parent_fullname"
+                :value="old('parent_fullname', $mode === 'edit' && isset($parent) ? $parent->fullname : '')" placeholder="Contoh: Budi Santoso" />
             <x-form.input-error :messages="$errors->get('parent_fullname')" class="mt-1" />
         </div>
 
         {{-- Nickname --}}
         <div class="input-group">
-            <x-form.input-label for="parent_nickname" :value="__('Nama Panggilan Orant Tua / Wali')" class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="parent_nickname"
-                class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" type="text"
-                name="parent_nickname" :value="old('parent_nickname', $mode === 'edit' && isset($parent) ? $parent->nickname : '')" placeholder="Contoh: Pak Budi" />
+            <x-form.input-label for="parent_nickname" :value="__('Nama Panggilan')" class="text-xs font-semibold text-stone-700" />
+            <x-form.text-input id="parent_nickname" class="block mt-1" type="text" name="parent_nickname"
+                :value="old('parent_nickname', $mode === 'edit' && isset($parent) ? $parent->nickname : '')" placeholder="Contoh: Pak Budi" />
             <x-form.input-error :messages="$errors->get('parent_nickname')" class="mt-1" />
         </div>
 
         {{-- Relationship --}}
         <div class="input-group">
             <x-form.input-label for="relationship" :value="__('Hubungan dengan Siswa')" class="text-xs font-semibold text-stone-700" />
-            <x-form.select-input name="relationship" id="relationship"
-                class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
+            <x-form.select-input name="relationship" id="relationship" class="mt-1">
                 <option value="">Pilih Hubungan</option>
                 <option value="father" @selected(old('relationship', $mode === 'edit' && isset($parent) ? $parent->relationship : '') == 'father')>Ayah (Father)</option>
                 <option value="mother" @selected(old('relationship', $mode === 'edit' && isset($parent) ? $parent->relationship : '') == 'mother')>Ibu (Mother)</option>
@@ -55,16 +52,16 @@
         {{-- Phone / Whatsapp --}}
         <div class="input-group">
             <x-form.input-label for="parent_phone" :value="__('Nomor Telepon (WhatsApp)')" class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="parent_phone" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="parent_phone" :value="old('parent_phone', $mode === 'edit' && isset($parent) ? $parent->phone : '')" required placeholder="Contoh: 081234567890" />
+            <x-form.text-input id="parent_phone" class="block mt-1" type="text" name="parent_phone" :value="old('parent_phone', $mode === 'edit' && isset($parent) ? $parent->phone : '')"
+                required placeholder="Contoh: 081234567890" />
             <x-form.input-error :messages="$errors->get('parent_phone')" class="mt-1" />
         </div>
 
         {{-- Email Address --}}
         <div class="input-group">
             <x-form.input-label for="parent_email" :value="__('Alamat Email')" class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="parent_email" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="email" name="parent_email" :value="old('parent_email', $mode === 'edit' && isset($parent) ? $parent->email : '')" placeholder="Contoh: orangtua@gmail.com" />
+            <x-form.text-input id="parent_email" class="block mt-1" type="email" name="parent_email"
+                :value="old('parent_email', $mode === 'edit' && isset($parent) ? $parent->email : '')" placeholder="Contoh: orangtua@gmail.com" />
             <x-form.input-error :messages="$errors->get('parent_email')" class="mt-1" />
         </div>
 
@@ -72,7 +69,7 @@
         <div class="input-group">
             <x-form.input-label for="occupation_id" :value="__('Pekerjaan')" class="text-xs font-semibold text-stone-700" />
             <x-form.select-input name="occupation_id" id="occupation_id" x-ref="occupationSelect"
-                @change="checkOccupation()" class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
+                @change="checkOccupation()" class="mt-1">
                 <option value="">Pilih Pekerjaan</option>
                 @foreach ($occupations as $occupation)
                     <option value="{{ $occupation->id }}"
@@ -89,18 +86,16 @@
         <div class="input-group" x-show="isOther" x-cloak x-transition>
             <x-form.input-label for="occupation_custom" :value="__('Nama Pekerjaan Khusus')"
                 class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="occupation_custom"
-                class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" type="text"
-                name="occupation_custom" :value="old('occupation_custom', $mode === 'edit' && isset($parent) ? $parent->occupation_custom : '')" placeholder="Contoh: Wiraswasta / Freelancer" />
+            <x-form.text-input id="occupation_custom" class="block mt-1" type="text" name="occupation_custom"
+                :value="old('occupation_custom', $mode === 'edit' && isset($parent) ? $parent->occupation_custom : '')" placeholder="Contoh: Wiraswasta / Freelancer" />
             <x-form.input-error :messages="$errors->get('occupation_custom')" class="mt-1" />
         </div>
 
         {{-- Address --}}
         <div class="input-group md:col-span-2 lg:col-span-3">
             <x-form.input-label for="parent_address" :value="__('Alamat Rumah')" class="text-xs font-semibold text-stone-700" />
-            <textarea id="parent_address" name="parent_address" rows="3"
-                class="block mt-1 w-full rounded-lg border-stone-300 text-sm focus:border-[#597928] focus:ring-[#597928] transition duration-150"
-                placeholder="Jl. Mawar No. 45, RT 02/RW 05...">{{ old('parent_address', $mode === 'edit' && isset($parent) ? $parent->address : '') }}</textarea>
+            <x-form.textarea id="parent_address" name="parent_address" rows="3"
+                placeholder="Jl. Mawar No. 45, RT 02/RW 05...">{{ old('parent_address', $mode === 'edit' && isset($parent) ? $parent->address : '') }}</x-form.textarea>
             <x-form.input-error :messages="$errors->get('parent_address')" class="mt-1" />
         </div>
 

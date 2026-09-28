@@ -10,6 +10,10 @@ import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 
+import TomSelect from "tom-select";
+import "tom-select/dist/css/tom-select.css";
+window.TomSelect = TomSelect;
+
 import ApexCharts from "apexcharts";
 window.ApexCharts = ApexCharts;
 

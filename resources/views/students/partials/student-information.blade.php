@@ -19,8 +19,7 @@
         <div class="flex items-center gap-2">
             <x-form.input-label for="status" :value="__('Status')"
                 class="text-xs font-semibold text-stone-700 hidden sm:block" />
-            <x-form.select-input name="status" id="status"
-                class="text-xs py-1.5 border-stone-300 rounded-lg focus:border-[#597928] focus:ring-[#597928]">
+            <x-form.select-input name="status" id="status" class="text-xs py-1.5 border-stone-300 rounded-lg ">
                 @foreach (StudentStatus::cases() as $status)
                     <option value="{{ $status->value }}" @selected(old('status', $mode === 'edit' ? $student->status?->value : StudentStatus::ACTIVE->value) === $status->value)>
                         {{ $status->label() }}
@@ -59,41 +58,39 @@
         {{-- Full Name --}}
         <div class="input-group md:col-span-2">
             <x-form.input-label for="fullname" :value="__('Nama Lengkap')" />
-            <x-form.text-input id="fullname" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="fullname" :value="old('fullname', $mode === 'edit' ? $student->fullname : '')" required autofocus
-                placeholder="Contoh: Muhammad Rizky Pratama" />
+            <x-form.text-input id="fullname" class="mt-1 " type="text" name="fullname" :value="old('fullname', $mode === 'edit' ? $student->fullname : '')" required
+                autofocus placeholder="Contoh: Muhammad Rizky Pratama" />
             <x-form.input-error :messages="$errors->get('fullname')" class="mt-1" />
         </div>
 
         {{-- Nickname --}}
         <div class="input-group">
             <x-form.input-label for="nickname" :value="__('Nama Panggilan')" />
-            <x-form.text-input id="nickname" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="nickname" :value="old('nickname', $mode === 'edit' ? $student->nickname : '')" placeholder="Contoh: Rizky" />
+            <x-form.text-input id="nickname" class="mt-1 " type="text" name="nickname" :value="old('nickname', $mode === 'edit' ? $student->nickname : '')"
+                placeholder="Contoh: Rizky" />
             <x-form.input-error :messages="$errors->get('nickname')" class="mt-1" />
         </div>
 
         {{-- NIS --}}
         <div class="input-group">
             <x-form.input-label for="nis" :value="__('NIS')" />
-            <x-form.text-input id="nis" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="nis" :value="old('nis', $mode === 'edit' ? $student->nis : '')" required placeholder="Contoh: 1029384" />
+            <x-form.text-input id="nis" class="mt-1 " type="text" name="nis" :value="old('nis', $mode === 'edit' ? $student->nis : '')" required
+                placeholder="Contoh: 1029384" />
             <x-form.input-error :messages="$errors->get('nis')" class="mt-1" />
         </div>
 
         {{-- NISN --}}
         <div class="input-group">
             <x-form.input-label for="nisn" :value="__('NISN')" class="text-xs font-semibold text-stone-700" />
-            <x-form.text-input id="nisn" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="nisn" :value="old('nisn', $mode === 'edit' ? $student->nisn : '')" placeholder="Contoh: 0051234567" />
+            <x-form.text-input id="nisn" class="mt-1 " type="text" name="nisn" :value="old('nisn', $mode === 'edit' ? $student->nisn : '')"
+                placeholder="Contoh: 0051234567" />
             <x-form.input-error :messages="$errors->get('nisn')" class="mt-1" />
         </div>
 
         {{-- Gender --}}
         <div class="input-group">
             <x-form.input-label for="gender" :value="__('Jenis Kelamin')" />
-            <x-form.select-input name="gender" id="gender"
-                class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" required>
+            <x-form.select-input name="gender" id="gender" class="mt-1 w-full " required>
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="L" @selected(old('gender', $mode === 'edit' ? $student->gender : '') == 'L')>Laki-laki (Male)</option>
                 <option value="P" @selected(old('gender', $mode === 'edit' ? $student->gender : '') == 'P')>Perempuan (Female)</option>
@@ -104,16 +101,16 @@
         {{-- Place of Birth --}}
         <div class="input-group">
             <x-form.input-label for="place_of_birth" :value="__('Tempat Lahir')" />
-            <x-form.text-input id="place_of_birth" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="place_of_birth" :value="old('place_of_birth', $mode === 'edit' ? $student->place_of_birth : '')" placeholder="Contoh: Jakarta" />
+            <x-form.text-input id="place_of_birth" class="mt-1 " type="text" name="place_of_birth"
+                :value="old('place_of_birth', $mode === 'edit' ? $student->place_of_birth : '')" placeholder="Contoh: Jakarta" />
             <x-form.input-error :messages="$errors->get('place_of_birth')" class="mt-1" />
         </div>
 
         {{-- Date of Birth --}}
         <div class="input-group">
             <x-form.input-label for="date_of_birth" :value="__('Tanggal Lahir')" />
-            <x-form.text-input id="date_of_birth" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="date" name="date_of_birth" :value="old('date_of_birth', $mode === 'edit' ? $student->date_of_birth : '')" />
+            <x-form.text-input id="date_of_birth" class="mt-1 " type="date" name="date_of_birth"
+                :value="old('date_of_birth', $mode === 'edit' ? $student->date_of_birth : '')" />
             <x-form.input-error :messages="$errors->get('date_of_birth')" class="mt-1" />
         </div>
 
@@ -121,8 +118,7 @@
         {{-- Religion --}}
         <div class="input-group">
             <x-form.input-label for="religion" :value="__('Agama')" />
-            <x-form.select-input name="religion" id="religion"
-                class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
+            <x-form.select-input name="religion" id="religion" class="mt-1 w-full ">
                 <option value="">Pilih Agama</option>
                 @foreach (Religion::cases() as $religion)
                     <option value="{{ $religion->value }}" @selected(old('religion', $mode === 'edit' ? $student->religion?->value : '') === $religion->value)>
@@ -136,32 +132,24 @@
         {{-- Phone --}}
         <div class="input-group">
             <x-form.input-label for="phone" :value="__('No Telepon (Whatsapp)')" />
-            <x-form.text-input id="phone" class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]"
-                type="text" name="phone" :value="old('phone', $mode === 'edit' ? $student->phone : '')" placeholder="Contoh: 081234567890" />
+            <x-form.text-input id="phone" class="mt-1 " type="text" name="phone" :value="old('phone', $mode === 'edit' ? $student->phone : '')"
+                placeholder="Contoh: 081234567890" />
             <x-form.input-error :messages="$errors->get('phone')" class="mt-1" />
         </div>
 
         {{-- Enrollment Year --}}
         <div class="input-group">
             <x-form.input-label for="enrollment_year" :value="__('Tahun Pendaftaran')" />
-            <x-form.text-input id="enrollment_year"
-                class="block mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" type="number"
-                name="enrollment_year" :value="old('enrollment_year', $mode === 'edit' ? $student->enrollment_year : date('Y'))" placeholder="e.g. 2024" min="2000" max="2099" />
+            <x-form.text-input id="enrollment_year" class="mt-1 " type="number" name="enrollment_year"
+                :value="old('enrollment_year', $mode === 'edit' ? $student->enrollment_year : date('Y'))" placeholder="e.g. 2024" min="2000" max="2099" />
             <x-form.input-error :messages="$errors->get('enrollment_year')" class="mt-1" />
         </div>
 
         {{-- Parent Selection --}}
         <div class="input-group">
             <x-form.input-label for="parent_id" :value="__('Orang Tua / Wali')" />
-            <x-form.select-input name="parent_id" id="parent_id"
-                class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
-                <option value="">Pilih Orang Tua / Wali</option>
-                {{-- @foreach ($parents as $parent)
-                    <option value="{{ $parent->id }}" @selected(old('parent_id', $mode === 'edit' ? $student->parent_id : '') == $parent->id)>
-                        {{ $parent->fullname ?? $parent->name }} ({{ $parent->phone ?? 'No Phone' }})
-                    </option>
-                @endforeach --}}
-            </x-form.select-input>
+            <x-form.select-parent class="mt-1">
+            </x-form.select-parent>
             <x-form.input-error :messages="$errors->get('parent_id')" class="mt-1" />
         </div>
 
@@ -169,8 +157,7 @@
         @if (in_array($schoolSetting->education_level, ['SMK', 'SMA']))
             <div class="input-group">
                 <x-form.input-label for="major_id" :value="__('Jurusan')" />
-                <x-form.select-input name="major_id" id="major-filter"
-                    class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]">
+                <x-form.select-input name="major_id" id="major-filter" class="mt-1 w-full ">
                     <option value="">Pilih Jurusan</option>
                     @foreach ($majors as $major)
                         <option value="{{ $major->id }}" @selected(old('major_id', $mode === 'edit' ? optional($student->classroom)->major_id : '') == $major->id)>
@@ -184,8 +171,7 @@
 
         <div class="input-group">
             <x-form.input-label for="classroom_id" :value="__('Kelas')" />
-            <x-form.select-input name="classroom_id" id="classroom-filter"
-                class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" required>
+            <x-form.select-input name="classroom_id" id="classroom-filter" class="mt-1 w-full " required>
             </x-form.select-input>
             <x-form.input-error :messages="$errors->get('classroom_id')" class="mt-1" />
         </div>
@@ -193,9 +179,8 @@
         {{-- Address (Full Span) --}}
         <div class="input-group md:col-span-2 lg:col-span-3">
             <x-form.input-label for="address" :value="__('Alamat Rumah')" />
-            <textarea id="address" name="address" rows="3"
-                class="block mt-1 w-full rounded-lg border-stone-300 text-sm focus:border-[#597928] focus:ring-[#597928] transition duration-150"
-                placeholder="Jl. Raya Utama No. 123, RT 01/RW 02...">{{ old('address', $mode === 'edit' ? $student->address : '') }}</textarea>
+            <x-form.textarea id="address" name="address" rows="3"
+                placeholder="Jl. Raya Utama No. 123, RT 01/RW 02...">{{ old('address', $mode === 'edit' ? $student->address : '') }}</x-form.textarea>
             <x-form.input-error :messages="$errors->get('address')" class="mt-1" />
         </div>
 

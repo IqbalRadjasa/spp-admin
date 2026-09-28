@@ -198,7 +198,7 @@ class ClassroomController extends Controller
         return response()->json(
             $major->classrooms()
                 ->orderBy('level')
-                ->orderBy('name')
+                ->orderBy('class_number')
                 ->get()
         );
     }

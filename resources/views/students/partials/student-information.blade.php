@@ -186,12 +186,6 @@
             <x-form.input-label for="classroom_id" :value="__('Kelas')" />
             <x-form.select-input name="classroom_id" id="classroom-filter"
                 class="mt-1 w-full focus:border-[#597928] focus:ring-[#597928]" required>
-                <option value="">Pilih Kelas</option>
-                @foreach ($classrooms as $classroom)
-                    <option value="{{ $classroom->id }}" @selected(old('classroom_id', $mode === 'edit' ? $student->classroom_id : '') == $classroom->id)>
-                        {{ $classroom->name }}
-                    </option>
-                @endforeach
             </x-form.select-input>
             <x-form.input-error :messages="$errors->get('classroom_id')" class="mt-1" />
         </div>

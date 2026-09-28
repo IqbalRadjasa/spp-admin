@@ -10,9 +10,11 @@ export function initializeStudentFilter() {
         classroomFilter.empty();
 
         classroomFilter.append(
-            `<option value="">
-                ${placeholder}
-            </option>`
+            `
+                <option value="">
+                    Pilih Kelas
+                </option>
+            `
         );
 
         if (!majorId) {

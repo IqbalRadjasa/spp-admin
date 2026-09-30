@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
@@ -15,11 +16,17 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\SchoolSettingController;
 use App\Http\Controllers\studentPromotionController;
+use App\Http\Controllers\FirstPasswordChangeController;
 
 Route::redirect('/', '/login');
 
 // Auth's Routes
 Route::middleware('auth')->group(function () {
+    Route::get('/change-first-password', [FirstPasswordChangeController::class, 'edit'])
+        ->name('password.first_change');
+    Route::post('/change-first-password', [FirstPasswordChangeController::class, 'update'])
+        ->name('password.first_change.update');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -28,7 +35,7 @@ Route::middleware('auth')->group(function () {
 // Admin's Routes
 Route::middleware([
     'auth',
-    'role:super_admin'
+    'role:admin'
 ])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -64,12 +71,15 @@ Route::middleware([
 
     // Student Promotion's Routes
     Route::resource('students-promotion', StudentPromotionController::class);
+
+    // User Management's Routes
+    Route::resource('users', UserController::class);
 });
 
 // Public Routes
 Route::middleware([
     'auth',
-    'role:super_admin,tu_staff'
+    'role:admin,tu_staff,parent'
 ])->group(function () {
 
     // Student's Routes

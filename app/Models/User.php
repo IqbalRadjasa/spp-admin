@@ -3,15 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'must_change_password'
     ];
 
     /**
@@ -44,21 +50,37 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'must_change_password' => 'boolean',
         ];
     }
 
-    // public function student_parent()
-    // {
-    //     return $this->belongsTo(StudentParent::class);
-    // }
-
-    public function isSuperAdmin()
+    public function studentParent()
     {
-        return $this->role === 'super_admin';
+        return $this->hasOne(StudentParent::class);
     }
 
-    public function isTuStaff()
+    public function isAdmin(): bool
     {
-        return $this->role === 'tu_staff';
+        return $this->role === UserRole::ADMIN;
+    }
+
+    public function isTuStaff(): bool
+    {
+        return $this->role === UserRole::TU_STAFF;
+    }
+
+    public function isParent(): bool
+    {
+        return $this->role === UserRole::PARENT;
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        return \Illuminate\Support\Str::of($this->name)
+            ->explode(' ')
+            ->map(fn($word) => $word[0] ?? '')
+            ->take(2)
+            ->join('');
     }
 }

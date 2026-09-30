@@ -1,4 +1,4 @@
- @if (auth()->user()->isSuperAdmin())
+ @if (auth()->user()->isAdmin())
      <x-sidebar.sidebar-link :href="route('dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('dashboard')">
          Dashboard
      </x-sidebar.sidebar-link>
@@ -8,7 +8,7 @@
      <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
          Daftar Siswa
      </x-sidebar.sidebar-dropdown-link>
-     @if (auth()->user()->isSuperAdmin())
+     @if (auth()->user()->isAdmin())
          <x-sidebar.sidebar-dropdown-link :href="route('students-promotion.index')" :active="request()->routeIs('students-promotion.*')">
              Kenaikan Kelas Siswa
          </x-sidebar.sidebar-dropdown-link>
@@ -35,13 +35,17 @@
      </x-sidebar.sidebar-dropdown-link>
  </x-sidebar.sidebar-dropdown>
 
- @if (auth()->user()->isSuperAdmin())
+ @if (auth()->user()->isAdmin())
+     <x-sidebar.sidebar-link :href="route('users.index')" icon="ri-user-line" :active="request()->routeIs('users.*')">
+         Manajemen Pengguna
+     </x-sidebar.sidebar-link>
+
      <x-sidebar.sidebar-link :href="route('activity-logs.index')" icon="ri-chat-history-line" :active="request()->routeIs('activity-logs.index')">
          Catatan Aktivitas
      </x-sidebar.sidebar-link>
  @endif
 
- @if (auth()->user()->isSuperAdmin())
+ @if (auth()->user()->isAdmin())
      <x-sidebar.sidebar-dropdown title="Pengaturan" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
          <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
              Sekolah

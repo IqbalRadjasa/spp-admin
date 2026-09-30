@@ -3,6 +3,7 @@
 namespace App\Services\Notifications\Channels;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 use App\Services\Notifications\Channels\Contracts\NotificationChannelInterface;
 
@@ -12,17 +13,33 @@ class WhatsAppChannel implements NotificationChannelInterface
         string $target,
         string $message
     ) {
-        Http::withHeaders([
-            'Authorization' => config('services.fonnte.token')
-        ])->post(
-            'https://api.fonnte.com/send',
-            [
+        $token = config('services.fonnte.token');
 
-                'target' => $target,
+        if (!$token) {
+            Log::error('Fonnte API Token is not set in config/services.php.');
+            return false;
+        }
 
-                'message' => $message
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+            ])->post($this->apiUrl, [
+                'target'  => $target,
+                'message' => $message,
+            ]);
 
-            ]
-        );
+            if ($response->failed()) {
+                Log::error('Fonnte API Request Failed', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+                return false;
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Fonnte Exception: ' . $e->getMessage());
+            return false;
+        }
     }
 }

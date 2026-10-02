@@ -10,8 +10,17 @@
             </svg>
         </div>
         <h2 class="text-2xl font-bold tracking-tight text-[#6E3511]">Selamat Datang Kembali</h2>
-        <p class="mt-1 text-sm text-gray-500">Masuk ke Portal Pembayaran SPP</p>
+        <p class="mt-1 text-sm text-gray-500">Masuk ke SkolaPayd</p>
     </div>
+
+    @if (session('error'))
+        <div class="mb-4 p-4 text-sm text-red-800 bg-red-50 rounded-lg border border-red-200" role="alert">
+            <div class="flex items-center gap-2">
+                <i class="ri-error-warning-line text-lg"></i>
+                <span class="font-medium">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
 
     <!-- Session Status Alert -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -96,14 +105,6 @@
                 class="w-full justify-center py-2.5 text-sm font-semibold tracking-wide rounded-lg shadow-md bg-[#597928] hover:bg-[#6E3511] focus:ring-[#597928] active:bg-[#6E3511] transition duration-150">
                 {{ __('Masuk ke Akun') }}
             </x-button.primary-button>
-        </div>
-
-        <!-- Registration Link -->
-        <div class="pt-2 text-center text-xs text-gray-500">
-            {{ __('Belum memiliki akun?') }}
-            <a href="{{ route('register') }}" class="font-semibold text-[#597928] hover:text-[#6E3511] hover:underline">
-                {{ __('Daftar disini') }}
-            </a>
         </div>
     </form>
 </x-guest-layout>

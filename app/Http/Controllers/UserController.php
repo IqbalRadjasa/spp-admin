@@ -25,11 +25,10 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()
-            ->where('role', '!=', 'admin')
             ->latest()
             ->paginate(5)
             ->withQueryString();
-        // dd($users);
+
         return view('user-management.index', compact('users'));
     }
 
@@ -95,7 +94,6 @@ class UserController extends Controller
                 ->route('users.index')
                 ->with('success', "Pengguna berhasil dibuat. Kredensial login telah dikirim ke {$user->email}.");
         } catch (\Exception $e) {
-            dd($e);
             return redirect()
                 ->back()
                 ->withInput()
@@ -114,9 +112,15 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        // dd($user->studentParent->occupation_id);
+        $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
+        return view('user-management.edit', [
+            'user' => $user,
+            'occupations' => $occupations,
+            'roles' => UserRole::cases()
+        ]);
     }
 
     /**
@@ -172,5 +176,16 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', "Akun {$user->name} dan data orang tua berhasil diaktifkan kembali.");
+    }
+
+    public function toggleStatus(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat menangguhkan akun Anda sendiri.');
+        }
+        $user->status = ($user->status === 'active') ? 'suspended' : 'active';
+        $user->save();
+
+        return back()->with('success', "Status akun {$user->name} berhasil diubah menjadi {$user->status}.");
     }
 }

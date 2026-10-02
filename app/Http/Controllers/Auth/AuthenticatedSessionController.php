@@ -26,18 +26,27 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if ($request->user()->status === 'suspended') {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Akun Anda telah ditangguhkan / Suspended. Silakan hubungi administrator.',
+                ]);
+        }
+
         $request->session()->regenerate();
 
         $user = auth()->user();
 
-        if ($user->role === 'super_admin') {
-
+        if ($user->role === 'admin') {
             return redirect()->route('dashboard');
-        }
-
-        if ($user->role === 'tu_staff') {
-
+        } elseif ($user->role === 'tu_staff') {
             return redirect()->route('bills.index');
+        } else {
+            return redirect()->route('students.index');
         }
 
         return redirect('/');

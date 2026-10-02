@@ -73,6 +73,7 @@ Route::middleware([
     Route::resource('students-promotion', StudentPromotionController::class);
 
     // User Management's Routes
+    Route::post('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
     Route::resource('users', UserController::class);
 });
 

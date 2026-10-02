@@ -76,24 +76,42 @@
                     </x-button.primary-button>
                 </form> --}}
 
-                <x-table :headers="['Nama', 'Email', 'Role', 'Action']" :empty="$users->isEmpty()">
+                <x-table :headers="['Nama', 'Email', 'Role', 'Status', 'Action']" :empty="$users->isEmpty()">
                     @foreach ($users as $user)
                         <x-table.tr>
-                            {{-- Name with Avatar --}}
                             <x-table.td>
                                 <x-table.avatar-cell :initials="$user->initials" :name="$user->name" />
                             </x-table.td>
 
-                            {{-- NIS Code Pill --}}
                             <x-table.td>
                                 <x-table.code-pill>{{ $user->email }}</x-table.code-pill>
                             </x-table.td>
 
-                            {{-- Classroom Badge --}}
                             <x-table.td>
                                 <x-table.badge variant="olive" class="capitalize">
                                     {{ $user->role }}
                                 </x-table.badge>
+                            </x-table.td>
+
+                            <x-table.td>
+                                @switch($user->status)
+                                    @case('pending')
+                                        <x-table.badge variant="gray" class="capitalize">
+                                            {{ $user->status }}
+                                        </x-table.badge>
+                                    @break
+
+                                    @case('suspended')
+                                        <x-table.badge variant="danger" class="capitalize">
+                                            {{ $user->status . ' / Ditangguhkan' }}
+                                        </x-table.badge>
+                                    @break
+
+                                    @default
+                                        <x-table.badge variant="olive" class="capitalize">
+                                            {{ $user->status }}
+                                        </x-table.badge>
+                                @endswitch
                             </x-table.td>
 
                             {{-- Action Dropdown --}}
@@ -107,13 +125,17 @@
                                     </x-slot>
 
                                     <x-slot name="content">
-                                        {{-- <x-dropdown.dropdown-link href="{{ route('students.show', $student->id) }}">
-                                            Detail
-                                        </x-dropdown.dropdown-link>
+                                        <form action="{{ route('users.status', $user->id) }}" method="POST"
+                                            onsubmit="event.preventDefault(); confirmAction(() => this.submit(), {confirmButtonColor: '#C0524E' });">
+                                            @csrf
 
-                                        <x-dropdown.dropdown-link href="{{ route('students.edit', $student->id) }}">
-                                            Edit
-                                        </x-dropdown.dropdown-link> --}}
+                                            {{-- <input type="text" name="status"
+                                                value="{{ $user->status === 'active' ? 'suspended' : 'active' }}"
+                                                hidden> --}}
+                                            <x-dropdown.dropdown-button type="submit" class="text-[#C0524E]">
+                                                {{ $user->status === 'active' ? 'Suspend' : 'Aktifkan' }}
+                                            </x-dropdown.dropdown-button>
+                                        </form>
 
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                             onsubmit="event.preventDefault(); confirmAction(() => this.submit(), { text: 'Pengguna ini akan dinonaktifkan/dihapus.', confirmButtonText: 'Hapus', confirmButtonColor: '#C0524E' });">

@@ -10,9 +10,8 @@
                         <i class="ri-user-add-line"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-[#6E3511]">Tambah Pengguna Baru</h1>
-                        <p class="text-xs text-gray-600 mt-0.5">Isi formulir di bawah untuk mendaftarkan pengguna ke
-                            sistem.</p>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Perbarui Pengguna</h1>
+                        <p class="text-xs text-gray-600 mt-0.5">Perbarui pengguna dan simpan perubahan ke sistem.</p>
                     </div>
                 </div>
             </div>
@@ -20,7 +19,8 @@
 
         {{-- Form --}}
         @include('user-management.partials.form', [
-            'mode' => 'create',
+            'mode' => 'edit',
+            'user' => $user,
         ])
     </div>
 </x-app-layout>

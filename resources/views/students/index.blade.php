@@ -1,13 +1,22 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between pb-6">
-            <h1 class="font-bold text-2xl uppercase">
-                Student Records
-            </h1>
+    <div class="py-6 space-y-6">
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-graduation-cap-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Daftar Siswa</h1>
+                    </div>
+                </div>
 
-            <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
-                Tambah Siswa
-            </x-link-button.primary-link>
+                <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
+                    Tambah Siswa
+                </x-link-button.primary-link>
+            </div>
         </div>
 
         <div x-data="{ open: false }" class="mb-6">
@@ -15,8 +24,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                 {{-- Always Visible: Grand Total --}}
-                <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Students" value="{{ $totalStudents }}"
-                    icon="ri-group-fill" />
+                <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Students"
+                    value="{{ $totalStudents }}" icon="ri-group-fill" />
 
                 {{-- Always Visible: First 2 Majors --}}
                 @foreach ($majorSummaries->take(2) as $summary)
@@ -52,23 +61,39 @@
 
         <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
-                        class="w-full md:w-80" />
+                <form method="GET" action="{{ url()->current() }}"
+                    class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <!-- Search Input -->
+                    <div class="w-full sm:w-72 md:w-80">
+                        <x-form.text-input type="text" name="search" :value="request('search')"
+                            placeholder="Find a student..." class="w-full" />
+                    </div>
 
-                    <x-form.select-input name="major" id="major-filter">
-                        <option value="">All</option>
+                    <!-- Major Select -->
+                    <div class="w-full sm:w-48 md:w-56">
+                        <x-form.select-input name="major" id="major-filter" class="w-full">
+                            <option value="">All Majors</option>
+                            @foreach ($majors as $major)
+                                <option value="{{ $major->id }}" @selected(request('major') == $major->id)>
+                                    {{ $major->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
+                    </div>
 
-                        @foreach ($majors as $major)
-                            <option value="{{ $major->id }}" @selected(request('major') == $major->id)>
-                                {{ $major->name }}
-                            </option>
-                        @endforeach
-                    </x-form.select-input>
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            Filter
+                        </x-button.primary-button>
 
-                    <x-button.primary-button class="w-full md:w-auto">
-                        Filter
-                    </x-button.primary-button>
+                        @if (request()->hasAny(['search', 'major']))
+                            <a href="{{ url()->current() }}"
+                                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md transition text-center">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
                 </form>
 
                 <x-table :headers="['Name', 'NIS', 'Class', 'Action']" :empty="$students->isEmpty()">

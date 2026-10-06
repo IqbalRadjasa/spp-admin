@@ -30,4 +30,13 @@ enum StudentStatus: string
             self::TRANSFERRED => 'bg-amber-100 text-amber-800 border-amber-200',
         };
     }
+
+    public static function casesForMode(string $mode): array
+    {
+        if ($mode === 'create') {
+            return [self::ACTIVE, self::INACTIVE];
+        }
+
+        return self::cases();
+    }
 }

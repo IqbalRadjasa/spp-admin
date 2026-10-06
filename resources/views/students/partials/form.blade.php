@@ -1,5 +1,5 @@
 <form action="{{ $mode === 'create' ? route('students.store') : route('students.update', $student->id) }}" method="POST"
-    class="space-y-6">
+    enctype="multipart/form-data" class="space-y-6">
     @csrf
     @if ($mode == 'edit')
         @method('PUT')
@@ -8,9 +8,6 @@
 
     {{-- Section 1: Student Information --}}
     @include('students.partials.student-information')
-
-    {{-- Section 2: Parent Information --}}
-    @include('students.partials.parent-information')
 
     {{-- Form Actions --}}
     <div class="flex items-center justify-end gap-3 pt-2">

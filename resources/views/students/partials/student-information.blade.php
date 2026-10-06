@@ -7,7 +7,7 @@
         <div class="flex items-center gap-3">
             <div
                 class="w-8 h-8 rounded-lg bg-[#91AC67]/20 text-[#597928] flex items-center justify-center font-bold text-sm">
-                1
+                <i class="ri-user-fill"></i>
             </div>
             <div>
                 <h3 class="text-base font-bold text-[#6E3511]">Informasi Siswa</h3>
@@ -20,7 +20,7 @@
             <x-form.input-label for="status" :value="__('Status')"
                 class="text-xs font-semibold text-stone-700 hidden sm:block" />
             <x-form.select-input name="status" id="status" class="text-xs py-1.5 border-stone-300 rounded-lg ">
-                @foreach (StudentStatus::cases() as $status)
+                @foreach (StudentStatus::casesForMode($mode) as $status)
                     <option value="{{ $status->value }}" @selected(old('status', $mode === 'edit' ? $student->status?->value : StudentStatus::ACTIVE->value) === $status->value)>
                         {{ $status->label() }}
                     </option>

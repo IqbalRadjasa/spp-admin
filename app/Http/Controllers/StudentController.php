@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Major;
 use App\Models\Student;
 use App\Models\Classroom;
@@ -10,7 +11,13 @@ use App\Models\SchoolSetting;
 use App\Models\StudentParent;
 use App\Services\ActivityLogService;
 
+use App\Notifications\StudentLinkedNotification;
+
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -87,36 +94,99 @@ class StudentController extends Controller
     public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'nis' => 'required|unique:students',
-            'classroom_id' => 'required',
-            'parent_phone' => 'required|string|max:20',
+            'fullname' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:100',
+            'nis' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('students', 'nis')->whereNull('deleted_at'), // Handles soft-deletes correctly
+            ],
+            'nisn' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('students', 'nisn')->whereNull('deleted_at'),
+            ],
+            'gender' => 'required|in:L,P',
+            'place_of_birth' => 'nullable|string|max:100',
+            'date_of_birth' => 'nullable|date',
+            'religion' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'enrollment_year' => 'nullable|numeric',
+            'status' => 'required',
+            'classroom_id' => 'required|exists:classrooms,id',
+            'address' => 'nullable|string',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'parent_id' => 'nullable|exists:users,id', // Single ID check
         ]);
 
+        DB::beginTransaction();
+
+        // $parent = User::find($validated['parent_id']);
+        // dd($parent);
         try {
+            if ($request->hasFile('avatar')) {
+                $validated['avatar'] = $request->file('avatar')->store('students/avatars', 'public');
+            }
+
+            // 2. Create Student Record
             $student = Student::create([
-                'name' => $validated['name'],
+                'fullname' => $validated['fullname'],
+                'nickname' => $validated['nickname'] ?? null,
                 'nis' => $validated['nis'],
+                'nisn' => $validated['nisn'] ?? null,
+                'gender' => $validated['gender'],
+                'place_of_birth' => $validated['place_of_birth'] ?? null,
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'religion' => $validated['religion'] ?? null,
+                'phone' => !empty($validated['phone']) ? normalizePhone($validated['phone']) : null,
+                'enrollment_year' => $validated['enrollment_year'] ?? date('Y'),
+                'status' => $validated['status'],
                 'classroom_id' => $validated['classroom_id'],
-                'parent_phone' => normalizePhone($validated['parent_phone']),
+                'address' => $validated['address'] ?? null,
+                'avatar' => $validated['avatar'] ?? null,
             ]);
 
+            if (!empty($validated['parent_id'])) {
+                $student->parents()->sync([
+                    $validated['parent_id'] => [
+                        'relationship' => $validated['relationship'] ?? 'father', // Or $request->relationship
+                    ],
+                ]);
+
+                // Find parent and send notification
+                $parent = User::find($validated['parent_id']);
+                if ($parent) {
+                    $parent->notify(new StudentLinkedNotification($student));
+                }
+            }
+
+            // 4. Log Activity
             $activityLog->log(
                 'created',
                 'student',
                 $student->id,
-                'Created Student ' .
-                    $student->name
+                'Created Student ' . $student->fullname
             );
+
+            DB::commit();
 
             return redirect()
                 ->route('students.index')
-                ->with('success', 'Data created successfully!');
+                ->with('success', 'Data siswa berhasil ditambahkan dan orang tua telah diberi notifikasi!');
         } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+
+            if (isset($validated['avatar'])) {
+                Storage::disk('public')->delete($validated['avatar']);
+            }
+
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to create data!');
+                ->with('error', 'Gagal menambahkan data siswa: ' . $e->getMessage());
         }
     }
     /**
@@ -192,27 +262,43 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Student $student, ActivityLogService $activityLog)
+    public function destroy(Student $student, ActivityLogService $activityLog): RedirectResponse
     {
-        try {
+        DB::transaction(function () use ($student, $activityLog) {
+            $timestamp = time();
+            $studentName = $student->fullname;
+            $avatarPath = $student->avatar;
+
+            // 1. Append timestamp suffix to unique columns to free up NIS/NISN
+            $student->update([
+                'nis' => $student->nis . '_deleted_' . $timestamp,
+                'nisn' => $student->nisn ? $student->nisn . '_deleted_' . $timestamp : null,
+            ]);
+
+            // 2. Detach parent relationship from pivot table
+            $student->parents()->detach();
+
+            // 3. Delete avatar file from storage if present
+            if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
+                Storage::disk('public')->delete($avatarPath);
+                $student->update(['avatar' => null]);
+            }
+
+            // 4. Soft delete (or force delete) student record
             $student->delete();
 
+            // 5. Log activity
             $activityLog->log(
                 'deleted',
                 'student',
                 $student->id,
-                'Deleted Student ' .
-                    $student->name
+                "Deleted Student {$studentName}"
             );
+        });
 
-            return redirect()
-                ->route('students.index')
-                ->with('success', 'Data deleted successfully!');
-        } catch (\Exception $th) {
-            return redirect()
-                ->back()
-                ->with('error', 'Failed to detele data!');
-        }
+        return redirect()
+            ->route('students.index')
+            ->with('success', "Data siswa {$student->fullname} berhasil dihapus.");
     }
 
     public function searchParent(Request $request)
@@ -235,7 +321,7 @@ class StudentController extends Controller
             ->get()
             ->map(function ($parent) {
                 return [
-                    'id' => $parent->id,
+                    'id' => $parent->user_id,
                     'fullname' => $parent->fullname,
                     'phone' => $parent->phone,
                     'email' => $parent->user?->email ?? '-',

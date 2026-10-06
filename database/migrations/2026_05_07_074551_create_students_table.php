@@ -16,11 +16,11 @@ return new class extends Migration
 
             $table->foreignId('parent_id')->nullable()->constrained('student_parents')->nullOnDelete();
             $table->foreignId('classroom_id')->nullable()->constrained('classrooms')->nullOnDelete();
-            $table->string('nis')->unique();
-            $table->string('nisn', 10)->nullable()->unique();
+            $table->string('nis', 50)->unique();
+            $table->string('nisn', 50)->nullable()->unique();
             $table->string('fullname');
             $table->string('nickname')->nullable();
-            $table->enum('gender', ['Laki-laki', 'Perempuan']);
+            $table->enum('gender', ['L', 'P']);
             $table->string('place_of_birth')->nullable();
             $table->date('date_of_birth');
             $table->enum('religion', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Khonghucu'])->nullable();

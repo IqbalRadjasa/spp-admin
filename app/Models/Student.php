@@ -7,27 +7,27 @@ use App\Enums\StudentStatus;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'parent_id',
-        'classroom_id',
-        'nis',
-        'nisn',
         'fullname',
         'nickname',
+        'nis',
+        'nisn',
         'gender',
         'place_of_birth',
         'date_of_birth',
         'religion',
-        'address',
         'phone',
-        'avatar',
-        'status',
         'enrollment_year',
+        'status',
+        'classroom_id',
+        'address',
+        'avatar',
     ];
 
     protected function casts(): array
@@ -46,6 +46,13 @@ class Student extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    }
+
+    public function parents(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'student_parent_relations', 'student_id', 'parent_id')
+            ->withPivot('relationship')
+            ->withTimestamps();
     }
 
     public function getInitialsAttribute(): string

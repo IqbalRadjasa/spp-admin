@@ -7,6 +7,8 @@ use App\Enums\UserRole;
 use App\Models\Occupation;
 use App\Models\StudentParent;
 
+use App\Services\ActivityLogService;
+
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -48,7 +50,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'role'              => ['required', new Enum(UserRole::class)],
@@ -56,11 +58,11 @@ class UserController extends Controller
             'nickname'   => ['nullable', 'string', 'max:100'],
             'phone'      => ['required', 'string', 'max:20'],
             'email'      => ['required', 'string', 'email', Rule::unique('users', 'email')->whereNull('deleted_at')],
+            'address'    => ['required', 'nullable', 'string'],
             // Conditional validations for Parent role
             'relationship'      => [Rule::requiredIf($request->role === UserRole::PARENT->value), 'nullable', 'string'],
             'occupation_id'     => [Rule::requiredIf($request->role === UserRole::PARENT->value), 'nullable', 'exists:occupations,id'],
             'occupation_custom' => ['nullable', 'string', 'max:255'],
-            'address'    => [Rule::requiredIf($request->role === UserRole::PARENT->value), 'nullable', 'string'],
         ]);
 
         $plainPassword = Str::password(12);
@@ -79,16 +81,32 @@ class UserController extends Controller
                         'user_id'           => $user->id,
                         'fullname'          => $validated['fullname'],
                         'nickname'          => $validated['nickname'] ?? null,
-                        'phone'             => $validated['phone'],
+                        'phone'             => normalizePhone($validated['phone']),
                         'relationship'      => $validated['relationship'],
                         'occupation_id'     => $validated['occupation_id'],
                         'occupation_custom' => $validated['occupation_custom'] ?? null,
+                        'address'           => $validated['address'],
+                    ]);
+                } else {
+                    StudentParent::create([
+                        'user_id'           => $user->id,
+                        'fullname'          => $validated['fullname'],
+                        'nickname'          => $validated['nickname'] ?? null,
+                        'phone'             => normalizePhone($validated['phone']),
                         'address'           => $validated['address'],
                     ]);
                 }
             });
 
             $user->notify(new WelcomeUserNotification($plainPassword));
+
+            $activityLog->log(
+                'created',
+                'user',
+                $user->id,
+                'Created Account ' .
+                    $validated['fullname']
+            );
 
             return redirect()
                 ->route('users.index')
@@ -136,7 +154,7 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
-        if (Auth::id() === $user->id) {
+        if ($user->id === auth()->id()) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
@@ -183,6 +201,7 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Anda tidak dapat menangguhkan akun Anda sendiri.');
         }
+
         $user->status = ($user->status === 'active') ? 'suspended' : 'active';
         $user->save();
 

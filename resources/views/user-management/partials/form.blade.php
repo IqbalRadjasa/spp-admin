@@ -121,8 +121,8 @@
                 <x-form.input-error :messages="$errors->get('occupation_custom')" class="mt-1" />
             </div>
 
-            {{-- Address (Parent Only) --}}
-            <div class="input-group md:col-span-2 lg:col-span-3" x-show="role === 'parent'" x-cloak x-transition>
+            {{-- Address --}}
+            <div class="input-group md:col-span-2 lg:col-span-3">
                 <x-form.input-label for="address" :value="__('Alamat Rumah')" class="text-xs font-semibold text-stone-700" />
                 <x-form.textarea class="mt-1" id="address" name="address" rows="3"
                     placeholder="Jl. Mawar No. 45, RT 02/RW 05...">{{ old('address', $mode === 'edit' && isset($user) ? $user->studentParent->address : '') }}</x-form.textarea>

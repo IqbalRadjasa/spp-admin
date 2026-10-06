@@ -2,11 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Jobs\SendWhatsappNotificationJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+
+use App\Jobs\SendWhatsappNotificationJob;
 
 class WelcomeUserNotification extends Notification implements ShouldQueue
 {
@@ -31,6 +32,12 @@ class WelcomeUserNotification extends Notification implements ShouldQueue
     {
         $this->dispatchWhatsapp($notifiable);
 
+        if ($notifiable instanceof \App\Models\User && ! $notifiable->relationLoaded('studentParent')) {
+            $notifiable->load('studentParent');
+        }
+
+        $targetPhone = $notifiable->studentParent?->phone ?? $notifiable->phone ?? null;
+
         return (new MailMessage)
             ->subject('Selamat Datang - Akun Anda Telah Dibuat')
             ->greeting('Halo, ' . $notifiable->name . '!')
@@ -47,9 +54,14 @@ class WelcomeUserNotification extends Notification implements ShouldQueue
      */
     protected function dispatchWhatsapp(object $notifiable): void
     {
-        $targetPhone = $notifiable->parentDetail?->phone ?? $notifiable->phone ?? null;
+        if ($notifiable instanceof \App\Models\User && ! $notifiable->relationLoaded('studentParent')) {
+            $notifiable->load('studentParent');
+        }
+
+        $targetPhone = $notifiable->studentParent?->phone ?? $notifiable->phone ?? null;
 
         if (! $targetPhone) {
+            \Illuminate\Support\Facades\Log::warning("WhatsApp notification skipped: No phone number found for User ID {$notifiable->id}");
             return;
         }
 
@@ -61,7 +73,6 @@ class WelcomeUserNotification extends Notification implements ShouldQueue
             . "Silakan login di: " . route('login') . "\n"
             . "Harap segera ganti password Anda setelah login.";
 
-        // Dispatch Job to Queue
         SendWhatsappNotificationJob::dispatch($targetPhone, $message);
     }
 }

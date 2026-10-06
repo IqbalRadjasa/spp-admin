@@ -9,6 +9,8 @@ use App\Services\Notifications\Channels\Contracts\NotificationChannelInterface;
 
 class WhatsAppChannel implements NotificationChannelInterface
 {
+    protected string $apiUrl = 'https://api.fonnte.com/send';
+
     public function send(
         string $target,
         string $message

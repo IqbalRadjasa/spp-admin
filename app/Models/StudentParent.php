@@ -32,4 +32,9 @@ class StudentParent extends Model
             ->withPivot('relationship')
             ->withTimestamps();
     }
+
+    public function occupation()
+    {
+        return $this->belongsTo(Occupation::class);
+    }
 }

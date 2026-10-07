@@ -11,4 +11,9 @@ class Occupation extends Model
         'code',
         'is_active'
     ];
+
+    public function studentParents()
+    {
+        return $this->hasMany(StudentParent::class);
+    }
 }

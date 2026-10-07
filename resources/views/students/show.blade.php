@@ -1,31 +1,22 @@
 <x-app-layout>
-    <div class="space-y-6">
-
+    <div class="py-6 space-y-6">
         {{-- Top Action Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('students.index') }}"
-                    class="flex h-9 w-9 items-center justify-center rounded-xl border border-stone-200/80 bg-white text-stone-600 hover:bg-[#FCECD8]/40 hover:text-stone-900 transition-colors shadow-2xs">
-                    <i class="ri-arrow-left-line text-lg"></i>
-                </a>
-                <div>
-                    <h1 class="text-xl font-bold text-stone-900">Student Profile</h1>
-                    <p class="text-xs text-stone-500">View complete details and payment history</p>
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-graduation-cap-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Profil Siswa</h1>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center gap-2">
-                <a href="{{ route('students.edit', $student->id) }}"
-                    class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-stone-200/80 text-xs font-semibold text-stone-700 hover:bg-[#FCECD8]/50 hover:text-[#597928] transition-colors shadow-2xs">
-                    <i class="ri-edit-line text-sm"></i>
-                    Edit Student
-                </a>
-
-                <button type="button"
-                    class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#597928] text-white text-xs font-semibold hover:bg-[#597928]/90 transition-colors shadow-2xs">
-                    <i class="ri-printer-line text-sm"></i>
-                    Print SPP Card
-                </button>
+                <x-link-button.secondary-link :href="route('students.edit', $student->id)" icon="ri-edit-line" class="">
+                    Edit Siswa
+                </x-link-button.secondary-link>
             </div>
         </div>
 
@@ -45,7 +36,12 @@
                         <div class="w-20 h-20 rounded-2xl bg-white p-1 shadow-md">
                             <div
                                 class="w-full h-full rounded-xl bg-[#FCECD8] text-[#6E3511] flex items-center justify-center font-black text-2xl uppercase border border-stone-200/50">
-                                {{ $student->initials }}
+                                @if ($student->avatar)
+                                    <img src="{{ asset('storage/' . $student->avatar) }}" alt="{{ $student->fullname }}"
+                                        class="w-full h-full object-cover">
+                                @else
+                                    {{ $student->initials }}
+                                @endif
                             </div>
                         </div>
 
@@ -63,15 +59,15 @@
                     {{-- Key Quick Stats --}}
                     <div class="mt-6 pt-6 border-t border-stone-100 grid grid-cols-2 gap-4">
                         <div class="p-3 rounded-xl bg-stone-50 border border-stone-200/50 text-center">
-                            <span class="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">SPP
-                                Status</span>
-                            <span class="text-xs font-bold text-emerald-600 mt-0.5 inline-block">Up to Date</span>
+                            <span class="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">Status
+                                SPP</span>
+                            <span class="text-xs font-bold text-emerald-600 mt-0.5 inline-block">Sudah diperbarui</span>
                         </div>
                         <div class="p-3 rounded-xl bg-stone-50 border border-stone-200/50 text-center">
                             <span
-                                class="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">Gender</span>
+                                class="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">Jenis</span>
                             <span
-                                class="text-xs font-bold text-stone-800 mt-0.5 inline-block">{{ $student->gender ?? 'Male' }}</span>
+                                class="text-xs font-bold text-stone-800 mt-0.5 inline-block">{{ $student->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
                         </div>
                     </div>
 
@@ -83,9 +79,8 @@
                                 <i class="ri-phone-line"></i>
                             </div>
                             <div>
-                                <span class="block text-[10px] text-stone-400 font-medium">Parent Phone</span>
-                                <span
-                                    class="font-medium text-stone-800">{{ $student->parent_phone ?? '+62 812-3456-7890' }}</span>
+                                <span class="block text-[10px] text-stone-400 font-medium">Nomor Telefon</span>
+                                <span class="font-medium text-stone-800">{{ '+' . $student->phone }}</span>
                             </div>
                         </div>
 
@@ -95,9 +90,9 @@
                                 <i class="ri-[#597928] ri-map-pin-line"></i>
                             </div>
                             <div>
-                                <span class="block text-[10px] text-stone-400 font-medium">Address</span>
+                                <span class="block text-[10px] text-stone-400 font-medium">Alamat Rumah</span>
                                 <span
-                                    class="font-medium text-stone-800 line-clamp-1">{{ $student->address ?? 'Jl. Raya Bogor No. 12, West Java' }}</span>
+                                    class="font-medium text-stone-800 line-clamp-1">{{ $student->address ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -114,7 +109,7 @@
                         :class="tab === 'details' ? 'bg-white text-stone-900 shadow-2xs font-bold' :
                             'text-stone-600 hover:text-stone-900 font-medium'"
                         class="px-4 py-2 rounded-xl text-xs transition-all duration-150">
-                        Personal Details
+                        Data Pribadi
                     </button>
                     <button @click="tab = 'payments'"
                         :class="tab === 'payments' ? 'bg-white text-stone-900 shadow-2xs font-bold' :
@@ -130,29 +125,41 @@
 
                     <h3 class="text-sm font-bold text-stone-900 flex items-center gap-2">
                         <i class="ri-user-3-line text-[#597928]"></i>
-                        General Information
+                        Informasi Umum
                     </h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">Full Name</span>
-                            <p class="font-bold text-stone-800 mt-1">{{ $student->name }}</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Nama Lengkap</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $student->fullname }}</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">National Student ID
-                                (NISN)</span>
-                            <p class="font-bold text-stone-800 mt-1">{{ $student->nisn ?? '0098234123' }}</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Nama Panggilan</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $student->nickname }}</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">Place & Date of Birth</span>
-                            <p class="font-bold text-stone-800 mt-1">Bogor, 14 May 2008</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">NIS</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $student->nis }}</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">Academic Year</span>
-                            <p class="font-bold text-stone-800 mt-1">2025 / 2026</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">NISN</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $student->nisn }}</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Tempat, Tinggal
+                                Lahir</span>
+                            <p class="font-bold text-stone-800 mt-1">
+                                {{ $student->place_of_birth ? $student->place_of_birth . ', ' : '' }}{{ $student->date_of_birth ? \Carbon\Carbon::parse($student->date_of_birth)->translatedFormat('d F Y') : '-' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Agama</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $student->religion }}</p>
                         </div>
                     </div>
 
@@ -160,21 +167,48 @@
 
                     <h3 class="text-sm font-bold text-stone-900 flex items-center gap-2 pt-2">
                         <i class="ri-parent-line text-[#597928]"></i>
-                        Guardian Information
+                        Informasi Orang Tua / Wali
                     </h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">Guardian Name</span>
-                            <p class="font-bold text-stone-800 mt-1">{{ $student->parent_name ?? 'Ahmad Dahlan' }}</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Nama Lengkap</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $parent->studentParent->fullname }}</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
-                            <span class="text-[10px] font-medium text-stone-400 uppercase">Guardian Occupation</span>
-                            <p class="font-bold text-stone-800 mt-1">Civil Servant</p>
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Nama Panggilan</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ $parent->studentParent->nickname }}</p>
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Nomor Telefon</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ '+' . $parent->studentParent->phone }}</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Pekerjaan</span>
+                            <p class="font-bold text-stone-800 mt-1">
+                                {{ $parent->studentParent->occupation->code != 'OC-99' ? $parent->studentParent->occupation->name : $parent->studentParent->occupation_custom }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Hubungan</span>
+                            <p class="font-bold text-stone-800 mt-1">{{ ucfirst($parent->pivot->relationship) }}</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/50">
+                            <span class="text-[10px] font-medium text-stone-400 uppercase">Alamat Rumah</span>
+                            <p class="font-bold text-stone-800 mt-1">
+                                {{ $parent->studentParent->address }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- TAB 2: SPP Payments List (Using Reusable Table) --}}
@@ -205,10 +239,12 @@
                         </x-table.tr>
                     </x-table>
                 </div>
-
             </div>
 
+
         </div>
+
+    </div>
 
     </div>
 </x-app-layout>

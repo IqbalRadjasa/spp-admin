@@ -212,18 +212,30 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
+        // Eager load necessary relationships, including parents and pivot data
+        $student->load([
+            'classroom.major',
+            'parents' => function ($query) {
+                $query->withPivot('relationship');
+            },
+            'parents.studentParent.occupation',
+        ]);
+
+        // Retrieve the primary linked parent (since single parent association is used)
+        $parent = $student->parents->first();
+
         $majors = Major::all();
         $classrooms = Classroom::all();
         $schoolSetting = SchoolSetting::first();
 
         return view('students.show', compact(
             'student',
+            'parent',
             'classrooms',
             'schoolSetting',
             'majors'
         ));
     }
-
     /**
      * Show the form for editing the specified resource.
      */

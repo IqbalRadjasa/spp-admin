@@ -63,60 +63,75 @@
             <div class="p-6">
                 <form method="GET" action="{{ url()->current() }}"
                     class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-                    <!-- Search Input -->
                     <div class="w-full sm:w-72 md:w-80">
-                        <x-form.text-input type="text" name="search" :value="request('search')"
-                            placeholder="Find a student..." class="w-full" />
+                        <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Cari siswa"
+                            class="w-full" />
                     </div>
 
-                    <!-- Major Select -->
-                    <div class="w-full sm:w-48 md:w-56">
-                        <x-form.select-input name="major" id="major-filter" class="w-full">
-                            <option value="">All Majors</option>
+                    <x-form.select-input name="enrollment_year" class="w-full md:w-auto" id="enrollment-year-filter">
+                        <option value="">Semua Angkatan / Tahun</option>
+                        @foreach ($enrollmentYears as $year)
+                            <option value="{{ $year }}" @selected(request('enrollment_year') == $year)>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
+
+                    <x-form.select-input id="level" name="level" class="w-full md:w-auto">
+                        <option value="">Semua Tingkat</option>
+                        @foreach (classroomLevels() as $level)
+                            <option value="{{ $level }}" @selected(request('level') == $level)>
+                                Tingkat {{ $level }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
+
+                    @if (in_array($schoolSetting->education_level, ['SMA', 'SMK']))
+                        <x-form.select-input id="major_id" name="major_id" class="w-full md:w-auto">
+                            <option value="">Semua Jurusan</option>
                             @foreach ($majors as $major)
-                                <option value="{{ $major->id }}" @selected(request('major') == $major->id)>
-                                    {{ $major->name }}
+                                <option value="{{ $major->id }}" @selected(request('major_id') == $major->id)>
+                                    {{ $major->name }} ({{ $major->code }})
                                 </option>
                             @endforeach
                         </x-form.select-input>
-                    </div>
+                    @endif
 
-                    <!-- Action Buttons -->
                     <div class="flex items-center gap-2">
                         <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
                             Filter
                         </x-button.primary-button>
 
                         @if (request()->hasAny(['search', 'major']))
-                            <a href="{{ url()->current() }}"
-                                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md transition text-center">
-                                Reset
-                            </a>
+                            <x-link-button.secondary-link :href="url()->current()">
+                                {{ __('Reset') }}
+                            </x-link-button.secondary-link>
                         @endif
                     </div>
                 </form>
 
-                <x-table :headers="['Name', 'NIS', 'Class', 'Action']" :empty="$students->isEmpty()">
+                <x-table :headers="['Nama', 'NIS', 'Kelas', 'Tahun Pendaftaran', 'Aksi']" :empty="$students->isEmpty()">
                     @foreach ($students as $student)
                         <x-table.tr>
-                            {{-- Name with Avatar --}}
                             <x-table.td>
-                                <x-table.avatar-cell :initials="$student->initials" :name="$student->name" />
+                                <x-table.avatar-cell :avatar="$student->avatar" :initials="$student->initials" :name="$student->fullname"
+                                    :subtitle="$student->nickname" />
                             </x-table.td>
 
-                            {{-- NIS Code Pill --}}
                             <x-table.td>
                                 <x-table.code-pill>{{ $student->nis }}</x-table.code-pill>
                             </x-table.td>
 
-                            {{-- Classroom Badge --}}
                             <x-table.td>
                                 <x-table.badge variant="olive">
                                     {{ $student->classroom?->display_name ?? 'N/A' }}
                                 </x-table.badge>
                             </x-table.td>
 
-                            {{-- Action Dropdown --}}
+                            <x-table.td>
+                                {{ $student->enrollment_year }}
+                            </x-table.td>
+
                             <x-table.td>
                                 <x-dropdown.dropdown align="right" width="48">
                                     <x-slot name="trigger">
@@ -139,7 +154,7 @@
                                             onsubmit="event.preventDefault(); confirmAction(() => this.submit(), { text: 'This student will be deleted.', confirmButtonText: 'Delete', confirmButtonColor: '#C0524E' });">
                                             @csrf
                                             @method('DELETE')
-                                            <x-dropdown.dropdown-button type="submit" class="text-[#C0524E]">
+                                            <x-dropdown.dropdown-button type="submit">
                                                 Delete
                                             </x-dropdown.dropdown-button>
                                         </form>

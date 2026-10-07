@@ -57,7 +57,7 @@ class Student extends Model
 
     public function getInitialsAttribute(): string
     {
-        return \Illuminate\Support\Str::of($this->name)
+        return \Illuminate\Support\Str::of($this->fullname)
             ->explode(' ')
             ->map(fn($word) => $word[0] ?? '')
             ->take(2)

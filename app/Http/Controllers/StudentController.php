@@ -26,36 +26,47 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Student::with(['classroom.major']);
+        $schoolSetting = SchoolSetting::first();
+        $enrollmentYears = Student::select('enrollment_year')
+            ->whereNotNull('enrollment_year')
+            ->distinct()
+            ->orderBy('enrollment_year', 'desc')
+            ->pluck('enrollment_year');
 
-        if ($request->search) {
-
-            $query->where(
-                'name',
-                'like',
-                '%' . $request->search . '%'
-            );
-        }
-
-        if ($request->major) {
-            $query->whereHas(
-                'classroom.major',
-                function ($q) use ($request) {
-                    $q->where(
-                        'id',
-                        $request->major
-                    );
-                }
-            );
-        }
-
-        if ($request->classroom) {
-            $query->where('classroom_id', $request->classroom);
-        }
+        $query = Student::with(['classroom.major'])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('fullname', 'like', '%' . $request->search . '%');
+            })
+            ->when($request->filled('major'), function ($query) use ($request) {
+                $query->whereHas(
+                    'classroom.major',
+                    function ($q) use ($request) {
+                        $q->where(
+                            'id',
+                            $request->major
+                        );
+                    }
+                );
+            })
+            ->when($request->filled('level'), function ($query) use ($request) {
+                $query->whereHas(
+                    'classroom',
+                    function ($q) use ($request) {
+                        $q->where(
+                            'level',
+                            $request->level
+                        );
+                    }
+                );
+            })
+            ->when($request->filled('enrollment_year'), function ($query) use ($request) {
+                $query->where('enrollment_year', $request->enrollment_year);
+            });
 
         // SUMMARY
         $totalStudents = (clone $query)->count();
         $majorSummaries = Major::withCount(['students'])->get();
+
 
         $students = $query
             ->latest()
@@ -67,7 +78,14 @@ class StudentController extends Controller
 
         return view(
             'students.index',
-            compact('students', 'majors', 'majorSummaries', 'totalStudents')
+            compact(
+                'students',
+                'majors',
+                'enrollmentYears',
+                'majorSummaries',
+                'totalStudents',
+                'schoolSetting'
+            )
         );
     }
     /**

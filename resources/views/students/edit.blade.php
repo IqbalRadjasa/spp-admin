@@ -10,9 +10,8 @@
                         <i class="ri-user-add-line"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-[#6E3511]">Tambah Siswa Baru</h1>
-                        <p class="text-xs text-gray-600 mt-0.5">Isi formulir di bawah untuk mendaftarkan siswa ke sistem
-                            SPP.</p>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Edit Siswa</h1>
+                        <p class="text-xs text-gray-600 mt-0.5">Masukkan perubahan baru dan perbarui siswa ke sistem.</p>
                     </div>
                 </div>
             </div>

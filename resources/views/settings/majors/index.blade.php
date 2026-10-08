@@ -21,14 +21,14 @@
 
         <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.select-input name="is_active">
+                <form class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <x-form.select-input name="is_active" class="md:w-auto">
                         <option value="" @selected(request('is_active') === null || request('is_active') === '')>Semua Status</option>
                         <option value="1" @selected(request('is_active') === '1')>Aktif</option>
                         <option value="0" @selected(request('is_active') === '0')>Nonaktif</option>
                     </x-form.select-input>
 
-                    <x-form.select-input name="sort">
+                    <x-form.select-input name="sort" class="md:w-auto">
                         <option value="" {{ request('sort') == '' ? 'selected' : '' }}>
                             Terbaru
                         </option>
@@ -40,18 +40,17 @@
                         </option>
                     </x-form.select-input>
 
-                    {{-- Submit Button --}}
-                    <x-button.primary-button type="submit" class="w-full md:w-auto bg-[#597928] hover:bg-[#6E3511]">
-                        <i class="ri-filter-3-line mr-1"></i> Filter
-                    </x-button.primary-button>
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            Filter
+                        </x-button.primary-button>
 
-                    {{-- Reset Button (Only rendered when query parameters are active) --}}
-                    @if (request()->hasAny(['is_active', 'sort']))
-                        <a href="{{ route('settings.majors.index') }}"
-                            class="w-full md:w-auto text-center px-4 py-2 text-sm font-medium text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors">
-                            Reset
-                        </a>
-                    @endif
+                        @if (request()->hasAny(['is_active', 'sort']))
+                            <x-link-button.secondary-link :href="url()->current()">
+                                {{ __('Reset') }}
+                            </x-link-button.secondary-link>
+                        @endif
+                    </div>
                 </form>
 
 

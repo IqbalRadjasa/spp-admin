@@ -273,38 +273,116 @@ class StudentController extends Controller
     public function update(Request $request, Student $student, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'nis' => 'required|unique:students,nis,' . $student->id,
-            'classroom_id' => 'required',
-            'parent_phone' => 'required|string|max:20',
+            'fullname' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:100',
+            'nis' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('students', 'nis')->ignore($student->id)->whereNull('deleted_at'),
+            ],
+            'nisn' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('students', 'nisn')->ignore($student->id)->whereNull('deleted_at'),
+            ],
+            'gender' => 'required|in:L,P',
+            'place_of_birth' => 'nullable|string|max:100',
+            'date_of_birth' => 'nullable|date',
+            'religion' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'enrollment_year' => 'nullable|numeric',
+            'status' => 'required',
+            'classroom_id' => 'required|exists:classrooms,id',
+            'address' => 'nullable|string',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'parent_id' => 'nullable|exists:users,id',
+            'relationship' => 'nullable|string|max:50',
         ]);
 
+        DB::beginTransaction();
+
+        $newAvatarPath = null;
+        $oldAvatarPath = $student->avatar;
+
         try {
+            // 1. Handle Avatar Upload & Replacement
+            if ($request->hasFile('avatar')) {
+                $newAvatarPath = $request->file('avatar')->store('students/avatars', 'public');
+                $validated['avatar'] = $newAvatarPath;
+            }
+
+            // 2. Update Student Record
             $student->update([
-                'name' => $validated['name'],
+                'fullname' => $validated['fullname'],
+                'nickname' => $validated['nickname'] ?? null,
                 'nis' => $validated['nis'],
+                'nisn' => $validated['nisn'] ?? null,
+                'gender' => $validated['gender'],
+                'place_of_birth' => $validated['place_of_birth'] ?? null,
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'religion' => $validated['religion'] ?? null,
+                'phone' => !empty($validated['phone']) ? normalizePhone($validated['phone']) : null,
+                'enrollment_year' => $validated['enrollment_year'] ?? $student->enrollment_year,
+                'status' => $validated['status'],
                 'classroom_id' => $validated['classroom_id'],
-                'parent_phone' => normalizePhone($validated['parent_phone']),
+                'address' => $validated['address'] ?? null,
+                'avatar' => $validated['avatar'] ?? $student->avatar,
             ]);
 
+            // Delete previous avatar file from storage if a new one was uploaded successfully
+            if ($newAvatarPath && $oldAvatarPath && Storage::disk('public')->exists($oldAvatarPath)) {
+                Storage::disk('public')->delete($oldAvatarPath);
+            }
+
+            // 3. Update Parent Pivot Table Relation
+            if (!empty($validated['parent_id'])) {
+                $currentParentId = $student->parents->first()?->id;
+
+                $student->parents()->sync([
+                    $validated['parent_id'] => [
+                        'relationship' => $validated['relationship'] ?? 'father',
+                    ],
+                ]);
+
+                // Optional: Send notification if parent changed
+                if ($currentParentId !== (int) $validated['parent_id']) {
+                    $parent = User::find($validated['parent_id']);
+                    if ($parent) {
+                        $parent->notify(new StudentLinkedNotification($student));
+                    }
+                }
+            } else {
+                // Detach parent relationship if parent_id is cleared
+                $student->parents()->detach();
+            }
+
+            // 4. Log Activity
             $activityLog->log(
                 'updated',
                 'student',
                 $student->id,
-                'Updated Student ' .
-                    $student->name
+                'Updated Student ' . $student->fullname
             );
 
+            DB::commit();
 
             return redirect()
                 ->route('students.index')
-                ->with('success', 'Data updated successfully!');
+                ->with('success', 'Data siswa berhasil diperbarui!');
         } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Remove newly uploaded avatar if transaction failed
+            if ($newAvatarPath && Storage::disk('public')->exists($newAvatarPath)) {
+                Storage::disk('public')->delete($newAvatarPath);
+            }
 
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to update data!');
+                ->with('error', 'Gagal memperbarui data siswa: ' . $e->getMessage());
         }
     }
 

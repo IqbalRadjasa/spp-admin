@@ -68,7 +68,7 @@
                             class="w-full" />
                     </div>
 
-                    <x-form.select-input name="enrollment_year" class="w-full md:w-auto" id="enrollment-year-filter">
+                    <x-form.select-input name="enrollment_year" class="md:w-auto" id="enrollment-year-filter">
                         <option value="">Semua Angkatan / Tahun</option>
                         @foreach ($enrollmentYears as $year)
                             <option value="{{ $year }}" @selected(request('enrollment_year') == $year)>
@@ -77,7 +77,7 @@
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input id="level" name="level" class="w-full md:w-auto">
+                    <x-form.select-input id="level" name="level" class="md:w-auto">
                         <option value="">Semua Tingkat</option>
                         @foreach (classroomLevels() as $level)
                             <option value="{{ $level }}" @selected(request('level') == $level)>

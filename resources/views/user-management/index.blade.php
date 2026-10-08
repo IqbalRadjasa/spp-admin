@@ -89,7 +89,7 @@
 
                             <x-table.td>
                                 <x-table.badge variant="olive" class="capitalize">
-                                    {{ $user->role }}
+                                    {{ $user->role->value == 'tu_staff' ? 'TU Staff' : $user->role }}
                                 </x-table.badge>
                             </x-table.td>
 

@@ -50,12 +50,12 @@
             <div class="input-group md:col-span-2">
                 <x-form.input-label for="fullname" :value="__('Nama Lengkap')" class="text-xs font-semibold text-stone-700" />
                 <x-form.text-input id="fullname" class="block mt-1" type="text" name="fullname" :value="old('fullname', $mode === 'edit' && isset($user) ? $user->studentParent->fullname : '')"
-                    placeholder="Contoh: Budi Santoso" />
+                    placeholder="Contoh: Budi Santoso" required />
                 <x-form.input-error :messages="$errors->get('fullname')" class="mt-1" />
             </div>
 
             {{-- Nickname --}}
-            <div class="input-group">
+            <div class="input-group" x-show="role === 'parent'" x-cloak x-transition>
                 <x-form.input-label for="nickname" :value="__('Nama Panggilan')" class="text-xs font-semibold text-stone-700" />
                 <x-form.text-input id="nickname" class="block mt-1" type="text" name="nickname" :value="old('nickname', $mode === 'edit' && isset($user) ? $user->studentParent->nickname : '')"
                     placeholder="Contoh: Pak Budi atau Budi" />
@@ -76,7 +76,7 @@
                     <x-form.input-label for="email" :value="__('Email')"
                         class="text-xs font-semibold text-stone-700" />
                     <x-form.text-input id="email" class="block mt-1" type="email" name="email"
-                        :value="old('email', $mode === 'edit' && isset($user) ? $user->email : '')" placeholder="Contoh: orangtua@gmail.com" />
+                        :value="old('email', $mode === 'edit' && isset($user) ? $user->email : '')" placeholder="Contoh: orangtua@gmail.com" required />
                     <x-form.input-error :messages="$errors->get('email')" class="mt-1" />
                 </div>
             @endif
@@ -125,7 +125,8 @@
             <div class="input-group md:col-span-2 lg:col-span-3">
                 <x-form.input-label for="address" :value="__('Alamat Rumah')" class="text-xs font-semibold text-stone-700" />
                 <x-form.textarea class="mt-1" id="address" name="address" rows="3"
-                    placeholder="Jl. Mawar No. 45, RT 02/RW 05...">{{ old('address', $mode === 'edit' && isset($user) ? $user->studentParent->address : '') }}</x-form.textarea>
+                    placeholder="Jl. Mawar No. 45, RT 02/RW 05..."
+                    required>{{ old('address', $mode === 'edit' && isset($user) ? $user->studentParent->address : '') }}</x-form.textarea>
                 <x-form.input-error :messages="$errors->get('address')" class="mt-1" />
             </div>
 

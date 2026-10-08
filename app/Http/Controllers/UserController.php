@@ -57,9 +57,9 @@ class UserController extends Controller
                 'phone' => normalizePhone($request->phone),
             ]);
         }
-        
+
         $validated = $request->validate([
-            'role'              => ['required', new Enum(UserRole::class)],
+            'role'       => ['required', new Enum(UserRole::class)],
             'fullname'   => ['required', 'string', 'max:255'],
             'nickname'   => ['nullable', 'string', 'max:100'],
             'phone'      => ['required', 'string', 'max:20', Rule::unique('student_parents', 'phone')->whereNull('deleted_at')],
@@ -78,6 +78,8 @@ class UserController extends Controller
                 $user = User::create([
                     'name'     => $validated['fullname'],
                     'email'    => $validated['email'],
+                    'phone'     => normalizePhone($validated['phone']),
+                    'address'   => $validated['address'],
                     'password' => Hash::make($plainPassword),
                     'role'     => $validated['role'],
                 ]);
@@ -91,14 +93,6 @@ class UserController extends Controller
                         'relationship'      => $validated['relationship'],
                         'occupation_id'     => $validated['occupation_id'],
                         'occupation_custom' => $validated['occupation_custom'] ?? null,
-                        'address'           => $validated['address'],
-                    ]);
-                } else {
-                    StudentParent::create([
-                        'user_id'           => $user->id,
-                        'fullname'          => $validated['fullname'],
-                        'nickname'          => $validated['nickname'] ?? null,
-                        'phone'             => normalizePhone($validated['phone']),
                         'address'           => $validated['address'],
                     ]);
                 }
@@ -118,7 +112,6 @@ class UserController extends Controller
                 ->route('users.index')
                 ->with('success', "Pengguna berhasil dibuat. Kredensial login telah dikirim ke {$user->email}.");
         } catch (\Exception $e) {
-            dd($e);
             return redirect()
                 ->back()
                 ->withInput()

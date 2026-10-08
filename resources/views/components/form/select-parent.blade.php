@@ -1,14 +1,16 @@
 @props([
     'disabled' => false,
     'value' => null,
+    'selected' => null, // Object/Array containing { id, fullname, email, phone }
 ])
 
 <div x-data="{
-    value: '{{ $value ?? old('parent_id', '') }}',
+    value: '{{ old('parent_id', $value ?? '') }}',
+    selectedParent: {{ Js::from($selected) }},
     initTomSelect() {
         this.$nextTick(() => {
             if (typeof TomSelect === 'undefined') {
-                console.error('TomSelect is not loaded. Please check CDN or app.js imports.');
+                console.error('TomSelect is not loaded.');
                 return;
             }
 
@@ -16,7 +18,6 @@
                 valueField: 'id',
                 labelField: 'fullname',
                 searchField: ['fullname', 'phone', 'email'],
-                // Apply select-input styling directly to Tom Select wrapper
                 controlInput: '<input class=&quot;focus:outline-none focus:ring-0 border-none p-0 text-sm shadow-none&quot;>',
                 load: (query, callback) => {
                     if (!query.length) return callback();
@@ -31,6 +32,12 @@
                 }
             });
 
+            // If an initial selected parent object is provided, inject it into TomSelect options
+            if (this.selectedParent) {
+                ts.addOption(this.selectedParent);
+            }
+
+            // Set the active value (prioritizes old input after validation error)
             if (this.value) {
                 ts.setValue(this.value);
             }

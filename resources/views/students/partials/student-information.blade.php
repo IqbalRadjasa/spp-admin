@@ -148,8 +148,7 @@
         {{-- Parent Selection --}}
         <div class="input-group">
             <x-form.input-label for="parent_id" :value="__('Orang Tua / Wali')" />
-            <x-form.select-parent class="mt-1">
-            </x-form.select-parent>
+            <x-form.select-parent class="mt-1" :value="$mode === 'edit' ? $selectedParent['id'] : null" :selected="$mode === 'edit' ? $selectedParent : null" />
             <x-form.input-error :messages="$errors->get('parent_id')" class="mt-1" />
         </div>
 

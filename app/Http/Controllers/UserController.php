@@ -52,11 +52,17 @@ class UserController extends Controller
      */
     public function store(Request $request, ActivityLogService $activityLog)
     {
+        if ($request->filled('phone')) {
+            $request->merge([
+                'phone' => normalizePhone($request->phone),
+            ]);
+        }
+        
         $validated = $request->validate([
             'role'              => ['required', new Enum(UserRole::class)],
             'fullname'   => ['required', 'string', 'max:255'],
             'nickname'   => ['nullable', 'string', 'max:100'],
-            'phone'      => ['required', 'string', 'max:20'],
+            'phone'      => ['required', 'string', 'max:20', Rule::unique('student_parents', 'phone')->whereNull('deleted_at')],
             'email'      => ['required', 'string', 'email', Rule::unique('users', 'email')->whereNull('deleted_at')],
             'address'    => ['required', 'nullable', 'string'],
             // Conditional validations for Parent role
@@ -112,6 +118,7 @@ class UserController extends Controller
                 ->route('users.index')
                 ->with('success', "Pengguna berhasil dibuat. Kredensial login telah dikirim ke {$user->email}.");
         } catch (\Exception $e) {
+            dd($e);
             return redirect()
                 ->back()
                 ->withInput()

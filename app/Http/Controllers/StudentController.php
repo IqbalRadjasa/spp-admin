@@ -212,7 +212,6 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        // Eager load necessary relationships, including parents and pivot data
         $student->load([
             'classroom.major',
             'parents' => function ($query) {
@@ -221,7 +220,6 @@ class StudentController extends Controller
             'parents.studentParent.occupation',
         ]);
 
-        // Retrieve the primary linked parent (since single parent association is used)
         $parent = $student->parents->first();
 
         $majors = Major::all();
@@ -241,13 +239,34 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
+        $student->load([
+            'parents' => function ($query) {
+                $query->withPivot('relationship');
+            },
+        ]);
+
+        $parentModel = $student->parents->first();
+
+        // Map parent object for TomSelect initialization
+        $selectedParent = $parentModel ? [
+            'id' => $parentModel->id,
+            'fullname' => $parentModel->name ?? $parentModel->fullname,
+            'email' => $parentModel->email ?? '-',
+            'phone' => $parentModel->studentParent?->phone ?? $parentModel->phone ?? '-',
+        ] : null;
+
         $majors = Major::all();
         $classrooms = Classroom::all();
         $schoolSetting = SchoolSetting::first();
 
-        return view('students.edit', compact('student', 'classrooms', 'schoolSetting', 'majors'));
+        return view('students.edit', compact(
+            'student',
+            'selectedParent',
+            'classrooms',
+            'schoolSetting',
+            'majors'
+        ));
     }
-
     /**
      * Update the specified resource in storage.
      */

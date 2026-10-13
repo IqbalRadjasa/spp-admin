@@ -38,6 +38,7 @@ import {
     confirmAction,
     successAlert,
     errorAlert,
+    confirmAndSubmit,
 } from "./helpers/sweetalert";
 
 window.toastError = toastError;
@@ -47,6 +48,7 @@ window.errorAlert = errorAlert;
 window.successAlert = successAlert;
 window.confirmDelete = confirmDelete;
 window.confirmAction = confirmAction;
+window.confirmAndSubmit = confirmAndSubmit;
 
 document.addEventListener("DOMContentLoaded", () => {
     // For Classroom Create Form

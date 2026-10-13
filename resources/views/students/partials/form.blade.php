@@ -1,5 +1,14 @@
-<form action="{{ $mode === 'create' ? route('students.store') : route('students.update', $student->id) }}" method="POST"
-    enctype="multipart/form-data" class="space-y-6">
+<form id="studentForm"
+    action="{{ $mode === 'create' ? route('students.store') : route('students.update', $student->id) }}" method="POST"
+    enctype="multipart/form-data" class="space-y-6" x-data="{
+        submitForm() {
+            confirmAndSubmit('studentForm', {
+                title: `{{ $mode === 'create' ? 'Simpan Data?' : 'Simpan Perubahan?' }}`,
+                text: 'Pastikan data siswa sudah benar.',
+                confirmButtonColor: '#597928',
+            });
+        }
+    }" @submit.prevent="submitForm">
     @csrf
     @if ($mode == 'edit')
         @method('PUT')
@@ -20,3 +29,31 @@
         </x-button.primary-button>
     </div>
 </form>
+
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            errorAlert({
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+            })
+        });
+    </script>
+@endif
+
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let errorMessages = '<ul style="text-align: left; margin-top: 10px; padding-left: 20px;">';
+            @foreach ($errors->all() as $error)
+                errorMessages += '<li style="font-size: 13px; color: #555;">{{ $error }}</li>';
+            @endforeach
+            errorMessages += '</ul>';
+
+            errorAlert({
+                title: 'Validasi Gagal!',
+                html: 'Mohon periksa kembali inputan Anda:' + errorMessages,
+            })
+        });
+    </script>
+@endif

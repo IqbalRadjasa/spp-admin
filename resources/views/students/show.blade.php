@@ -35,7 +35,7 @@
                     <div class="relative z-10 pt-4 flex flex-col items-center">
                         <div class="w-20 h-20 rounded-2xl bg-white p-1 shadow-md">
                             <div
-                                class="w-full h-full rounded-xl bg-[#FCECD8] text-[#6E3511] flex items-center justify-center font-black text-2xl uppercase border border-stone-200/50">
+                                class="w-full h-full rounded-xl bg-[#FCECD8] text-[#6E3511] flex items-center justify-center font-black text-2xl uppercase border border-stone-200/50 overflow-hidden">
                                 @if ($student->avatar)
                                     <img src="{{ asset('storage/' . $student->avatar) }}" alt="{{ $student->fullname }}"
                                         class="w-full h-full object-cover">

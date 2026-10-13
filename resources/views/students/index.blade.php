@@ -99,18 +99,18 @@
 
                     <div class="flex items-center gap-2">
                         <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
-                            Filter
+                            <i class="ri-filter-3-line mr-1"></i> Filter
                         </x-button.primary-button>
 
                         @if (request()->hasAny(['search', 'major']))
                             <x-link-button.secondary-link :href="url()->current()">
-                                {{ __('Reset') }}
+                                <i class="ri-refresh-line"></i> Reset
                             </x-link-button.secondary-link>
                         @endif
                     </div>
                 </form>
 
-                <x-table :headers="['Nama', 'NIS', 'Kelas', 'Tahun Pendaftaran', 'Aksi']" :empty="$students->isEmpty()">
+                <x-table :headers="['Nama', 'NIS', 'Kelas', 'Tahun Pendaftaran', 'Status', 'Aksi']" :empty="$students->isEmpty()">
                     @foreach ($students as $student)
                         <x-table.tr>
                             <x-table.td>
@@ -133,6 +133,14 @@
                             </x-table.td>
 
                             <x-table.td>
+                                <x-table.badge
+                                    variant="{{ optional($student->status)->value === 'active' ? 'olive' : 'danger' }}"
+                                    class="capitalize">
+                                    {{ $student->status->value ?? $student->status }}
+                                </x-table.badge>
+                            </x-table.td>
+
+                            <x-table.td>
                                 <x-dropdown.dropdown align="right" width="48">
                                     <x-slot name="trigger">
                                         <button type="button"
@@ -151,7 +159,13 @@
                                         </x-dropdown.dropdown-link>
 
                                         <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                            onsubmit="event.preventDefault(); confirmAction(() => this.submit(), { text: 'This student will be deleted.', confirmButtonText: 'Delete', confirmButtonColor: '#C0524E' });">
+                                            onsubmit="
+                                                event.preventDefault();
+                                                confirmAction(() => this.submit(), {
+                                                    text: 'This student will be deleted.',
+                                                    confirmButtonText: 'Delete',
+                                                    confirmButtonColor: '#C0524E'
+                                                });">
                                             @csrf
                                             @method('DELETE')
                                             <x-dropdown.dropdown-button type="submit">

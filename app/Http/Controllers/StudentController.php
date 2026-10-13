@@ -33,7 +33,15 @@ class StudentController extends Controller
             ->orderBy('enrollment_year', 'desc')
             ->pluck('enrollment_year');
 
-        $query = Student::with(['classroom.major'])
+        $query = Student::select(['id', 'fullname', 'nickname', 'nis', 'classroom_id', 'avatar', 'enrollment_year', 'status'])
+            ->with([
+                'classroom' => function ($q) {
+                    $q->select(['id', 'class_number', 'level', 'major_id']);
+                },
+                'classroom.major' => function ($q) {
+                    $q->select(['id', 'name', 'code']);
+                }
+            ])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('fullname', 'like', '%' . $request->search . '%');
             })
@@ -72,6 +80,8 @@ class StudentController extends Controller
             ->latest()
             ->paginate(5)
             ->withQueryString();
+
+        // dd($students);
 
         $majors = Major::all();
 
@@ -127,16 +137,16 @@ class StudentController extends Controller
                 Rule::unique('students', 'nisn')->whereNull('deleted_at'),
             ],
             'gender' => 'required|in:L,P',
-            'place_of_birth' => 'nullable|string|max:100',
-            'date_of_birth' => 'nullable|date',
-            'religion' => 'nullable|string',
-            'phone' => 'nullable|string|max:20',
-            'enrollment_year' => 'nullable|numeric',
+            'place_of_birth' => 'required|string|max:100',
+            'date_of_birth' => 'required|date',
+            'religion' => 'required|string',
+            'phone' => 'required|string|max:20',
+            'enrollment_year' => 'required|numeric',
             'status' => 'required',
             'classroom_id' => 'required|exists:classrooms,id',
-            'address' => 'nullable|string',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'parent_id' => 'nullable|exists:users,id', // Single ID check
+            'address' => 'required|string',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'parent_id' => 'required|exists:users,id', // Single ID check
         ]);
 
         DB::beginTransaction();

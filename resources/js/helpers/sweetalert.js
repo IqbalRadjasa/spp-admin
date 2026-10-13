@@ -32,11 +32,13 @@ export function successAlert(message) {
     });
 }
 
-export function errorAlert(message) {
+export function errorAlert(options = {}) {
     Swal.fire({
         icon: "error",
-        title: "Error",
-        text: message,
+        title: options.title ?? "Error",
+        html: options.html ?? "",
+        text: options.message,
+        confirmButtonColor: "#597928",
     });
 }
 
@@ -55,6 +57,7 @@ export function confirmDelete(callback) {
         }
     });
 }
+
 export function confirmAction(callback, options = {}) {
     Swal.fire({
         title: options.title ?? "Konfirmasi Tindakan?",
@@ -68,6 +71,42 @@ export function confirmAction(callback, options = {}) {
     }).then((result) => {
         if (result.isConfirmed) {
             callback();
+        }
+    });
+}
+
+export function confirmAndSubmit(formId, options = {}) {
+    Swal.fire({
+        title: options.title ?? "Simpan Data?",
+        text: options.text ?? "Pastikan data sudah benar.",
+        icon: options.icon ?? "question",
+        showCancelButton: true,
+        confirmButtonColor: options.confirmButtonColor ?? "#597928",
+        cancelButtonColor: options.cancelButtonColor ?? "#d33",
+        confirmButtonText: options.confirmButtonText ?? "Ya, Simpan!",
+        cancelButtonText: options.cancelButtonText ?? "Batal",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state automatically
+            Swal.fire({
+                title: options.loadingTitle ?? "Sedang Menyimpan...",
+                text:
+                    options.loadingText ??
+                    "Mohon tunggu sebentar, data sedang diproses.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            // Submit the form dynamically by ID
+            const form = document.getElementById(formId);
+            if (form) {
+                form.submit();
+            } else {
+                console.error(`Form with ID "${formId}" not found.`);
+            }
         }
     });
 }

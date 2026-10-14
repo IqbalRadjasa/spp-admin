@@ -4,9 +4,9 @@
         <div
             class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center justify-center flex-col md:flex-row gap-4">
                     <div
-                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        class="w-10 h-10 md:w-12 md:h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
                         <i class="ri-graduation-cap-line"></i>
                     </div>
                     <div>
@@ -14,9 +14,15 @@
                     </div>
                 </div>
 
-                <x-link-button.secondary-link :href="route('students.edit', $student->id)" icon="ri-edit-line" class="">
-                    Edit Siswa
-                </x-link-button.secondary-link>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <x-link-button.secondary-link :href="route('students.index')" icon="ri-arrow-left-circle-line" class="">
+                        Kembali
+                    </x-link-button.secondary-link>
+
+                    <x-link-button.secondary-link :href="route('students.edit', $student->id)" icon="ri-edit-line" class="">
+                        Edit Siswa
+                    </x-link-button.secondary-link>
+                </div>
             </div>
         </div>
 

@@ -34,7 +34,7 @@ enum StudentStatus: string
     public static function casesForMode(string $mode): array
     {
         if ($mode === 'create') {
-            return [self::ACTIVE, self::INACTIVE];
+            return [self::ACTIVE];
         }
 
         return self::cases();

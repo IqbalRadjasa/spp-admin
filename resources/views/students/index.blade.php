@@ -1,3 +1,5 @@
+@use('App\Enums\StudentStatus')
+
 <x-app-layout>
     <div class="py-6 space-y-6">
         <div
@@ -24,7 +26,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                 {{-- Always Visible: Grand Total --}}
-                <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Students"
+                <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Siswa Aktif"
                     value="{{ $totalStudents }}" icon="ri-group-fill" />
 
                 {{-- Always Visible: First 2 Majors --}}
@@ -68,7 +70,7 @@
                             class="w-full" />
                     </div>
 
-                    <x-form.select-input name="enrollment_year" class="md:w-auto" id="enrollment-year-filter">
+                    <x-form.select-input name="enrollment_year" class="md:w-32" id="enrollment-year-filter">
                         <option value="">Semua Angkatan / Tahun</option>
                         @foreach ($enrollmentYears as $year)
                             <option value="{{ $year }}" @selected(request('enrollment_year') == $year)>
@@ -77,7 +79,7 @@
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input id="level" name="level" class="md:w-auto">
+                    <x-form.select-input id="level" name="level" class="md:w-32">
                         <option value="">Semua Tingkat</option>
                         @foreach (classroomLevels() as $level)
                             <option value="{{ $level }}" @selected(request('level') == $level)>
@@ -87,7 +89,7 @@
                     </x-form.select-input>
 
                     @if (in_array($schoolSetting->education_level, ['SMA', 'SMK']))
-                        <x-form.select-input id="major_id" name="major_id" class="w-full md:w-auto">
+                        <x-form.select-input id="major_id" name="major_id" class="md:w-auto">
                             <option value="">Semua Jurusan</option>
                             @foreach ($majors as $major)
                                 <option value="{{ $major->id }}" @selected(request('major_id') == $major->id)>
@@ -96,6 +98,15 @@
                             @endforeach
                         </x-form.select-input>
                     @endif
+
+                    <x-form.select-input id="status" name="status" class="md:w-40">
+                        <option value="">Semua Status</option>
+                        @foreach (StudentStatus::cases() as $status)
+                            <option value="{{ $status->value }}" @selected(request('status') == $status->value)>
+                                {{ $status->label() }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
 
                     <div class="flex items-center gap-2">
                         <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">

@@ -69,10 +69,15 @@ class StudentController extends Controller
             })
             ->when($request->filled('enrollment_year'), function ($query) use ($request) {
                 $query->where('enrollment_year', $request->enrollment_year);
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
             });
 
         // SUMMARY
-        $totalStudents = (clone $query)->count();
+        $totalStudents = (clone $query)
+            ->where('status', 'active')
+            ->count();
         $majorSummaries = Major::withCount(['students'])->get();
 
 

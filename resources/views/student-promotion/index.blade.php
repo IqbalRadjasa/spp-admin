@@ -1,129 +1,101 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between pb-6 gap-2">
-            <h1 class="font-semibold text-xl">
-                Student Promotions
-            </h1>
-
-            <div class="flex flex-col lg:flex-row lg:items-center gap-2">
-                <h1 class="text-sm">
-                    Preview Scope:
-                </h1>
-
-                <div
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 w-full sm:w-auto">
-                    <i class="ri-user-3-line text-3xl text-gray-500"></i>
-
-                    <div>
-                        <p class="text-xs text-gray-500">
-                            Total Students
-                        </p>
-
-                        <p class="font-bold text-lg text-gray-600">
-                            {{ $summary['total_students'] }}
-                        </p>
+    <div class="py-6 space-y-6">
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-graduation-cap-line"></i>
                     </div>
-                </div>
-
-                <div
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-yellow-200 bg-yellow-50 w-full sm:w-auto">
-                    <i class="ri-award-fill text-3xl text-yellow-500"></i>
-
                     <div>
-                        <p class="text-xs text-gray-500">
-                            Will Promote
-                        </p>
-
-                        <p class="font-bold text-lg text-yellow-600">
-                            {{ $summary['promote_count'] }}
-                        </p>
-                    </div>
-                </div>
-
-                <div
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg border border-green-200 bg-green-50 w-full sm:w-auto">
-                    <i class="ri-graduation-cap-line text-3xl text-green-500"></i>
-
-                    <div>
-                        <p class="text-xs text-gray-500">
-                            Will Graduate
-                        </p>
-
-                        <p class="font-bold text-lg text-green-600">
-                            {{ $summary['graduate_count'] }}
-                        </p>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Kenaikan Kelas Siswa</h1>
                     </div>
                 </div>
             </div>
-
-            {{-- <x-link-button.primary-link :href="route('students.create')" icon="ri-add-line" class="">
-                Add Student
-            </x-link-button.primary-link> --}}
         </div>
 
-        <div class="bg-white shadow-sm rounded-lg">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+            {{-- Always Visible: Grand Total --}}
+            <x-widget-summary title="Total Siswa Aktif" value="{{ $summary['total_students'] }}" icon="ri-group-fill" />
+
+            <x-widget-summary title="Siswa Naik Kelas" value="{{ $summary['promote_count'] }}" icon="ri-award-fill" />
+
+            <x-widget-summary title="Siswa Lulus" value="{{ $summary['graduate_count'] }}"
+                icon="ri-graduation-cap-line" />
+        </div>
+
+        <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
-                        class="w-full md:w-80" />
+                <form method="GET" action="{{ url()->current() }}"
+                    class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <div class="w-full sm:w-72 md:w-80">
+                        <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Cari siswa"
+                            class="w-full" />
+                    </div>
 
-                    <x-form.select-input name="major" id="major-filter">
-                        <option value="">All</option>
-
-                        @foreach ($majors as $major)
-                            <option value="{{ $major->id }}" @selected(request('major') == $major->id)>
-                                {{ $major->name }}
+                    <x-form.select-input id="level" name="level" class="md:w-40">
+                        <option value="">Semua Tingkat</option>
+                        @foreach (classroomLevels() as $level)
+                            <option value="{{ $level }}" @selected(request('level') == $level)>
+                                Tingkat {{ $level }}
                             </option>
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input name="classroom" id="classroom-filter" data-placeholder="All">
-                    </x-form.select-input>
+                    @if (in_array($schoolSetting->education_level, ['SMA', 'SMK']))
+                        <x-form.select-input id="major_id" name="major_id" class="md:w-auto">
+                            <option value="">Semua Jurusan</option>
+                            @foreach ($majors as $major)
+                                <option value="{{ $major->id }}" @selected(request('major_id') == $major->id)>
+                                    {{ $major->name }} ({{ $major->code }})
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
+                    @endif
 
-                    <x-button.primary-button class="w-full md:w-auto">
-                        Filter
-                    </x-button.primary-button>
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            <i class="ri-filter-3-line mr-1"></i> Filter
+                        </x-button.primary-button>
+
+                        @if (request()->hasAny(['search', 'major']))
+                            <x-link-button.secondary-link :href="url()->current()">
+                                <i class="ri-refresh-line"></i> Reset
+                            </x-link-button.secondary-link>
+                        @endif
+                    </div>
                 </form>
 
-                <div class="overflow-x-auto mb-3">
-                    <table id="studentsTable" class="min-w-full min-w-[700px]">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Current Classroom</th>
-                                <th>Next Classroom</th>
-                            </tr>
-                        </thead>
+                <x-table :headers="['Nama', 'NIS', 'Kelas Saat Ini', 'Kelas Selanjutnya']" :empty="$promotions->isEmpty()">
+                    @foreach ($promotions as $promotion)
+                        <x-table.tr>
+                            <x-table.td>
+                                {{ $promotion->fullname }}
+                            </x-table.td>
 
-                        <tbody>
-                            @foreach ($promotions as $student)
-                                <tr>
-                                    <td>{{ $student->name }}</td>
+                            <x-table.td>
+                                {{ $promotion->nis }}
+                            </x-table.td>
 
-                                    <td>
-                                        {{ $student->classroom->display_name }}
-                                    </td>
+                            <x-table.td>
+                                <x-table.code-pill>{{ $promotion->classroom->display_name }}</x-table.code-pill>
+                            </x-table.td>
 
-                                    <td>
-                                        @if ($student->graduated)
-                                            <span
-                                                class="bg-green-100 text-green-500 font-semibold py-1 px-2 text-sm rounded-md">
-                                                Graduated
-                                            </span>
-                                        @else
-                                            <span
-                                                class="bg-yellow-100 text-yellow-500 font-semibold py-1 px-2 text-sm rounded-md">
-                                                {{ $student->next_classroom->display_name }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-                </div>
+                            <x-table.td>
+                                @if ($promotion->is_graduating)
+                                    <x-table.badge variant="cream">
+                                        Lulus
+                                    </x-table.badge>
+                                @else
+                                    <x-table.badge variant="olive">
+                                        {{ $promotion->next_classroom->display_name ?? 'N/A' }}
+                                    </x-table.badge>
+                                @endif
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
 
                 {{ $promotions->links() }}
             </div>

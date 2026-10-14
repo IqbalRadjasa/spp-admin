@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Major;
-
+use App\Models\SchoolSetting;
 use App\Services\StudentPromotionService;
 
 use Illuminate\Http\Request;
@@ -15,8 +15,11 @@ class StudentPromotionController extends Controller
      */
     public function index(Request $request, StudentPromotionService $service)
     {
-        $data  = $service->getPromotionPreview($request?->search, $request?->major, $request?->classroom);
+        $schoolSetting = SchoolSetting::first();
+        $data  = $service->getPromotionPreview($request?->search, $request?->major, $request?->level);
         $majors = Major::all();
+
+        // dd($data);
 
         return view(
             'student-promotion.index',
@@ -24,6 +27,7 @@ class StudentPromotionController extends Controller
                 'majors' => $majors,
                 'promotions' => $data['students'],
                 'summary' => $data['summary'],
+                'schoolSetting' => $schoolSetting
             ]
         );
     }

@@ -24,7 +24,6 @@
         <div x-data="{ open: false }" class="mb-6">
             {{-- Grid Wrapper --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
                 {{-- Always Visible: Grand Total --}}
                 <x-widget-summary class="md:col-span-2 lg:col-span-2" title="Total Siswa Aktif"
                     value="{{ $totalStudents }}" icon="ri-group-fill" />
@@ -44,7 +43,6 @@
                         </div>
                     </template>
                 @endif
-
             </div>
 
             {{-- Toggle Button (Only shows if more than 2 majors exist) --}}

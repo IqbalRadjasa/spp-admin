@@ -9,31 +9,40 @@
 <header x-data="{ openProfile: false }"
     class="bg-stone-50/90 backdrop-blur-md border-b border-stone-200/80 h-16 flex items-center justify-between px-4 py-3 sticky z-40">
 
-    <div>
+    {{-- Left Side: Mobile Menu & Active Academic Year Badge --}}
+    <div class="flex items-center gap-3">
         <button class="md:hidden px-3 py-2 rounded bg-gray-200 flex items-center" @click="mobileSidebarOpen = true">
             <i class="ri-menu-line text-2xl"></i>
         </button>
+
+        {{-- Active Academic Year Indicator --}}
+        @php
+            $activeAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+        @endphp
+
+        <div
+            class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
+            <i class="ri-calendar-line text-[#597928] text-base"></i>
+            <span>Tahun Akademik:</span>
+            <span class="text-[#597928] font-bold">
+                {{ $activeAcademicYear ? $activeAcademicYear->name : 'Belum Atur Aktif' }}
+            </span>
+        </div>
     </div>
 
-
+    {{-- Right Side: Profile Dropdown --}}
     <div class="">
-        {{-- Theme Toggle --}}
-        {{-- <div class="flex items-center ml-5">
-            <button class="px-3 py-2 rounded bg-gray-200">
-                🌙
-            </button>
-        </div> --}}
         <x-dropdown.dropdown align="right" width="48">
             <x-slot name="trigger">
                 <button @click="openProfile = !openProfile" type="button"
                     class="flex items-center gap-3 px-3 py-1.5 rounded-xl border border-stone-200/80 bg-white hover:bg-[#FCECD8]/40 transition-all duration-200 shadow-2xs group focus:outline-none focus:ring-2 focus:ring-[#597928]/30"
-                    :class="{ 'bg-[#FCECD8]/50 border-[#91AC67]/50': openProfile }">
+                    class:list="{ 'bg-[#FCECD8]/50 border-[#91AC67]/50': openProfile }">
 
                     {{-- Avatar with Accent Ring --}}
                     <div class="relative shrink-0">
                         <div
                             class="w-8 h-8 rounded-full bg-[#597928] text-white font-bold text-xs flex items-center justify-center ring-2 ring-[#91AC67]/40 shadow-2xs group-hover:scale-105 transition-transform duration-200">
-                            {{ $initials }}
+                            {{ $initials ?? 'AD' }}
                         </div>
                         <span
                             class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
@@ -45,9 +54,6 @@
                             <span class="text-sm font-bold text-stone-800 leading-snug">
                                 {{ Auth::user()->name }}
                             </span>
-                            {{-- <span class="text-[10px] font-medium text-stone-500 leading-none">
-                                {{ Auth::user()->role ?? 'Administrator' }}
-                            </span> --}}
                         @endauth
                     </div>
 
@@ -59,6 +65,12 @@
             </x-slot>
 
             <x-slot name="content">
+                {{-- Optional Mobile View Academic Year Item Inside Dropdown --}}
+                <div class="block md:hidden px-4 py-2 text-xs font-medium text-stone-500 border-b border-stone-100">
+                    TA Aktif: <span
+                        class="font-bold text-[#597928]">{{ $activeAcademicYear ? $activeAcademicYear->name : '-' }}</span>
+                </div>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 

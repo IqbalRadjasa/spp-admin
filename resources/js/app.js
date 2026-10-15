@@ -25,7 +25,6 @@ import {
 
 import { initializeClassroomPreview } from "./classroom/classroom-preview";
 import { initializeStudentFilter } from "./student/student-filter";
-import { initializeAcademicYears } from "./academic-years/academic-years";
 
 import collapse from "@alpinejs/collapse";
 

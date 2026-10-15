@@ -90,30 +90,33 @@ class BillController extends Controller
         DB::enableQueryLog();
 
         $validated = $request->validate([
-            'billing_period' => 'required',
+            'month' => 'required|digits:2|between:01,12',
+            'year'  => 'required|digits:4|integer|between:2000,2100',
             'amount' => 'required|integer|min:1'
         ]);
 
-        $exists = Bill::where('billing_period', $validated['billing_period'])->exists();
+        $billingPeriod = $validated['year'] . '-' . $validated['month'];
+
+        $exists = Bill::where('billing_period', $billingPeriod)->exists();
 
         if ($exists) {
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Billing period has been registered.');
+                ->with('error', 'Periode tagihan telah terdaftar');
         }
 
         $students = Student::all();
 
         try {
             DB::transaction(
-                function () use ($validated, $students, $activityLog) {
+                function () use ($billingPeriod, $validated, $students, $activityLog) {
                     foreach ($students as $student) {
                         Bill::firstOrCreate(
                             [
                                 'student_id' => $student->id,
                                 'academic_year_id' => activeAcademicYear()->id,
-                                'billing_period' => $validated['billing_period']
+                                'billing_period' => $billingPeriod
                             ],
                             [
                                 'amount' => $validated['amount'],
@@ -123,23 +126,24 @@ class BillController extends Controller
                     }
 
                     $activityLog->log(
-                        'generate bills',
-                        'bill',
+                        'buat tagihan',
+                        'tagihan',
                         null,
-                        'Bills Generated ' .
-                            $validated['billing_period']
+                        'Tagihan telah dibuat ' . $billingPeriod
                     );
                 }
             );
 
             return redirect()
                 ->back()
-                ->with('success', 'Bill successfully generated!');
-        } catch (\Exception $th) {
+                ->with('success', 'Tagihan berhasil dibuat!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Something went wrong, please try again later.');
+                ->with('error', 'Gagal membuat tagihan: ' . $e->getMessage());
         }
     }
 }

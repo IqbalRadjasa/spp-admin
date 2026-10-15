@@ -27,13 +27,22 @@
 
             {{-- Form Body --}}
             <div class="p-8">
-                <form action="{{ route('bills.generate') }}" method="POST" x-data="{
-                    selectedMonth: '07',
-                    selectedYear: '{{ $startYear }}',
-                    get finalPeriod() {
-                        return this.selectedYear + '-' + this.selectedMonth;
-                    }
-                }">
+                <form id="generateBillsForm" action="{{ route('bills.generate') }}" method="POST"
+                    x-data="{
+                        selectedMonth: '07',
+                        selectedYear: '{{ $startYear }}',
+                        get finalPeriod() {
+                            return this.selectedYear + '-' + this.selectedMonth;
+                        },
+                        submitForm() {
+                            confirmAndSubmit('generateBillsForm', {
+                                title: 'Konfirmasi Tindakan?',
+                                text: 'Pastikan periode dan jumlah tagihan sudah benar.',
+                                confirmButtonText: 'Buat',
+                                confirmButtonColor: '#597928',
+                            });
+                        }
+                    }" @submit.prevent="submitForm">
                     @csrf
 
                     {{-- Hidden input to submit the combined YYYY-MM format to backend --}}
@@ -49,8 +58,9 @@
 
                             <div class="grid grid-cols-2 gap-2 mt-1">
                                 {{-- Month Select --}}
-                                <select x-model="selectedMonth" id="month_selector"
-                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm">
+                                <select x-model="selectedMonth" id="month_selector" name="month"
+                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm"
+                                    required>
                                     <option value="01">Januari</option>
                                     <option value="02">Februari</option>
                                     <option value="03">Maret</option>
@@ -66,8 +76,9 @@
                                 </select>
 
                                 {{-- Year Select derived from active academic year --}}
-                                <select x-model="selectedYear"
-                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm font-semibold text-[#597928]">
+                                <select x-model="selectedYear" name="year"
+                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm font-semibold text-[#597928]"
+                                    required>
                                     @if ($activeAcademicYear)
                                         <option value="{{ $year1 }}">{{ $year1 }}</option>
                                         <option value="{{ $year2 }}">{{ $year2 }}</option>
@@ -118,7 +129,7 @@
 
                         <x-button.primary-button class="justify-center gap-2 bg-[#597928] hover:bg-[#486320]">
                             <i class="ri-flashlight-line"></i>
-                            {{ __('Generate Tagihan Sekarang') }}
+                            {{ __('Buat Tagihan Sekarang') }}
                         </x-button.primary-button>
                     </div>
                 </form>

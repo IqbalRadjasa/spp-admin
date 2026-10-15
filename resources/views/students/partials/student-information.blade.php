@@ -72,12 +72,12 @@
         </div>
 
         {{-- NIS --}}
-        <div class="input-group">
+        {{-- <div class="input-group">
             <x-form.input-label for="nis" :value="__('NIS')" :is-required="true" />
             <x-form.text-input id="nis" class="mt-1 " type="text" name="nis" :value="old('nis', $mode === 'edit' ? $student->nis : '')" required
                 placeholder="Contoh: 1029384" />
             <x-form.input-error :messages="$errors->get('nis')" class="mt-1" />
-        </div>
+        </div> --}}
 
         {{-- NISN --}}
         <div class="input-group">
@@ -138,12 +138,12 @@
         </div>
 
         {{-- Enrollment Year --}}
-        <div class="input-group">
+        {{-- <div class="input-group">
             <x-form.input-label for="enrollment_year" :is-required="true" :value="__('Tahun Pendaftaran')" />
             <x-form.text-input id="enrollment_year" class="mt-1 " type="number" name="enrollment_year"
                 :value="old('enrollment_year', $mode === 'edit' ? $student->enrollment_year : date('Y'))" placeholder="e.g. 2024" min="2000" max="2099" required />
             <x-form.input-error :messages="$errors->get('enrollment_year')" class="mt-1" />
-        </div>
+        </div> --}}
 
         {{-- Parent Selection --}}
         <div class="input-group">

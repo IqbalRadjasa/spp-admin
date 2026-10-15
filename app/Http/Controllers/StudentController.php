@@ -12,7 +12,7 @@ use App\Models\StudentParent;
 use App\Services\ActivityLogService;
 
 use App\Notifications\StudentLinkedNotification;
-
+use App\Services\StudentService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
+    public function __construct(StudentService $studentService)
+    {
+        $this->studentService = $studentService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -129,16 +134,16 @@ class StudentController extends Controller
         $validated = $request->validate([
             'fullname' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:100',
-            'nis' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('students', 'nis')->whereNull('deleted_at'), // Handles soft-deletes correctly
-            ],
+            // 'nis' => [
+            //     'required',
+            //     'string',
+            //     'max:10',
+            //     Rule::unique('students', 'nis')->whereNull('deleted_at'), // Handles soft-deletes correctly
+            // ],
             'nisn' => [
                 'nullable',
                 'string',
-                'max:50',
+                'max:10',
                 Rule::unique('students', 'nisn')->whereNull('deleted_at'),
             ],
             'gender' => 'required|in:L,P',
@@ -146,7 +151,6 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'religion' => 'required|string',
             'phone' => 'required|string|max:20',
-            'enrollment_year' => 'required|numeric',
             'status' => 'required',
             'classroom_id' => 'required|exists:classrooms,id',
             'address' => 'required|string',
@@ -156,8 +160,6 @@ class StudentController extends Controller
 
         DB::beginTransaction();
 
-        // $parent = User::find($validated['parent_id']);
-        // dd($parent);
         try {
             if ($request->hasFile('avatar')) {
                 $validated['avatar'] = $request->file('avatar')->store('students/avatars', 'public');
@@ -167,28 +169,29 @@ class StudentController extends Controller
             $student = Student::create([
                 'fullname' => $validated['fullname'],
                 'nickname' => $validated['nickname'] ?? null,
-                'nis' => $validated['nis'],
+                'nis' => 'TEMP',
                 'nisn' => $validated['nisn'] ?? null,
                 'gender' => $validated['gender'],
                 'place_of_birth' => $validated['place_of_birth'] ?? null,
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
                 'religion' => $validated['religion'] ?? null,
                 'phone' => !empty($validated['phone']) ? normalizePhone($validated['phone']) : null,
-                'enrollment_year' => $validated['enrollment_year'] ?? date('Y'),
+                'enrollment_year' => now()->format('Y'),
                 'status' => $validated['status'],
                 'classroom_id' => $validated['classroom_id'],
                 'address' => $validated['address'] ?? null,
                 'avatar' => $validated['avatar'] ?? null,
             ]);
 
+            $this->studentService->generateNIS($student);
+
             if (!empty($validated['parent_id'])) {
                 $student->parents()->sync([
                     $validated['parent_id'] => [
-                        'relationship' => $validated['relationship'] ?? 'father', // Or $request->relationship
+                        'relationship' => $validated['relationship'] ?? 'father',
                     ],
                 ]);
 
-                // Find parent and send notification
                 $parent = User::find($validated['parent_id']);
                 if ($parent) {
                     $parent->notify(new StudentLinkedNotification($student));

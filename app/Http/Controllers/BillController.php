@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear;
 use App\Models\Student;
 use App\Models\Bill;
 
@@ -68,7 +69,20 @@ class BillController extends Controller
 
     public function generateForm()
     {
-        return view('bills.generate');
+        $activeAcademicYear = activeAcademicYear();
+
+        $startYear = $activeAcademicYear
+            ? substr(trim($activeAcademicYear->name), 0, 4)
+            : now()->format('Y');
+
+        [$year1, $year2] = explode('/', str_replace(' ', '', $activeAcademicYear->name));
+
+        return view('bills.generate', compact(
+            'activeAcademicYear',
+            'startYear',
+            'year1',
+            'year2',
+        ));
     }
 
     public function generateBills(Request $request, ActivityLogService $activityLog)

@@ -210,7 +210,6 @@ class StudentController extends Controller
                 ->with('success', 'Data siswa berhasil ditambahkan dan orang tua telah diberi notifikasi!');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
 
             if (isset($validated['avatar'])) {
                 Storage::disk('public')->delete($validated['avatar']);

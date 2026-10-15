@@ -44,13 +44,14 @@ export function errorAlert(options = {}) {
 
 export function confirmDelete(callback) {
     Swal.fire({
-        title: "Delete Data?",
-        text: "This action cannot be undone.",
+        title: "Hapus Data?",
+        text: "Tindakan ini tidak dapat dibatalkan.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: "Delete",
+        confirmButtonText: "Hapus",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Batal",
     }).then((result) => {
         if (result.isConfirmed) {
             callback();

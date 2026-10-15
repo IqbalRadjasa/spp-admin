@@ -11,20 +11,25 @@ export function initializeAcademicYears() {
         $("[data-input-error]").text("");
     });
 
-    $("#create-academic-year-form").on("submit", function (e) {
+    // Use Event Delegation so it works even if the form is inside a hidden modal
+    $(document).on("submit", "#create-academic-year-form", function (e) {
         e.preventDefault();
+        console.log("Form submission intercepted via AJAX delegation!");
 
         $("[data-input-error]").text("");
 
+        let $form = $(this); // Cache the form element
+
         $.ajax({
-            url: $(this).data("url"),
+            url: $form.data("url"),
             method: "POST",
-            data: $(this).serialize(),
+            data: $form.serialize(),
             headers: {
                 Accept: "application/json",
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
-
             success: function (res) {
+                console.log("AJAX Success:", res);
                 Swal.fire({
                     toast: true,
                     position: "top-end",
@@ -39,12 +44,14 @@ export function initializeAcademicYears() {
                             detail: "add-academic-year",
                         })
                     );
-
+                    // Reload or update your table list dynamically here
                     location.reload();
                 });
             },
-
             error: function (xhr) {
+                console.error("AJAX Error Status:", xhr.status);
+                console.error("AJAX Error Response:", xhr.responseJSON);
+
                 if (xhr.status === 422) {
                     Swal.fire({
                         toast: true,
@@ -53,19 +60,27 @@ export function initializeAcademicYears() {
                         timer: 2500,
                         timerProgressBar: true,
                         icon: "error",
-                        title: xhr.responseJSON.message,
+                        title: xhr.responseJSON?.message || "Validation Error",
+                    });
+
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        let errors = xhr.responseJSON.errors;
+                        Object.keys(errors).forEach((field) => {
+                            $(`[data-input-error="${field}"]`).text(
+                                errors[field][0]
+                            );
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "System Error",
+                        confirmButtonColor: "#597928",
+                        text:
+                            xhr.responseJSON?.message ||
+                            "Terjadi kesalahan pada server.",
                     });
                 }
-
-                try {
-                    let errors = xhr.responseJSON.errors;
-
-                    Object.keys(errors).forEach((field) => {
-                        $(`[data-input-error="${field}"]`).text(
-                            errors[field][0]
-                        );
-                    });
-                } catch (e) {}
             },
         });
     });

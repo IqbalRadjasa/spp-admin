@@ -90,7 +90,7 @@
         {{-- Gender --}}
         <div class="input-group">
             <x-form.input-label for="gender" :value="__('Jenis Kelamin')" :is-required="true" />
-            <x-form.select-input name="gender" id="gender" class="mt-1 w-full " required>
+            <x-form.select-input name="gender" id="gender" class="mt-1" required>
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="L" @selected(old('gender', $mode === 'edit' ? $student->gender : '') == 'L')>Laki-laki (Male)</option>
                 <option value="P" @selected(old('gender', $mode === 'edit' ? $student->gender : '') == 'P')>Perempuan (Female)</option>

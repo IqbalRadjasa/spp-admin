@@ -15,31 +15,38 @@ class BillController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Bill::with('student');
-
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->billing_period) {
-            $query->where(
-                'billing_period',
-                $request->billing_period
-            );
-        }
-
-        if ($request->search) {
-            $query->whereHas('student', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%');
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
+        $query = Bill::with([
+            'student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis', 'avatar']);
+            }
+        ])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->whereHas('student', function ($q) use ($request) {
+                    $q->where('fullname', 'like', '%' . $request->search . '%')
+                        ->orWhere('nis', 'like', '%' . $request->search . '%');;
+                });
+            })
+            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
+                $query->where('academic_year_id', $request->input('academic_year_id'));
+            })
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $month = $request->input('month');
+                $query->where('billing_period', 'like', "%-{$month}");
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->when($request->filled('escalation_status'), function ($query) use ($request) {
+                $query->where('escalation_status', $request->escalation_status);
             });
-        }
 
         $bills = $query
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
-        return view('bills.index', compact('bills'));
+        return view('bills.index', compact('bills', 'academicYears'));
     }
 
     public function detail(Bill $bill)

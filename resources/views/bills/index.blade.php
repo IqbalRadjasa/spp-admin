@@ -1,119 +1,163 @@
 <x-app-layout>
-    <div class="py-6">
+    <div class="py-6 space-y-6">
 
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">List Bills</h1>
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Daftar Tagihan</h1>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6">
-                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
-                        class="w-full md:w-80" />
+                <form method="GET" action="{{ url()->current() }}"
+                    class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <x-form.text-input type="text" name="search" :value="request('search')"
+                        placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
-                    <x-form.select-input name="status">
-                        <option value="">All</option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>
-                            Paid
-                        </option>
-                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>
-                            Unpaid
-                        </option>
+                    <x-form.select-input name="academic_year_id" class="md:w-auto">
+                        <option value="">Semua Tahun Akademik</option>
+                        @foreach ($academicYears as $ay)
+                            <option value="{{ $ay->id }}"
+                                {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
+                                {{ $ay->name }}
+                            </option>
+                        @endforeach
                     </x-form.select-input>
 
-                    <x-form.text-input type="month" name="billing_period" :value="request('billing_period')" placeholder="2026-06" />
+                    <x-form.select-input name="month" class="md:w-auto">
+                        <option value="">Semua Bulan</option>
+                        @php
+                            $months = [
+                                '01' => 'Januari',
+                                '02' => 'Februari',
+                                '03' => 'Maret',
+                                '04' => 'April',
+                                '05' => 'Mei',
+                                '06' => 'Juni',
+                                '07' => 'Juli',
+                                '08' => 'Agustus',
+                                '09' => 'September',
+                                '10' => 'Oktober',
+                                '11' => 'November',
+                                '12' => 'Desember',
+                            ];
+                        @endphp
+                        @foreach ($months as $num => $name)
+                            <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
+                        @endforeach
+                    </x-form.select-input>
 
-                    <x-button.primary-button class="w-full md:w-auto">
-                        Filter
-                    </x-button.primary-button>
+                    <x-form.select-input name="status" class="md:w-auto">
+                        <option value="">Semua Status</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                    </x-form.select-input>
+
+                    <x-form.select-input name="escalation_status" class="md:w-auto">
+                        <option value="">Semua Eskalasi</option>
+                        <option value="normal" {{ request('escalation_status') == 'normal' ? 'selected' : '' }}>Normal
+                        </option>
+                        <option value="escalated" {{ request('escalation_status') == 'escalated' ? 'selected' : '' }}>
+                            Meningkat</option>
+                        <option value="resolved" {{ request('escalation_status') == 'resolved' ? 'selected' : '' }}>
+                            Diselesaikan</option>
+                    </x-form.select-input>
+
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            <i class="ri-filter-3-line mr-1"></i> Filter
+                        </x-button.primary-button>
+
+                        @if (request()->hasAny(['search', 'major']))
+                            <x-link-button.secondary-link :href="url()->current()">
+                                <i class="ri-refresh-line"></i> Reset
+                            </x-link-button.secondary-link>
+                        @endif
+                    </div>
                 </form>
 
-                <div class="overflow-x-auto mb-3">
-                    <table id="billsTable" class="min-w-full min-w-[700px]">
-                        <thead>
+                <x-table :headers="['Nama Siswa', 'Periode', 'Nominal', 'Status', 'Eskalasi Status', 'Aksi']" :empty="$bills->isEmpty()">
+                    @foreach ($bills as $bill)
+                        <x-table.tr>
+                            <x-table.td>
+                                <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
+                                    :subtitle="$bill->student->nis" />
+                            </x-table.td>
 
-                            <tr>
-                                <th>Student</th>
-                                <th>Period</th>
-                                <th>Nominal</th>
-                                <th>Status</th>
-                                <th>Escalation Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                            <x-table.td>
+                                <x-table.code-pill>{{ $bill->billing_period }}</x-table.code-pill>
+                            </x-table.td>
 
-                        <tbody>
-                            @foreach ($bills as $bill)
-                                <tr>
-                                    <td>{{ $bill->student->name }}</td>
+                            <x-table.td>
+                                {{ rupiah($bill->amount) }}
+                            </x-table.td>
 
-                                    <td>{{ $bill->billing_period }}</td>
+                            <x-table.td>
+                                <x-table.badge variant="{{ $bill->status === 'paid' ? 'olive' : 'danger' }}"
+                                    class="capitalize">
+                                    {{ $bill->status }}
+                                </x-table.badge>
+                            </x-table.td>
 
-                                    <td>{{ rupiah($bill->amount) }}</td>
+                            <x-table.td>
+                                @switch($bill->escalation_status)
+                                    @case('resolved')
+                                        <x-table.badge variant="olive" class="capitalize">
+                                            Diselesaikan
+                                        </x-table.badge>
+                                    @break
 
-                                    <td>
-                                        <span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} py-1 px-2 text-sm font-semibold rounded-md">
-                                            {{ titleCase($bill->status) }}
-                                        </span>
-                                    </td>
+                                    @case('escalated')
+                                        <x-table.badge variant="danger" class="capitalize">
+                                            Meningkat
+                                        </x-table.badge>
+                                    @break
 
-                                    <td>
-                                        @switch($bill->escalation_status)
-                                            @case('resolved')
-                                                <span
-                                                    class="bg-green-100 text-green-500 font-semibold py-1 px-2 text-sm rounded-md">
-                                                    {{ titleCase($bill->escalation_status) }}
-                                                </span>
-                                            @break
+                                    @default
+                                        <x-table.badge variant="gray" class="capitalize">
+                                            Normal
+                                        </x-table.badge>
+                                @endswitch
+                            </x-table.td>
 
-                                            @case('escalated')
-                                                <span
-                                                    class="bg-red-100 text-red-500 font-semibold py-1 px-2 text-sm rounded-md">
-                                                    {{ titleCase($bill->escalation_status) }}
-                                                </span>
-                                            @break
+                            <x-table.td>
+                                <x-dropdown.dropdown align="right" width="48">
+                                    <x-slot name="trigger">
+                                        <button type="button"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg text-stone-500 hover:bg-stone-100 hover:text-stone-800 transition-colors">
+                                            <i class="ri-more-2-fill text-lg"></i>
+                                        </button>
+                                    </x-slot>
 
-                                            @default
-                                                <span
-                                                    class="bg-gray-100 text-gray-700 font-semibold py-1 px-2 text-sm rounded-md">
-                                                    {{ titleCase($bill->escalation_status) }}
-                                                </span>
-                                        @endswitch
-                                    </td>
+                                    <x-slot name="content">
+                                        <x-dropdown.dropdown-link href="{{ route('bills.detail', $bill->id) }}">
+                                            View Detail
+                                        </x-dropdown.dropdown-link>
 
-                                    <td>
-                                        <x-dropdown.dropdown align="right" width="48">
-                                            <x-slot name="trigger">
+                                        @if ($bill->status == 'unpaid')
+                                            <x-dropdown.dropdown-link href="{{ route('payments.create', $bill->id) }}">
+                                                Pay
+                                            </x-dropdown.dropdown-link>
+                                        @endif
+                                    </x-slot>
+                                </x-dropdown.dropdown>
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
 
-                                                <button class="px-4 py-2 bg-gray-200 rounded">
-                                                    <i class="ri-list-unordered"></i>
-                                                </button>
-
-                                            </x-slot>
-
-                                            <x-slot name="content">
-                                                <x-dropdown.dropdown-link
-                                                    href="{{ route('bills.detail', $bill->id) }}">
-                                                    View Detail
-                                                </x-dropdown.dropdown-link>
-
-                                                @if ($bill->status == 'unpaid')
-                                                    <x-dropdown.dropdown-link
-                                                        href="{{ route('payments.create', $bill->id) }}">
-                                                        Pay
-                                                    </x-dropdown.dropdown-link>
-                                                @endif
-                                            </x-slot>
-                                        </x-dropdown.dropdown>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                {{ $bills->links() }}
+                {{ $bills->links('vendor.pagination.default') }}
             </div>
         </div>
     </div>

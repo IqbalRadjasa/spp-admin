@@ -58,9 +58,7 @@
 
                             <div class="grid grid-cols-2 gap-2 mt-1">
                                 {{-- Month Select --}}
-                                <select x-model="selectedMonth" id="month_selector" name="month"
-                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm"
-                                    required>
+                                <x-form.select-input x-model="selectedMonth" id="month_selector" name="month">
                                     <option value="01">Januari</option>
                                     <option value="02">Februari</option>
                                     <option value="03">Maret</option>
@@ -73,19 +71,20 @@
                                     <option value="10">Oktober</option>
                                     <option value="11">November</option>
                                     <option value="12">Desember</option>
-                                </select>
+                                </x-form.select-input>
+                                <x-form.input-error :messages="$errors->get('month')" class="mt-1" />
+
 
                                 {{-- Year Select derived from active academic year --}}
-                                <select x-model="selectedYear" name="year"
-                                    class="w-full border-stone-300 focus:border-[#597928] focus:ring-[#597928]/30 rounded-xl shadow-2xs text-sm font-semibold text-[#597928]"
-                                    required>
+                                <x-form.select-input x-model="selectedYear" name="year" required>
                                     @if ($activeAcademicYear)
                                         <option value="{{ $year1 }}">{{ $year1 }}</option>
                                         <option value="{{ $year2 }}">{{ $year2 }}</option>
                                     @else
                                         <option value="{{ now()->format('Y') }}">{{ now()->format('Y') }}</option>
                                     @endif
-                                </select>
+                                </x-form.select-input>
+                                <x-form.input-error :messages="$errors->get('year')" class="mt-1" />
                             </div>
 
                             {{-- Live Preview Box --}}

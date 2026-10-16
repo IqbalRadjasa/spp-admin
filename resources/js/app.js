@@ -56,17 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // For Student Table and Create Form Filter
     initializeStudentFilter();
 
-    const billsTable = document.querySelector("#billsTable");
     const overdueReportTable = document.querySelector("#overdueReportTable");
     const paymentReportTable = document.querySelector("#paymentReportTable");
-
-    if (billsTable) {
-        new DataTable(billsTable, {
-            responsive: true,
-            paging: false,
-            searchable: false,
-        });
-    }
 
     if (overdueReportTable) {
         new DataTable(overdueReportTable, {

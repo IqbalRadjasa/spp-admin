@@ -94,8 +94,8 @@ Route::middleware([
     Route::get('/bills/generate', [BillController::class, 'generateForm'])
         ->name('bills.generate.form');
 
-    Route::get('/bills/{bill}/detail', [BillController::class, 'detail'])
-        ->name('bills.detail');
+    Route::get('/bills/{bill}/show', [BillController::class, 'show'])
+        ->name('bills.show');
 
     Route::post('/bills/{bill}/escalation-notes', [BillController::class, 'storeEscalationNote'])
         ->name('bills.escalation-notes.store');

@@ -141,8 +141,8 @@
                                     </x-slot>
 
                                     <x-slot name="content">
-                                        <x-dropdown.dropdown-link href="{{ route('bills.detail', $bill->id) }}">
-                                            View Detail
+                                        <x-dropdown.dropdown-link href="{{ route('bills.show', $bill->id) }}">
+                                            Detail
                                         </x-dropdown.dropdown-link>
 
                                         @if ($bill->status == 'unpaid')

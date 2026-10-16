@@ -49,9 +49,15 @@ class BillController extends Controller
         return view('bills.index', compact('bills', 'academicYears'));
     }
 
-    public function detail(Bill $bill)
+    public function show(Bill $bill)
     {
-        return view('bills.detail', compact('bill'));
+        $bil = $bill::with([
+            'student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis', 'enrollment_year', 'status']);
+            }
+        ]);
+
+        return view('bills.show', compact('bill'));
     }
 
     public function storeEscalationNote(Request $request, Bill $bill)

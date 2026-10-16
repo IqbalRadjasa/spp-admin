@@ -4,7 +4,7 @@
 
             {{-- Header Section with Active Academic Year Banner --}}
             <div
-                class="bg-gradient-to-r from-[#597928]/10 via-[#91AC67]/10 to-transparent px-8 py-6 border-b border-stone-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                class="bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white px-8 py-6 border-b border-stone-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-xl font-bold text-stone-800 flex items-center gap-2">
                         <i class="ri-file-list-3-line text-[#597928]"></i>

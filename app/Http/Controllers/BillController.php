@@ -24,7 +24,7 @@ class BillController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->whereHas('student', function ($q) use ($request) {
                     $q->where('fullname', 'like', '%' . $request->search . '%')
-                        ->orWhere('nis', 'like', '%' . $request->search . '%');;
+                        ->orWhere('nis', 'like', '%' . $request->search . '%');
                 });
             })
             ->when($request->filled('academic_year_id'), function ($query) use ($request) {

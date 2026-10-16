@@ -27,7 +27,8 @@ class StudentPromotionService
             ])
             ->where('status', StudentStatus::ACTIVE->value ?? 'active')
             ->when(filled($search), function ($q) use ($search) {
-                $q->where('fullname', 'like', '%' . $search . '%');
+                $q->where('fullname', 'like', '%' . $search . '%')
+                    ->orWhere('nis', 'like', '%' . $search . '%');
             })
             ->when(filled($major), function ($q) use ($major) {
                 $q->whereHas('classroom.major', function ($sub) use ($major) {

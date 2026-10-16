@@ -30,8 +30,8 @@
                 <form method="GET" action="{{ url()->current() }}"
                     class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
                     <div class="w-full sm:w-72 md:w-80">
-                        <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Cari siswa"
-                            class="w-full" />
+                        <x-form.text-input type="text" name="search" :value="request('search')"
+                            placeholder="Cari nama siswa atau NIS..." />
                     </div>
 
                     <x-form.select-input id="level" name="level" class="md:w-40">

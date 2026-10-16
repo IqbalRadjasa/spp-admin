@@ -48,7 +48,8 @@ class StudentController extends Controller
                 }
             ])
             ->when($request->filled('search'), function ($query) use ($request) {
-                $query->where('fullname', 'like', '%' . $request->search . '%');
+                $query->where('fullname', 'like', '%' . $request->search . '%')
+                    ->orWhere('nis', 'like', '%' . $request->search . '%');
             })
             ->when($request->filled('major'), function ($query) use ($request) {
                 $query->whereHas(

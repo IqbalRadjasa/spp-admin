@@ -14,7 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OccupationController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\SchoolSettingController;
+use App\Http\Controllers\SchoolProfileController;
 use App\Http\Controllers\studentPromotionController;
 use App\Http\Controllers\FirstPasswordChangeController;
 
@@ -45,10 +45,10 @@ Route::middleware([
         ->group(function () {
 
             // School Setting Routes
-            Route::get('/school', [SchoolSettingController::class, 'edit'])
+            Route::get('/school', [SchoolProfileController::class, 'edit'])
                 ->name('school.edit');
 
-            Route::put('/school/update', [SchoolSettingController::class, 'update'])
+            Route::put('/school/update', [SchoolProfileController::class, 'update'])
                 ->name('school.update');
 
             Route::resource('majors', MajorController::class);

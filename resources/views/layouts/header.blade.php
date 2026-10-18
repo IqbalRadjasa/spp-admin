@@ -4,21 +4,27 @@
     $initials = strtoupper(
         count($words) >= 2 ? substr($words[0], 0, 1) . substr(end($words), 0, 1) : substr($name, 0, 2),
     );
+
+    $activeAcademicYear = activeAcademicYear();
+    $schoolProfile = schoolProfile();
 @endphp
 
 <header x-data="{ openProfile: false }"
     class="bg-stone-50/90 backdrop-blur-md border-b border-stone-200/80 h-16 flex items-center justify-between px-4 py-3 sticky z-40">
 
-    {{-- Left Side: Mobile Menu & Active Academic Year Badge --}}
     <div class="flex items-center gap-3">
         <button class="md:hidden px-3 py-2 rounded bg-gray-200 flex items-center" @click="mobileSidebarOpen = true">
             <i class="ri-menu-line text-2xl"></i>
         </button>
 
-        {{-- Active Academic Year Indicator --}}
-        @php
-            $activeAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
-        @endphp
+        <div
+            class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
+            <i class="ri-school-line text-[#597928] text-base"></i>
+            <span>Sekolah:</span>
+            <span class="text-[#597928] font-bold">
+                {{ $schoolProfile ? $schoolProfile->school_name : '-' }}
+            </span>
+        </div>
 
         <div
             class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
@@ -30,7 +36,6 @@
         </div>
     </div>
 
-    {{-- Right Side: Profile Dropdown --}}
     <div class="">
         <x-dropdown.dropdown align="right" width="48">
             <x-slot name="trigger">

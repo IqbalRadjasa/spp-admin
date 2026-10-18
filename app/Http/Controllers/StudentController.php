@@ -293,30 +293,28 @@ class StudentController extends Controller
         $validated = $request->validate([
             'fullname' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:100',
-            'nis' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('students', 'nis')->ignore($student->id)->whereNull('deleted_at'),
-            ],
+            // 'nis' => [
+            //     'required',
+            //     'string',
+            //     'max:10',
+            //     Rule::unique('students', 'nis')->whereNull('deleted_at'), // Handles soft-deletes correctly
+            // ],
             'nisn' => [
                 'nullable',
                 'string',
-                'max:50',
-                Rule::unique('students', 'nisn')->ignore($student->id)->whereNull('deleted_at'),
+                'max:10',
+                Rule::unique('students', 'nisn')->whereNull('deleted_at'),
             ],
             'gender' => 'required|in:L,P',
-            'place_of_birth' => 'nullable|string|max:100',
-            'date_of_birth' => 'nullable|date',
-            'religion' => 'nullable|string',
-            'phone' => 'nullable|string|max:20',
-            'enrollment_year' => 'nullable|numeric',
+            'place_of_birth' => 'required|string|max:100',
+            'date_of_birth' => 'required|date',
+            'religion' => 'required|string',
+            'phone' => 'required|string|max:20',
             'status' => 'required',
             'classroom_id' => 'required|exists:classrooms,id',
-            'address' => 'nullable|string',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'parent_id' => 'nullable|exists:users,id',
-            'relationship' => 'nullable|string|max:50',
+            'address' => 'required|string',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'parent_id' => 'required|exists:users,id', // Single ID check
         ]);
 
         DB::beginTransaction();

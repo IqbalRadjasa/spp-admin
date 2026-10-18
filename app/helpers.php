@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\AcademicYear;
-use App\Models\SchoolSetting;
+use App\Models\SchoolProfile;
 
 use Illuminate\Support\Str;
 
@@ -59,7 +59,7 @@ if (!function_exists('titleCase')) {
 if (!function_exists('classroomLevels')) {
     function classroomLevels()
     {
-        $educationLevel = SchoolSetting::first()->education_level;
+        $educationLevel = SchoolProfile::first()->education_level;
 
         return match ($educationLevel) {
             'SD' => [1, 2, 3, 4, 5, 6],
@@ -77,5 +77,12 @@ if (!function_exists('activeAcademicYear')) {
             'is_active',
             true
         )->first();
+    }
+}
+
+if (!function_exists('schoolProfile')) {
+    function schoolProfile()
+    {
+        return SchoolProfile::first();
     }
 }

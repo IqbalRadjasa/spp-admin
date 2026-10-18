@@ -7,7 +7,7 @@ use App\Models\Major;
 use App\Models\Student;
 use App\Models\Classroom;
 use App\Models\Occupation;
-use App\Models\SchoolSetting;
+use App\Models\SchoolProfile;
 use App\Models\StudentParent;
 use App\Services\ActivityLogService;
 
@@ -31,7 +31,7 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
         $enrollmentYears = Student::select('enrollment_year')
             ->whereNotNull('enrollment_year')
             ->distinct()
@@ -105,7 +105,7 @@ class StudentController extends Controller
                 'enrollmentYears',
                 'majorSummaries',
                 'totalStudents',
-                'schoolSetting'
+                'schoolProfile'
             )
         );
     }
@@ -114,7 +114,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
         $majors = Major::select('id', 'name')->where('is_active', true)->orderBy('id', 'asc')->get();
         $classrooms = Classroom::select('id')->get();
         $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
@@ -122,7 +122,7 @@ class StudentController extends Controller
         return view('students.create', compact(
             'classrooms',
             'majors',
-            'schoolSetting',
+            'schoolProfile',
             'occupations'
         ));
     }
@@ -242,13 +242,13 @@ class StudentController extends Controller
 
         $majors = Major::all();
         $classrooms = Classroom::all();
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
 
         return view('students.show', compact(
             'student',
             'parent',
             'classrooms',
-            'schoolSetting',
+            'schoolProfile',
             'majors'
         ));
     }
@@ -275,13 +275,13 @@ class StudentController extends Controller
 
         $majors = Major::all();
         $classrooms = Classroom::all();
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
 
         return view('students.edit', compact(
             'student',
             'selectedParent',
             'classrooms',
-            'schoolSetting',
+            'schoolProfile',
             'majors'
         ));
     }

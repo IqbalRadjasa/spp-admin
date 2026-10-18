@@ -43,7 +43,7 @@
                         @endforeach
                     </x-form.select-input>
 
-                    @if (in_array($schoolSetting->education_level, ['SMA', 'SMK']))
+                    @if (in_array($schoolProfile->education_level, ['SMA', 'SMK']))
                         <x-form.select-input id="major_id" name="major_id" class="md:w-auto">
                             <option value="">Semua Jurusan</option>
                             @foreach ($majors as $major)

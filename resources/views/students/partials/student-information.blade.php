@@ -153,7 +153,7 @@
         </div>
 
         {{-- Major & Classroom Selection --}}
-        @if (in_array($schoolSetting->education_level, ['SMK', 'SMA']))
+        @if (in_array($schoolProfile->education_level, ['SMK', 'SMA']))
             <div class="input-group">
                 <x-form.input-label for="major_id" :is-required="true" :value="__('Jurusan')" />
                 <x-form.select-input name="major_id" id="major-filter" class="mt-1 w-full" required>

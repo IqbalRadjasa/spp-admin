@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Major;
 use App\Models\Classroom;
-use App\Models\SchoolSetting;
+use App\Models\SchoolProfile;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,7 +16,7 @@ class ClassroomController extends Controller
      */
     public function index(Request $request)
     {
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
         $majors = Major::select('id', 'name', 'code')->where('is_active', true)->orderBy('id', 'asc')->get();
 
         // Global summary metrics
@@ -54,7 +54,7 @@ class ClassroomController extends Controller
 
         return view('settings.classrooms.index', compact(
             'classrooms',
-            'schoolSetting',
+            'schoolProfile',
             'majors',
             'summary'
         ));
@@ -65,10 +65,10 @@ class ClassroomController extends Controller
      */
     public function create()
     {
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
         $majors = Major::all();
 
-        return view('settings.classrooms.create', compact('schoolSetting', 'majors'));
+        return view('settings.classrooms.create', compact('schoolProfile', 'majors'));
     }
 
     /**
@@ -124,10 +124,10 @@ class ClassroomController extends Controller
      */
     public function edit(Classroom $classroom)
     {
-        $schoolSetting = SchoolSetting::first();
+        $schoolProfile = SchoolProfile::first();
         $majors = Major::all();
 
-        return view('settings.classrooms.edit', compact('classroom', 'schoolSetting', 'majors'));
+        return view('settings.classrooms.edit', compact('classroom', 'schoolProfile', 'majors'));
     }
 
     /**

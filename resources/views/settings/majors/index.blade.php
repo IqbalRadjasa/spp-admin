@@ -1,17 +1,28 @@
 <x-app-layout>
     <div class="py-6 space-y-6">
-        <div class="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between">
-            <h1 class="font-bold text-2xl uppercase">
-                Jurusan
-            </h1>
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-building-4-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Jurusan</h1>
+                        <p class="text-sm text-stone-600 mt-0.5">Kelola jurusan yang ada di sekolah.</p>
+                    </div>
+                </div>
 
-            <x-button.primary-button
-                x-on:click="$dispatch('open-major-modal', { isEdit: false, action: '{{ route('settings.majors.store') }}', name: '', code: '', is_active: '1' })"
-                class="gap-1">
-                <i class="ri-add-line"></i>
-                Tambah Jurusan
-            </x-button.primary-button>
+                <x-button.primary-button
+                    x-on:click="$dispatch('open-major-modal', { isEdit: false, action: '{{ route('settings.majors.store') }}', name: '', code: '', is_active: '1' })"
+                    class="gap-1">
+                    <i class="ri-add-line"></i>
+                    Tambah Jurusan
+                </x-button.primary-button>
+            </div>
         </div>
+
 
         <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4">
             <x-widget-summary title="Total Jurusan" value="{{ $summary['total'] }}" icon="ri-building-4-line" />
@@ -42,12 +53,12 @@
 
                     <div class="flex items-center gap-2">
                         <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
-                            Filter
+                            <i class="ri-filter-3-line mr-1"></i> Filter
                         </x-button.primary-button>
 
                         @if (request()->hasAny(['is_active', 'sort']))
                             <x-link-button.secondary-link :href="url()->current()">
-                                {{ __('Reset') }}
+                                <i class="ri-refresh-line"></i> Reset
                             </x-link-button.secondary-link>
                         @endif
                     </div>

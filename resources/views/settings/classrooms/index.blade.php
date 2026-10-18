@@ -36,7 +36,7 @@
                     class="flex flex-col md:flex-row md:flex-wrap items-center gap-3 mb-6">
 
                     {{-- Filter: Level --}}
-                    <x-form.select-input id="level" name="level" class="w-full md:w-auto">
+                    <x-form.select-input id="level" name="level" class="md:w-auto">
                         <option value="">Semua Tingkat</option>
                         @foreach (classroomLevels() as $level)
                             <option value="{{ $level }}" @selected(request('level') == $level)>
@@ -47,7 +47,7 @@
 
                     {{-- Filter: Major (SMA/SMK only) --}}
                     @if (in_array($schoolProfile->education_level, ['SMA', 'SMK']))
-                        <x-form.select-input id="major_id" name="major_id" class="w-full md:w-auto">
+                        <x-form.select-input id="major_id" name="major_id" class="md:w-auto">
                             <option value="">Semua Jurusan</option>
                             @foreach ($majors as $major)
                                 <option value="{{ $major->id }}" @selected(request('major_id') == $major->id)>
@@ -58,14 +58,14 @@
                     @endif
 
                     {{-- Filter: Status --}}
-                    <x-form.select-input name="is_active" class="w-full md:w-auto">
+                    <x-form.select-input name="is_active" class="md:w-auto">
                         <option value="" @selected(request('is_active') === null || request('is_active') === '')>Semua Status</option>
                         <option value="1" @selected(request('is_active') === '1')>Aktif</option>
                         <option value="0" @selected(request('is_active') === '0')>Nonaktif</option>
                     </x-form.select-input>
 
                     {{-- Filter: Sort --}}
-                    <x-form.select-input name="sort" class="w-full md:w-auto">
+                    <x-form.select-input name="sort" class="md:w-auto">
                         <option value="" @selected(request('sort') === null || request('sort') === '')>
                             Terbaru
                         </option>
@@ -77,17 +77,17 @@
                         </option>
                     </x-form.select-input>
 
-                    {{-- Submit Button --}}
-                    <x-button.primary-button type="submit" class="w-full md:w-auto bg-[#597928] hover:bg-[#6E3511]">
-                        <i class="ri-filter-3-line mr-1"></i> Filter
-                    </x-button.primary-button>
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            <i class="ri-filter-3-line mr-1"></i> Filter
+                        </x-button.primary-button>
 
-                    {{-- Reset Button (Only rendered when query parameters are active) --}}
-                    @if (request()->hasAny(['level', 'major_id', 'is_active', 'sort']))
-                        <x-link-button.secondary-link :href="url()->current()">
-                            <i class="ri-refresh-line"></i> Reset
-                        </x-link-button.secondary-link>
-                    @endif
+                        @if (request()->hasAny(['level', 'major_id', 'is_active', 'sort']))
+                            <x-link-button.secondary-link :href="url()->current()">
+                                <i class="ri-refresh-line"></i> Reset
+                            </x-link-button.secondary-link>
+                        @endif
+                    </div>
                 </form>
 
 
@@ -224,7 +224,8 @@
                             <div class="input-group">
                                 <x-form.input-label for="class_number" :value="__('Nomor Kelas')" />
                                 <x-form.text-input id="class_number" class="block mt-1 w-full" type="text"
-                                    name="class_number" placeholder="Contoh: 1" x-model="form.class_number" required />
+                                    name="class_number" placeholder="Contoh: 1" x-model="form.class_number"
+                                    required />
                                 <x-form.input-error :messages="$errors->get('class_number')" />
                             </div>
 

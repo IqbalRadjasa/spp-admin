@@ -1,16 +1,26 @@
 <x-app-layout>
     <div class="py-6 space-y-6">
-        <div class="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between">
-            <h1 class="font-bold text-2xl uppercase">
-                Pekerjaan
-            </h1>
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-user-2-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Pekerjaan</h1>
+                        <p class="text-sm text-stone-600 mt-0.5">Kelola data pekerjaan.</p>
+                    </div>
+                </div>
 
-            <x-button.primary-button
-                x-on:click="$dispatch('open-occupation-modal', { isEdit: false, action: '{{ route('settings.occupations.store') }}', name: '', is_active: '1' })"
-                class="gap-1">
-                <i class="ri-add-line"></i>
-                Tambah Pekerjaan
-            </x-button.primary-button>
+                <x-button.primary-button
+                    x-on:click="$dispatch('open-occupation-modal', { isEdit: false, action: '{{ route('settings.occupations.store') }}', name: '', is_active: '1' })"
+                    class="gap-1">
+                    <i class="ri-add-line"></i>
+                    Tambah Pekerjaan
+                </x-button.primary-button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4">
@@ -22,14 +32,14 @@
 
         <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.select-input name="is_active">
+                <form class="flex flex-col md:flex-row md:flex-wrap items-center gap-3 mb-6">
+                    <x-form.select-input name="is_active" class="md:w-auto">
                         <option value="" @selected(request('is_active') === null || request('is_active') === '')>Semua Status</option>
                         <option value="1" @selected(request('is_active') === '1')>Aktif</option>
                         <option value="0" @selected(request('is_active') === '0')>Nonaktif</option>
                     </x-form.select-input>
 
-                    <x-form.select-input name="sort">
+                    <x-form.select-input name="sort" class="md:w-auto">
                         <option value="" {{ request('sort') == '' ? 'selected' : '' }}>
                             Terbaru
                         </option>
@@ -41,18 +51,17 @@
                         </option>
                     </x-form.select-input>
 
-                    {{-- Submit Button --}}
-                    <x-button.primary-button type="submit" class="w-full md:w-auto bg-[#597928] hover:bg-[#6E3511]">
-                        <i class="ri-filter-3-line mr-1"></i> Filter
-                    </x-button.primary-button>
+                    <div class="flex items-center gap-2">
+                        <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                            <i class="ri-filter-3-line mr-1"></i> Filter
+                        </x-button.primary-button>
 
-                    {{-- Reset Button (Only rendered when query parameters are active) --}}
-                    @if (request()->hasAny(['is_active', 'sort']))
-                        <a href="{{ route('settings.occupations.index') }}"
-                            class="w-full md:w-auto text-center px-4 py-2 text-sm font-medium text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors">
-                            Reset
-                        </a>
-                    @endif
+                        @if (request()->hasAny(['is_active', 'sort']))
+                            <x-link-button.secondary-link :href="url()->current()">
+                                <i class="ri-refresh-line"></i> Reset
+                            </x-link-button.secondary-link>
+                        @endif
+                    </div>
                 </form>
 
 

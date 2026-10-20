@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Major;
+
+use App\Services\ActivityLogService;
+
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class MajorController extends Controller
 {
@@ -49,30 +54,40 @@ class MajorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'name' => ['required', 'string',],
-            'code' => ['required', 'unique:majors,code'],
+            'code' => ['required', Rule::unique('majors', 'code')],
             'is_active' => ['required', 'boolean'],
         ]);
 
         try {
-            Major::create([
-                'name' => $validated['name'],
-                'code' => $validated['code'],
-                'is_active' => $validated['is_active'],
-            ]);
+
+            DB::transaction(function () use ($validated, $activityLog) {
+                $major = Major::create([
+                    'name' => $validated['name'],
+                    'code' => $validated['code'],
+                    'is_active' => $validated['is_active'],
+                ]);
+
+                $activityLog->log(
+                    'tambah jurusan',
+                    'majors',
+                    $major->id,
+                    'Jurusan ditambah: ' . $major->name
+                );
+            });
 
             return redirect()
                 ->route('settings.majors.index')
-                ->with('success', 'Data created successfully!');
+                ->with('success', 'Data berhasil ditambah!');
         } catch (\Exception $e) {
 
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to create data!');
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -95,48 +110,67 @@ class MajorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Major $major)
+    public function update(Request $request, Major $major, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'name' => ['required', 'string',],
-            'code' => ['required', 'unique:majors,code'],
+            'code' => ['required', 'string', Rule::unique('majors', 'code')->ignore($major->id)],
             'is_active' => ['required', 'boolean'],
         ]);
 
         try {
-            $major->update([
-                'name' => $validated['name'],
-                'code' => $validated['code'],
-                'is_active' => $validated['is_active'],
-            ]);
+
+            DB::transaction(function () use ($validated, $activityLog, $major) {
+                $major->update([
+                    'name' => $validated['name'],
+                    'code' => $validated['code'],
+                    'is_active' => $validated['is_active'],
+                ]);
+
+                $activityLog->log(
+                    'update jurusan',
+                    'majors',
+                    $major->id,
+                    'Jurusan diperbarui: ' . $major->name
+                );
+            });
 
             return redirect()
                 ->route('settings.majors.index')
-                ->with('success', 'Data updated successfully!');
+                ->with('success', 'Data berhasil diperbarui!');
         } catch (\Exception $e) {
 
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Failed to update data!');
+                ->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Major $major)
+    public function destroy(Major $major, ActivityLogService $activityLog)
     {
-        $major->delete();
-
         try {
+            DB::transaction(function () use ($major, $activityLog) {
+                $activityLog->log(
+                    'hapus jurusan',
+                    'majors',
+                    $major->id,
+                    'Jurusan dihapus: ' . $major->name
+                );
+
+                $major->delete();
+            });
+
             return redirect()
                 ->route('settings.majors.index')
-                ->with('success', 'Data deleted successfully!');
-        } catch (\Exception $th) {
+                ->with('success', 'Data berhasil dihapus!');
+        } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Failed to detele data!');
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

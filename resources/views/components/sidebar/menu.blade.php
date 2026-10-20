@@ -48,7 +48,7 @@
  @if (auth()->user()->isAdmin())
      <x-sidebar.sidebar-dropdown title="Pengaturan" icon="ri-settings-3-line" :active="request()->routeIs('settings.*')">
          <x-sidebar.sidebar-dropdown-link :href="route('settings.school.edit')" :active="request()->routeIs('settings.school.edit')">
-             Sekolah
+             Profil Sekolah
          </x-sidebar.sidebar-dropdown-link>
 
          <x-sidebar.sidebar-dropdown-link :href="route('settings.academic-years.index')" :active="request()->routeIs('settings.academic-years.index')">

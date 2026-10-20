@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\SchoolProfile;
 
+use App\Services\ActivityLogService;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class SchoolProfileController extends Controller
@@ -52,7 +55,7 @@ class SchoolProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'school_name'     => 'required|string|max:255',
@@ -75,10 +78,23 @@ class SchoolProfileController extends Controller
             unset($validated['logo']);
         }
 
-        $setting->fill($validated);
-        $setting->save();
+        try {
+            DB::transaction(function () use ($setting, $validated, $activityLog) {
+                $setting->fill($validated);
+                $setting->save();
 
-        return back()->with('success', 'Pengaturan sekolah berhasil diperbarui!');
+                $activityLog->log(
+                    'update profil sekolah',
+                    'school_profile',
+                    $setting->id,
+                    'Informasi profil sekolah telah diperbarui: ' . $setting->school_name
+                );
+            });
+
+            return back()->with('success', 'Profil sekolah berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal memperbarui profil: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -6,8 +6,11 @@ use App\Models\Major;
 use App\Models\Classroom;
 use App\Models\SchoolProfile;
 
+use App\Services\ActivityLogService;
+
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class ClassroomController extends Controller
 {
@@ -74,7 +77,7 @@ class ClassroomController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'level' => ['required', 'integer', 'min:1', 'max:12'],
@@ -83,7 +86,6 @@ class ClassroomController extends Controller
                 'required',
                 'integer',
                 'min:1',
-                // Composite Unique Rule: level + major_id + class_number must be unique
                 Rule::unique('classrooms')->where(function ($query) use ($request) {
                     return $query->where('level', $request->level)
                         ->where('major_id', $request->major_id);
@@ -91,23 +93,31 @@ class ClassroomController extends Controller
             ],
             'is_active' => ['required', 'boolean'],
         ], [
-            // Custom Indonesian error message for the composite unique check
             'class_number.unique' => 'Kombinasi Tingkat, Jurusan, dan Nomor Kelas ini sudah ada.',
             'major_id.exists' => 'Jurusan yang dipilih tidak valid.',
         ]);
 
         try {
-            Classroom::create($validated);
+
+            DB::transaction(function () use ($validated, $activityLog) {
+                $classroom = Classroom::create($validated);
+
+                $activityLog->log(
+                    'tambah kelas',
+                    'classrooms',
+                    $classroom->id,
+                    'Kelas ditambah: ' . $classroom->display_name
+                );
+            });
 
             return redirect()
                 ->route('settings.classrooms.index')
-                ->with('success', 'Data berhasil dibuat!');
+                ->with('success', 'Data berhasil ditambah!');
         } catch (\Exception $e) {
-
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Gagal membuat data!');
+                ->with('error', 'Gagal membuat data: ' . $e->getMessage());
         }
     }
 
@@ -133,7 +143,7 @@ class ClassroomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Classroom $classroom)
+    public function update(Request $request, Classroom $classroom, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'level' => ['required', 'integer'],
@@ -156,40 +166,58 @@ class ClassroomController extends Controller
         }
 
         try {
-            $classroom->update([
-                'level' => $validated['level'],
-                'major_id' => $validated['major_id'],
-                'class_number' => $validated['class_number'],
-                'is_active' => $validated['is_active'],
-            ]);
+            DB::transaction(function () use ($validated, $activityLog, $classroom) {
+                $classroom->update([
+                    'level' => $validated['level'],
+                    'major_id' => $validated['major_id'],
+                    'class_number' => $validated['class_number'],
+                    'is_active' => $validated['is_active'],
+                ]);
+
+                $activityLog->log(
+                    'update kelas',
+                    'classrooms',
+                    $classroom->id,
+                    'Kelas diperbarui: ' . $classroom->display_name
+                );
+            });
 
             return redirect()
                 ->route('settings.classrooms.index')
-                ->with('success', 'Data telah berhasil diperbarui!');
+                ->with('success', 'Data berhasil diperbarui!');
         } catch (\Exception $e) {
-            // dd($e);
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Gagal memperbarui data!');
+                ->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Classroom $classroom)
+    public function destroy(Classroom $classroom, ActivityLogService $activityLog)
     {
-        $classroom->delete();
 
         try {
+            DB::transaction(function () use ($activityLog, $classroom) {
+                $activityLog->log(
+                    'hapus kelas',
+                    'classrooms',
+                    $classroom->id,
+                    'Kelas dihapus: ' . $classroom->display_name
+                );
+
+                $classroom->delete();
+            });
+
             return redirect()
                 ->route('settings.classrooms.index')
-                ->with('success', 'Data deleted successfully!');
-        } catch (\Exception $th) {
+                ->with('success', 'Data berhasil dihapus!');
+        } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Failed to detele data!');
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 

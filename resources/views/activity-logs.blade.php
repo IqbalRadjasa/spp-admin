@@ -1,61 +1,52 @@
 <x-app-layout>
-    <div class="py-6">
+    <div class="py-6 space-y-6">
 
-        <div class="flex items-center pb-6 justify-between">
-            <h1 class="font-semibold text-xl">Activity Logs</h1>
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-chat-history-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Log Aktivitas</h1>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-lg">
+        <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                {{-- <form class="flex flex-col md:flex-row md:flex-wrap gap-3 mb-6">
-                    <x-form.text-input type="text" name="search" :value="request('search')" placeholder="Find a student..."
-                        class="w-full md:w-80" />
+                <x-table :headers="['Pengguna', 'Aksi', 'Entitas', 'Deksripsi', 'Dibuat pada']" :empty="$activityLogs->isEmpty()">
+                    @foreach ($activityLogs as $activityLog)
+                        <x-table.tr>
+                            <x-table.td>
+                                {{ $activityLog->user->name }}
+                            </x-table.td>
 
-                    <x-form.select-input name="status">
-                        <option value="">All</option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>
-                            Paid
-                        </option>
-                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>
-                            Unpaid
-                        </option>
-                    </x-form.select-input>
+                            <x-table.td>
+                                {{ $activityLog->action }}
+                            </x-table.td>
 
-                    <x-form.text-input type="month" name="billing_period" :value="request('billing_period')" placeholder="2026-06" />
+                            <x-table.td>
+                                <x-table.code-pill>
+                                    {{ $activityLog->entity_type }}
+                                </x-table.code-pill>
+                            </x-table.td>
 
-                    <x-button.primary-button class="w-full md:w-auto">
-                        Filter
-                    </x-button.primary-button>
-                </form> --}}
+                            <x-table.td>
+                                {{ $activityLog->description }}
+                            </x-table.td>
 
-                <div class="overflow-x-auto mb-3">
-                    <table id="billsTable" class="min-w-full min-w-[700px]">
-                        <thead>
+                            <x-table.td>
+                                {{ $activityLog->created_at }}
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
 
-                            <tr>
-                                <th>User</th>
-                                <th>Action</th>
-                                <th>Entity</th>
-                                <th>Description</th>
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach ($activityLogs as $activityLog)
-                                <tr>
-                                    <td>{{ $activityLog->user->name }}</td>
-                                    <td>{{ $activityLog->action }}</td>
-                                    <td>{{ $activityLog->entity_type }}</td>
-                                    <td>{{ $activityLog->description }}</td>
-                                    <td>{{ $activityLog->created_at }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                {{ $activityLogs->links() }}
+                {{ $activityLogs->links('vendor.pagination.default') }}
             </div>
         </div>
     </div>

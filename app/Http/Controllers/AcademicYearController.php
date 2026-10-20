@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AcademicYearController extends Controller
 {
@@ -31,7 +33,7 @@ class AcademicYearController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'year' => [
@@ -75,18 +77,28 @@ class AcademicYearController extends Controller
         }
 
         try {
-            if ($validated['is_active'] == 1) {
-                AcademicYear::where('is_active', 1)->update(['is_active' => 0]);
-            }
 
-            AcademicYear::create([
-                'name'      => $formattedYear,
-                'is_active' => $validated['is_active']
-            ]);
+            DB::transaction(function () use ($formattedYear, $validated, $activityLog) {
+                if ($validated['is_active'] == 1) {
+                    AcademicYear::where('is_active', 1)->update(['is_active' => 0]);
+                }
+
+                $academicYear = AcademicYear::create([
+                    'name'      => $formattedYear,
+                    'is_active' => $validated['is_active']
+                ]);
+
+                $activityLog->log(
+                    'tambah tahun akademik',
+                    'academic_years',
+                    $academicYear->id,
+                    'Tahun akademik ditambah: ' . $academicYear->name
+                );
+            });
 
             return redirect()
                 ->back()
-                ->with('success', 'Data berhasil ditambahkan!');
+                ->with('success', 'Data berhasil ditambah!');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
@@ -114,7 +126,7 @@ class AcademicYearController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AcademicYear $academicYear)
+    public function update(Request $request, AcademicYear $academicYear, ActivityLogService $activityLog)
     {
         $validated = $request->validate([
             'year' => [
@@ -160,14 +172,23 @@ class AcademicYearController extends Controller
         }
 
         try {
-            if ($validated['is_active'] == 1) {
-                AcademicYear::where('is_active', 1)->update(['is_active' => 0]);
-            }
+            DB::transaction(function () use ($formattedYear, $validated, $activityLog, $academicYear) {
+                if ($validated['is_active'] == 1) {
+                    AcademicYear::where('is_active', 1)->update(['is_active' => 0]);
+                }
 
-            $academicYear->update([
-                'name'      => $formattedYear,
-                'is_active' => $validated['is_active']
-            ]);
+                $academicYear->update([
+                    'name'      => $formattedYear,
+                    'is_active' => $validated['is_active']
+                ]);
+
+                $activityLog->log(
+                    'update tahun akademik',
+                    'academic_years',
+                    $academicYear->id,
+                    'Tahun akademik diperbarui: ' . $academicYear->name
+                );
+            });
 
             return redirect()
                 ->back()
@@ -183,7 +204,7 @@ class AcademicYearController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AcademicYear $academicYear)
+    public function destroy(AcademicYear $academicYear, ActivityLogService $activityLog)
     {
         $activeYear = AcademicYear::select('is_active')->where('id', $academicYear->id)->first();
         if ($activeYear->is_active) {
@@ -192,9 +213,20 @@ class AcademicYearController extends Controller
                 ->with('error', 'Tahun akademik sedang aktif.');
         }
 
-        $academicYear->delete();
-
         try {
+            DB::transaction(
+                function () use ($academicYear, $activityLog) {
+                    $activityLog->log(
+                        'hapus tahun akademik',
+                        'academic_years',
+                        $academicYear->id,
+                        'Tahun akademik dihapus: ' . $academicYear->name
+                    );
+
+                    $academicYear->delete();
+                }
+            );
+
             return redirect()
                 ->back()
                 ->with('success', 'Data berhasil dihapus!');
@@ -203,66 +235,5 @@ class AcademicYearController extends Controller
                 ->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
-    }
-
-    public function activateAcademicYear(AcademicYear $academicYear)
-    {
-        $anotherActiveYear = AcademicYear::query()
-            ->where('is_active', true)
-            ->where('id', '!=', $academicYear->id)
-            ->exists();
-
-        if ($anotherActiveYear) {
-            return back()->with(
-                'error',
-                'Another academic year is still active.'
-            );
-        }
-
-        try {
-
-            $academicYear->update([
-                'is_active' => true
-            ]);
-
-            return redirect()
-                ->route('settings.academic-years.index')
-                ->with(
-                    'success',
-                    'Academic year activated successfully!'
-                );
-        } catch (\Exception $e) {
-
-            return back()->with(
-                'error',
-                'Failed to activate academic year.'
-            );
-        }
-    }
-
-    public function getAcademicYear($id)
-    {
-        $academicYear = AcademicYear::find($id);
-
-        if (!$academicYear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Academic year not found.'
-            ], 404);
-        }
-
-        [$from, $to] = array_map(
-            'trim',
-            explode('/', $academicYear->name)
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data found.',
-            'data' => [
-                'from' => $from,
-                'to' => $to,
-            ]
-        ]);
     }
 }

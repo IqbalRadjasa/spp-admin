@@ -22,8 +22,8 @@
         {{-- Main Form Card --}}
         <div class="bg-white overflow-hidden shadow-xl rounded-2xl border border-stone-200/80">
             <div class="p-8">
-                <form action="{{ route('settings.school.update') }}" method="POST" enctype="multipart/form-data"
-                    x-data="{
+                <form id="schoolProfileForm" action="{{ route('settings.school.update') }}" method="POST"
+                    enctype="multipart/form-data" x-data="{
                         schoolName: '{{ addslashes(old('school_name', $setting->school_name ?? '')) }}',
                         educationLevel: '{{ old('education_level', $setting->education_level ?? 'SD') }}',
                         phone: '{{ addslashes(old('phone', $setting->phone ?? '')) }}',
@@ -37,8 +37,16 @@
                                 reader.onload = e => this.logoPreview = e.target.result;
                                 reader.readAsDataURL(file);
                             }
+                        },
+                    
+                        submitForm() {
+                            confirmAndSubmit('schoolProfileForm', {
+                                title: 'Simpan Perubahan?',
+                                text: 'Pastikan profil sudah benar.',
+                                confirmButtonColor: '#597928',
+                            });
                         }
-                    }">
+                    }" @submit.prevent="submitForm">
                     @csrf
                     @method('PUT')
 
@@ -169,7 +177,7 @@
 
                     {{-- Form Actions Footer --}}
                     <div class="flex items-center justify-end gap-3 pt-6 mt-8 border-t border-stone-100">
-                        <x-button.primary-button class="bg-[#597928] hover:bg-[#486320] gap-2">
+                        <x-button.primary-button class="gap-2">
                             <i class="ri-save-line"></i>
                             {{ __('Simpan Perubahan') }}
                         </x-button.primary-button>

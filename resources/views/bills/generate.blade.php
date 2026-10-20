@@ -59,18 +59,13 @@
                             <div class="grid grid-cols-2 gap-2 mt-1">
                                 {{-- Month Select --}}
                                 <x-form.select-input x-model="selectedMonth" id="month_selector" name="month">
-                                    <option value="01">Januari</option>
-                                    <option value="02">Februari</option>
-                                    <option value="03">Maret</option>
-                                    <option value="04">April</option>
-                                    <option value="05">Mei</option>
-                                    <option value="06">Juni</option>
-                                    <option value="07">Juli (Tahun Ajaran Baru)</option>
-                                    <option value="08">Agustus</option>
-                                    <option value="09">September</option>
-                                    <option value="10">Oktober</option>
-                                    <option value="11">November</option>
-                                    <option value="12">Desember</option>
+                                    <option value="">Semua Bulan</option>
+                                    @foreach ($months as $num => $name)
+                                        <option value="{{ $num }}"
+                                            {{ request('month') == $num ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
                                 </x-form.select-input>
                                 <x-form.input-error :messages="$errors->get('month')" class="mt-1" />
 

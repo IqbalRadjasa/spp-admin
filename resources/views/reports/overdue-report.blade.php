@@ -1,37 +1,63 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="flex flex-col sm:flex-row md:items-center md:justify-between pb-6 gap-2">
-            <h1 class="font-semibold text-xl">
-                Overdue Report
-            </h1>
-
-            <div class=" flex items-center gap-3 px-4 py-3 rounded-lg border border-red-200 bg-red-50 w-full sm:w-auto">
-                <i class="ri-arrow-down-circle-line text-3xl text-red-500"></i>
-
-                <div>
-                    <p class="text-xs text-gray-500">
-                        Total Outstanding
-                    </p>
-
-                    <p class="font-bold text-lg text-red-600">
-                        {{ rupiah($totalOutstanding) }}
-                    </p>
+    <div class="py-6 space-y-6">
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-book-2-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Laporan Telat Pembayaran</h1>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div class="grid grid-cols-1">
+            <x-widget-summary title="Total yang Belum Dilunasi" value="{{ rupiah($totalOutstanding) }}"
+                icon="ri-arrow-down-circle-line" />
+        </div>
+
+        <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
-                    <form method="GET" class="flex flex-col lg:flex-row lg:flex-wrap gap-3">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-2">
+                    <form method="GET" action="{{ url()->current() }}"
+                        class="flex flex-col sm:flex-row sm:items-center gap-3">
                         <x-form.text-input type="text" name="search" :value="request('search')"
-                            placeholder="Find a student..." />
+                            placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
-                        <x-form.text-input type="month" name="month" :value="request('month')" placeholder="e.g. 2026-06" />
+                        <x-form.select-input name="academic_year_id" class="md:w-auto">
+                            <option value="">Semua Tahun Akademik</option>
+                            @foreach ($academicYears as $ay)
+                                <option value="{{ $ay->id }}"
+                                    {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
+                                    {{ $ay->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
 
-                        <x-button.primary-button>
-                            {{ __('Filter') }}
-                        </x-button.primary-button>
+                        <x-form.select-input name="month" class="md:w-auto">
+                            <option value="">Semua Bulan</option>
+                            @foreach ($months as $num => $name)
+                                <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
+
+                        <div class="flex items-center gap-2">
+                            <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                                <i class="ri-filter-3-line mr-1"></i> Filter
+                            </x-button.primary-button>
+
+                            @if (request()->hasAny(['search', 'academic_year_id', 'month']))
+                                <x-link-button.secondary-link :href="url()->current()">
+                                    <i class="ri-refresh-line"></i> Reset
+                                </x-link-button.secondary-link>
+                            @endif
+                        </div>
                     </form>
 
                     <x-link-button.primary-link :href="route('reports.overdue.export', request()->query())" icon="ri-export-line">
@@ -39,40 +65,33 @@
                     </x-link-button.primary-link>
                 </div>
 
+                <x-table :headers="['Nama Siswa', 'Periode', 'Nominal', 'Status']" :empty="$bills->isEmpty()">
+                    @foreach ($bills as $bill)
+                        <x-table.tr>
+                            <x-table.td>
+                                <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
+                                    :subtitle="$bill->student->nis" />
+                            </x-table.td>
 
-                <div class="overflow-x-auto mb-3">
-                    <table id="overdueReportTable" class="min-w-full min-w-[700px]">
-                        <thead>
+                            <x-table.td>
+                                <x-table.code-pill>{{ $bill->billing_period }}</x-table.code-pill>
+                            </x-table.td>
 
-                            <tr>
-                                <th>Student</th>
-                                <th>Period</th>
-                                <th>Nominal</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
+                            <x-table.td>
+                                {{ rupiah($bill->amount) }}
+                            </x-table.td>
 
-                        <tbody>
-                            @foreach ($bills as $bill)
-                                <tr>
-                                    <td>{{ $bill->student->name }}</td>
+                            <x-table.td>
+                                <x-table.badge variant="{{ $bill->status === 'paid' ? 'olive' : 'danger' }}"
+                                    class="capitalize">
+                                    {{ $bill->status }}
+                                </x-table.badge>
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
 
-                                    <td>{{ $bill->billing_period }}</td>
-
-                                    <td>{{ rupiah($bill->amount) }}</td>
-
-                                    <td>
-                                        <span
-                                            class="{{ $bill->status == 'paid' ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} py-1 px-2 text-sm font-semibold rounded-md">
-                                            {{ titleCase($bill->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                {{ $bills->links() }}
+                {{ $bills->links('vendor.pagination.default') }}
             </div>
         </div>
     </div>

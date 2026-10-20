@@ -16,7 +16,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-            {{-- Always Visible: Grand Total --}}
             <x-widget-summary title="Total Siswa Aktif" value="{{ $summary['total_students'] }}" icon="ri-group-fill" />
 
             <x-widget-summary title="Siswa Naik Kelas" value="{{ $summary['promote_count'] }}" icon="ri-award-fill" />

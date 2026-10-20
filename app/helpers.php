@@ -86,3 +86,23 @@ if (!function_exists('schoolProfile')) {
         return SchoolProfile::first();
     }
 }
+
+if (!function_exists('get_months')) {
+    function get_months(): array
+    {
+        return [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember',
+        ];
+    }
+}

@@ -15,6 +15,7 @@ class BillController extends Controller
 {
     public function index(Request $request)
     {
+        $months = get_months();
         $academicYears = AcademicYear::orderBy('name', 'desc')->get();
         $query = Bill::with([
             'student' => function ($q) {
@@ -46,7 +47,7 @@ class BillController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return view('bills.index', compact('bills', 'academicYears'));
+        return view('bills.index', compact('bills', 'academicYears', 'months'));
     }
 
     public function show(Bill $bill)
@@ -82,6 +83,7 @@ class BillController extends Controller
 
     public function generateForm()
     {
+        $months = get_months();
         $activeAcademicYear = activeAcademicYear();
 
         $startYear = $activeAcademicYear
@@ -95,6 +97,7 @@ class BillController extends Controller
             'startYear',
             'year1',
             'year2',
+            'months'
         ));
     }
 

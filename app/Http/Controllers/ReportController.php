@@ -9,7 +9,7 @@ use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 
 use App\Exports\PaymentsExport;
-
+use App\Models\AcademicYear;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,39 +18,44 @@ class ReportController extends Controller
 {
     public function overdueReport(Request $request)
     {
-        $query = Bill::with('student')
-            ->where('status', 'unpaid');
+        $months = get_months();
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
-        if ($request->month) {
-
-            $query->where(
-                'billing_period',
-                $request->month
-            );
-        }
-
-        if ($request->search) {
-
-            $query->whereHas('student', function ($q) use ($request) {
-
-                $q->where(
-                    'name',
-                    'like',
-                    '%' . $request->search . '%'
-                );
+        $query = Bill::with([
+            'student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis', 'avatar']);
+            }
+        ])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->whereHas('student', function ($q) use ($request) {
+                    $q->where('fullname', 'like', '%' . $request->search . '%')
+                        ->orWhere('nis', 'like', '%' . $request->search . '%');
+                });
+            })
+            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
+                $query->where('academic_year_id', $request->input('academic_year_id'));
+            })
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $month = $request->input('month');
+                $query->where('billing_period', 'like', "%-{$month}");
             });
-        }
+
+        $totalOutstanding = (clone $query)->sum('amount');
 
         $bills = $query
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
-        $totalOutstanding = $query->sum('amount');
 
         return view(
             'reports.overdue-report',
-            compact('bills', 'totalOutstanding')
+            compact(
+                'bills',
+                'totalOutstanding',
+                'months',
+                'academicYears'
+            )
         );
     }
 
@@ -108,14 +113,24 @@ class ReportController extends Controller
 
     public function exportOverdue(Request $request)
     {
-        $fileName = 'overdue-report';
+        $nameSegments = ['laporan-tunggakan'];
 
-        if ($request->month) {
-
-            $fileName .= '-' . $request->month;
+        if ($request->filled('academic_year_id')) {
+            $academicYear = AcademicYear::find($request->academic_year_id);
+            if ($academicYear) {
+                $nameSegments[] = str_replace('/', '-', $academicYear->name);
+            }
         }
 
-        $fileName .= '.xlsx';
+        if ($request->filled('month')) {
+            $months = get_months();
+            $monthName = $months[$request->month] ?? $request->month;
+            $nameSegments[] = strtolower($monthName);
+        } else {
+            $nameSegments[] = 'semua-periode';
+        }
+
+        $fileName = implode('-', $nameSegments) . '-' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
             new OverdueExport($request),

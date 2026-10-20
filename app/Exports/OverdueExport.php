@@ -3,21 +3,15 @@
 namespace App\Exports;
 
 use App\Models\Bill;
-
-use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, WithStyles
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-
     protected $request;
 
     public function __construct($request)
@@ -27,42 +21,43 @@ class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, Wit
 
     public function collection()
     {
-        $query = Bill::with([
-            'student'
-        ])->where('status', 'unpaid');
-
-
-        if ($this->request->month) {
-            $query->where('billing_period', $this->request->month);
-        }
-
+        $query = Bill::with(['student'])
+            ->where('status', 'unpaid')
+            ->when($this->request->filled('search'), function ($q) {
+                $search = $this->request->search;
+                $q->whereHas('student', function ($sq) use ($search) {
+                    $sq->where('fullname', 'like', '%' . $search . '%')
+                        ->orWhere('nis', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($this->request->filled('academic_year_id'), function ($q) {
+                $q->where('academic_year_id', $this->request->academic_year_id);
+            })
+            ->when($this->request->filled('month'), function ($q) {
+                $month = $this->request->month;
+                $q->where('billing_period', 'like', "%-{$month}");
+            });
 
         return $query
+            ->latest()
             ->get()
             ->map(function ($bill) {
-
                 return [
-
-                    $bill->student->name,
-
+                    $bill->student->fullname ?? $bill->student->name,
                     $bill->billing_period,
-
                     rupiah($bill->amount),
-
-                    $bill->status
-
+                    titleCase($bill->status),
                 ];
             });
     }
 
-
     public function headings(): array
     {
         return [
-            'Student Name',
-            'Billing Period',
-            'Amount',
-            'Status'
+            'Nama Siswa',
+            'Periode',
+            'Nominal',
+            'Status',
         ];
     }
 
@@ -78,26 +73,20 @@ class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, Wit
             );
 
         return [
-
             1 => [
                 'font' => [
-                    'bold' => true
+                    'bold' => true,
                 ],
-
                 'alignment' => [
-                    'horizontal' => 'center'
+                    'horizontal' => 'center',
                 ],
-
                 'fill' => [
-
                     'fillType' => 'solid',
-
                     'startColor' => [
-                        'rgb' => 'D9D9D9'
-                    ]
-
-                ]
-            ]
+                        'rgb' => 'D9D9D9',
+                    ],
+                ],
+            ],
         ];
     }
 }

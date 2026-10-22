@@ -1,95 +1,109 @@
 <x-app-layout>
-    <div class="py-6">
-
-        <div class="flex flex-col sm:flex-row md:items-center md:justify-between pb-6 gap-2">
-            <h1 class="font-semibold text-xl">
-                Payment Report
-            </h1>
-
-            <div
-                class=" flex items-center gap-3 px-4 py-3 rounded-lg border border-green-200 bg-green-50 w-full sm:w-auto">
-                <i class="ri-arrow-up-circle-line text-3xl text-green-500"></i>
-
-                <div>
-                    <p class="text-xs text-gray-500">
-                        Total Income
-                    </p>
-
-                    <p class="font-bold text-lg text-green-600">
-                        {{ rupiah($totalIncome) }}
-                    </p>
+    <div class="py-6 space-y-6">
+        <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FCECD8] via-[#FCECD8]/70 to-white p-6 border border-[#91AC67]/20 shadow-sm">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 text-xl rounded-xl bg-[#597928] text-[#FCECD8] flex items-center justify-center shadow-md shadow-[#597928]/20">
+                        <i class="ri-book-2-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Laporan Pembayaran</h1>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <div class="grid grid-cols-1">
+            <x-widget-summary title="Total Pemasukan" value="{{ rupiah($totalIncome) }}" icon="ri-arrow-up-circle-line" />
+        </div>
+
         <div class="bg-white overflow-hidden shadow-sm rounded-lg">
             <div class="p-6">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
-                    <form method="GET" class="flex flex-col lg:flex-row lg:flex-wrap gap-3">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-2">
+                    <form method="GET" action="{{ url()->current() }}"
+                        class="flex flex-col sm:flex-row sm:items-center gap-3">
                         <x-form.text-input type="text" name="search" :value="request('search')"
-                            placeholder="Find a student..." />
+                            placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
-                        <x-form.text-input type="month" name="month" :value="request('month')" placeholder="e.g. 2026-06" />
+                        <x-form.select-input name="academic_year_id" class="md:w-auto">
+                            <option value="">Semua Tahun Akademik</option>
+                            @foreach ($academicYears as $ay)
+                                <option value="{{ $ay->id }}"
+                                    {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
+                                    {{ $ay->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
 
-                        <x-form.select-input name="payment_method">
+                        <x-form.select-input name="month" class="md:w-auto">
+                            <option value="">Semua Bulan</option>
+                            @foreach ($months as $num => $name)
+                                <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
 
-                            <option value="">All</option>
-
+                        <x-form.select-input name="payment_method" class="md:w-auto">
+                            <option value="">Semua Metode</option>
                             @foreach ($paymentMethods as $method)
                                 <option value="{{ $method->id }}"
                                     {{ request('payment_method') == $method->id ? 'selected' : '' }}>
                                     {{ $method->name }}
                                 </option>
                             @endforeach
-
                         </x-form.select-input>
 
-                        <x-button.primary-button>
-                            {{ __('Filter') }}
-                        </x-button.primary-button>
+                        <div class="flex items-center gap-2">
+                            <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
+                                <i class="ri-filter-3-line mr-1"></i> Filter
+                            </x-button.primary-button>
+
+                            @if (request()->hasAny(['search', 'academic_year_id', 'month', 'payment_method']))
+                                <x-link-button.secondary-link :href="url()->current()">
+                                    <i class="ri-refresh-line"></i> Reset
+                                </x-link-button.secondary-link>
+                            @endif
+                        </div>
                     </form>
 
-                    <x-link-button.primary-link :href="route('reports.payments.export', request()->query())" icon="ri-export-line">
+                    <x-link-button.primary-link :href="route('reports.overdue.export', request()->query())" icon="ri-export-line">
                         Export Excel
                     </x-link-button.primary-link>
                 </div>
 
+                <x-table :headers="['Nama Siswa', 'Tanggal', 'Metode', 'Nominal', 'Aksi']" :empty="$payments->isEmpty()">
+                    @foreach ($payments as $payment)
+                        <x-table.tr>
+                            <x-table.td>
+                                <x-table.avatar-cell :avatar="$payment->bill->student->avatar" :initials="$payment->bill->student->initials" :name="$payment->bill->student->fullname"
+                                    :subtitle="$payment->bill->student->nis" />
+                            </x-table.td>
 
-                <div class="overflow-x-auto mb-3">
-                    <table id="paymentReportTable" class="min-w-full min-w-[700px]">
-                        <thead>
+                            <x-table.td>
+                                {{ $payment->paid_at }}
+                            </x-table.td>
 
-                            <tr>
-                                <th>Student</th>
-                                <th>Date</th>
-                                <th>Method</th>
-                                <th>Nominal</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                            <x-table.td>
+                                <x-table.code-pill>{{ $payment->paymentMethod->name }}</x-table.code-pill>
+                            </x-table.td>
 
-                        <tbody>
-                            @foreach ($payments as $payment)
-                                <tr>
-                                    <td>{{ $payment->bill->student->name }}</td>
+                            <x-table.td>
+                                {{ rupiah($payment->amount_paid) }}
+                            </x-table.td>
 
-                                    <td>{{ $payment->paid_at }}</td>
+                            <x-table.td>
+                                <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
+                                    Print Receipt
+                                </x-link-button.primary-link>
+                            </x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-table>
 
-                                    <td>{{ $payment->paymentMethod->name }}</td>
-
-                                    <td>{{ rupiah($payment->amount_paid) }}</td>
-
-                                    <td>
-                                        <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
-                                            Print Receipt
-                                        </x-link-button.primary-link>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                {{ $payments->links() }}
+                {{ $payments->links('vendor.pagination.default') }}
             </div>
         </div>
     </div>

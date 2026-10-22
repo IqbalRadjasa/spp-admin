@@ -61,53 +61,54 @@ class ReportController extends Controller
 
     public function paymentReport(Request $request)
     {
-        $query = Payment::with([
-            'bill.student',
-            'paymentMethod'
-        ]);
-
-        if ($request->month) {
-
-            $query->whereMonth(
-                'paid_at',
-                Carbon::parse(
-                    $request->month
-                )->month
-            );
-        }
-
-
-        if ($request->payment_method) {
-
-            $query->where(
-                'payment_method_id',
-                $request->payment_method
-            );
-        }
-
-        if ($request->search) {
-
-            $query->whereHas('bill.student', function ($q) use ($request) {
-
-                $q->where(
-                    'name',
-                    'like',
-                    '%' . $request->search . '%'
-                );
-            });
-        }
-
+        $months = get_months();
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
         $paymentMethods = PaymentMethod::all();
-        $totalIncome = $query->sum('amount_paid');
+
+        $query = Payment::with([
+            'bill.student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis', 'avatar']);
+            },
+            'paymentMethod'
+        ])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->whereHas('bill.student', function ($q) use ($search) {
+                    $q->where('fullname', 'like', '%' . $search . '%')
+                        ->orWhere('nis', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
+                $query->whereHas('bill', function ($q) use ($request) {
+                    $q->where('academic_year_id', $request->input('academic_year_id'));
+                });
+            })
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $month = $request->input('month');
+                $query->whereHas('bill', function ($q) use ($month) {
+                    $q->where('billing_period', 'like', "%-{$month}");
+                });
+            })
+            ->when($request->filled('payment_method'), function ($query) use ($request) {
+                $query->where('payment_method_id', $request->input('payment_method'));
+            });
+
+        $totalIncome = (clone $query)->sum('amount_paid');
+
         $payments = $query
             ->latest('paid_at')
             ->paginate(5)
             ->withQueryString();
 
-
         return view(
             'reports.payment-report',
-            compact('payments', 'totalIncome', 'paymentMethods')
+            compact(
+                'payments',
+                'totalIncome',
+                'paymentMethods',
+                'months',
+                'academicYears'
+            )
         );
     }
 

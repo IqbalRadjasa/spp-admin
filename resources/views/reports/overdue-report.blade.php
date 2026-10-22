@@ -16,7 +16,7 @@
         </div>
 
         <div class="grid grid-cols-1">
-            <x-widget-summary title="Total yang Belum Dilunasi" value="{{ rupiah($totalOutstanding) }}"
+            <x-widget-summary title="Total yang Belum Dilunasi" mode="danger" value="{{ rupiah($totalOutstanding) }}"
                 icon="ri-arrow-down-circle-line" />
         </div>
 

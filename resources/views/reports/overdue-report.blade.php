@@ -9,7 +9,7 @@
                         <i class="ri-book-2-line"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-[#6E3511]">Laporan Telat Pembayaran</h1>
+                        <h1 class="text-2xl font-bold text-[#6E3511]">Laporan Tunggakan</h1>
                     </div>
                 </div>
             </div>

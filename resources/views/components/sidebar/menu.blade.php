@@ -27,7 +27,7 @@
 
  <x-sidebar.sidebar-dropdown title="Laporan" icon="ri-book-2-line" :active="request()->routeIs('reports.*', 'payments.receipt')">
      <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
-         Laporan Telat Pembayaran
+         Laporan Tunggakan
      </x-sidebar.sidebar-dropdown-link>
 
      <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report', 'payments.receipt')">

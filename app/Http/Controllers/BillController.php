@@ -52,7 +52,7 @@ class BillController extends Controller
 
     public function show(Bill $bill)
     {
-        $bil = $bill::with([
+        $bill->load([
             'student' => function ($q) {
                 $q->select(['id', 'fullname', 'nis', 'enrollment_year', 'status']);
             }

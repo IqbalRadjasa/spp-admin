@@ -131,7 +131,7 @@
 
                                         @if ($bill->status == 'unpaid')
                                             <x-dropdown.dropdown-link href="{{ route('payments.create', $bill->id) }}">
-                                                Pay
+                                                Bayar
                                             </x-dropdown.dropdown-link>
                                         @endif
                                     </x-slot>

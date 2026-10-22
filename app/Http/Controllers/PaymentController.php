@@ -22,6 +22,12 @@ class PaymentController extends Controller
             abort(404);
         }
 
+        $bill->load([
+            'student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis']);
+            }
+        ]);
+
         $paymentMethods = PaymentMethod::all();
 
         return view('payments.create', compact(

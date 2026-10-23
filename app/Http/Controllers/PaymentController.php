@@ -111,7 +111,7 @@ class PaymentController extends Controller
             SendPaymentNotificationJob::dispatch($payment);
 
             return redirect()
-                ->route('payments.receipt', $payment)
+                ->route('payments.download-receipt', $payment)
                 ->with([
                     'success' => 'Pembayaran tunai telah berhasil dicatat!',
                     'auto_print' => true
@@ -220,7 +220,7 @@ class PaymentController extends Controller
         });
 
         return redirect()
-            ->route('payments.receipt', $payment)
+            ->route('payments.download-receipt', $payment)
             ->with([
                 'success' => 'Pembayaran tunai telah berhasil dicatat!',
                 'auto_print' => true

@@ -27,41 +27,14 @@
                         <x-form.text-input type="text" name="search" :value="request('search')"
                             placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
-                        <x-form.select-input name="academic_year_id" class="md:w-auto">
-                            <option value="">Semua Tahun Akademik</option>
-                            @foreach ($academicYears as $ay)
-                                <option value="{{ $ay->id }}"
-                                    {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
-                                    {{ $ay->name }}
-                                </option>
-                            @endforeach
-                        </x-form.select-input>
-
-                        <x-form.select-input name="month" class="md:w-auto">
-                            <option value="">Semua Bulan</option>
-                            @foreach ($months as $num => $name)
-                                <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </x-form.select-input>
-
-                        <x-form.select-input name="payment_method" class="md:w-auto">
-                            <option value="">Semua Metode</option>
-                            @foreach ($paymentMethods as $method)
-                                <option value="{{ $method->id }}"
-                                    {{ request('payment_method') == $method->id ? 'selected' : '' }}>
-                                    {{ $method->name }}
-                                </option>
-                            @endforeach
-                        </x-form.select-input>
+                        <x-form.text-input type="date" name="date" :value="request('date')" class="md:w-auto" />
 
                         <div class="flex items-center gap-2">
                             <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
                                 <i class="ri-filter-3-line mr-1"></i> Filter
                             </x-button.primary-button>
 
-                            @if (request()->hasAny(['search', 'academic_year_id', 'month', 'payment_method']))
+                            @if (request()->hasAny(['search', 'date']))
                                 <x-link-button.secondary-link :href="url()->current()">
                                     <i class="ri-refresh-line"></i> Reset
                                 </x-link-button.secondary-link>
@@ -95,13 +68,9 @@
                             </x-table.td>
 
                             <x-table.td>
-
                                 <x-link-button.primary-link :href="route('payments.download-receipt', $payment)" icon="ri-printer-line">
                                     {{ __('Download PDF Kuitansi') }}
                                 </x-link-button.primary-link>
-                                {{-- <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
-                                    Print Receipt
-                                </x-link-button.primary-link> --}}
                             </x-table.td>
                         </x-table.tr>
                     @endforeach

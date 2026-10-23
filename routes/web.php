@@ -80,7 +80,7 @@ Route::middleware([
 // Public Routes
 Route::middleware([
     'auth',
-    'role:admin,tu_staff,parent'
+    'role:admin,tu_staff'
 ])->group(function () {
 
     // Student's Routes
@@ -118,6 +118,9 @@ Route::middleware([
 
     Route::get('/reports/payment-report', [ReportController::class, 'paymentReport'])
         ->name('reports.payment-report');
+
+    Route::get('/reports/payment-report/{payment}/show', [ReportController::class, 'show'])
+        ->name('reports.payment-report.show');
 
 
     // Export's Routes

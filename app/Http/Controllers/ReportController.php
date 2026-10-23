@@ -38,6 +38,10 @@ class ReportController extends Controller
             ->when($request->filled('month'), function ($query) use ($request) {
                 $month = $request->input('month');
                 $query->where('billing_period', 'like', "%-{$month}");
+            })
+            ->where(function ($q) {
+                $q->where('status', 'unpaid')
+                    ->orWhere('status', 'pending');
             });
 
         $totalOutstanding = (clone $query)->sum('amount');
@@ -78,19 +82,11 @@ class ReportController extends Controller
                         ->orWhere('nis', 'like', '%' . $search . '%');
                 });
             })
-            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
-                $query->whereHas('bill', function ($q) use ($request) {
-                    $q->where('academic_year_id', $request->input('academic_year_id'));
-                });
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $query->whereDate('paid_at', $request->input('date'));
             })
-            ->when($request->filled('month'), function ($query) use ($request) {
-                $month = $request->input('month');
-                $query->whereHas('bill', function ($q) use ($month) {
-                    $q->where('billing_period', 'like', "%-{$month}");
-                });
-            })
-            ->when($request->filled('payment_method'), function ($query) use ($request) {
-                $query->where('payment_method_id', $request->input('payment_method'));
+            ->where(function ($q) {
+                $q->where('status', 'paid');
             });
 
         $totalIncome = (clone $query)->sum('amount_paid');

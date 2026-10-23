@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\OverdueExport;
+use Carbon\Carbon;
+
 use App\Models\Bill;
 use App\Models\Payment;
-use App\Models\PaymentMethod;
-use Illuminate\Http\Request;
-
-use App\Exports\PaymentsExport;
 use App\Models\AcademicYear;
-use Carbon\Carbon;
+use App\Models\PaymentMethod;
+
+use App\Exports\OverdueExport;
+use App\Exports\PaymentsExport;
+
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
@@ -40,8 +43,7 @@ class ReportController extends Controller
                 $query->where('billing_period', 'like', "%-{$month}");
             })
             ->where(function ($q) {
-                $q->where('status', 'unpaid')
-                    ->orWhere('status', 'pending');
+                $q->where('status', 'unpaid');
             });
 
         $totalOutstanding = (clone $query)->sum('amount');
@@ -66,8 +68,12 @@ class ReportController extends Controller
     public function paymentReport(Request $request)
     {
         $months = get_months();
-        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
         $paymentMethods = PaymentMethod::all();
+        $years = Payment::select(DB::raw('YEAR(paid_at) as year'))
+            ->whereNotNull('paid_at')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
 
         $query = Payment::with([
             'bill.student' => function ($q) {
@@ -82,8 +88,17 @@ class ReportController extends Controller
                         ->orWhere('nis', 'like', '%' . $search . '%');
                 });
             })
+            ->when($request->filled('payment_method_id'), function ($query) use ($request) {
+                $query->where('payment_method_id', $request->input('payment_method_id'));
+            })
             ->when($request->filled('date'), function ($query) use ($request) {
                 $query->whereDate('paid_at', $request->input('date'));
+            })
+            ->when($request->filled('year'), function ($query) use ($request) {
+                $query->whereYear('paid_at', $request->input('year'));
+            })
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $query->whereMonth('paid_at', $request->input('month'));
             })
             ->where(function ($q) {
                 $q->where('status', 'paid');
@@ -103,7 +118,7 @@ class ReportController extends Controller
                 'totalIncome',
                 'paymentMethods',
                 'months',
-                'academicYears'
+                'years'
             )
         );
     }
@@ -137,17 +152,22 @@ class ReportController extends Controller
 
     public function exportPayments(Request $request)
     {
-        $fileName = 'payments-report';
+        $fileName = 'laporan-pembayaran';
+
+        if ($request->year) {
+
+            $fileName .= '-' . $request->year;
+        }
 
         if ($request->month) {
 
             $fileName .= '-' . $request->month;
         }
 
-        if ($request->payment_method) {
+        if ($request->payment_method_id) {
 
             $paymentMethod = PaymentMethod::find(
-                $request->payment_method
+                $request->payment_method_id
             );
 
             $fileName .= '-' . Str::slug(

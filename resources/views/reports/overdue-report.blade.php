@@ -84,7 +84,7 @@
                             <x-table.td>
                                 <x-table.badge variant="{{ $bill->status === 'paid' ? 'olive' : 'danger' }}"
                                     class="capitalize">
-                                    {{ $bill->status }}
+                                    {{ $bill->status == 'unpaid' ? 'Belum Dibayar' : 'Telah Dibayar' }}
                                 </x-table.badge>
                             </x-table.td>
                         </x-table.tr>

@@ -27,51 +27,40 @@ class PaymentsExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 
     public function collection()
     {
-        $query =  Payment::with([
-            'bill.student',
+
+        $query = Payment::with([
+            'bill.student' => function ($q) {
+                $q->select(['id', 'fullname', 'nis', 'avatar']);
+            },
             'paymentMethod'
-        ]);
-
-        if ($this->request->month) {
-
-            $query->whereMonth(
-                'paid_at',
-                Carbon::parse(
-                    $this->request->month
-                )->month
-            );
-        }
-
-        if ($this->request->payment_method) {
-
-            $query->where(
-                'payment_method_id',
-                $this->request->payment_method
-            );
-        }
+        ])
+            ->when($this->request->filled('payment_method_id'), function ($q) {
+                $q->where('payment_method_id', $this->request->payment_method_id);
+            })
+            ->when($this->request->filled('year'), function ($q) {
+                $q->whereYear('paid_at', $this->request->year);
+            })
+            ->when($this->request->filled('month'), function ($q) {
+                $q->whereMonth('paid_at', $this->request->month);
+            })
+            ->where(function ($q) {
+                $q->where('status', 'paid');
+            });
 
         return $query
             ->get()
             ->map(function ($payment) {
-
                 return [
-
                     $payment->payment_code,
-
-                    $payment->bill->student->name,
-
+                    $payment->bill->student->fullname,
                     $payment->bill->billing_period,
-
                     $payment->paymentMethod->name,
-
                     Carbon::parse(
                         $payment->paid_at
                     )->format('d M Y'),
-
                     rupiah(
                         $payment->amount_paid
                     )
-
                 ];
             });
     }
@@ -79,12 +68,12 @@ class PaymentsExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
     public function headings(): array
     {
         return [
-            'Payment Code',
-            'Student Name',
-            'Billing Period',
-            'Payment Method',
-            'Paid At',
-            'Amount'
+            'Kode Pembayaran',
+            'Nama Siswa',
+            'Periode',
+            'Metode Pembayaran',
+            'Tanggal Pembayaran',
+            'Nominal'
         ];
     }
 
@@ -115,7 +104,7 @@ class PaymentsExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
                     'fillType' => 'solid',
 
                     'startColor' => [
-                        'rgb' => 'D9D9D9'
+                        'rgb' => 'B2BD7E'
                     ]
 
                 ]

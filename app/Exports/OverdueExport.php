@@ -42,11 +42,13 @@ class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, Wit
             ->latest()
             ->get()
             ->map(function ($bill) {
+                $billStatus = $bill->status == 'unpaid' ? 'Belum Dibayar' : 'Telah Dibayar';
+
                 return [
                     $bill->student->fullname ?? $bill->student->name,
                     $bill->billing_period,
                     rupiah($bill->amount),
-                    titleCase($bill->status),
+                    titleCase($billStatus),
                 ];
             });
     }

@@ -27,14 +27,43 @@
                         <x-form.text-input type="text" name="search" :value="request('search')"
                             placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
+                        <x-form.select-input name="payment_method_id" class="md:w-auto">
+                            <option value="">Semua Metode</option>
+                            @foreach ($paymentMethods as $pm)
+                                <option value="{{ $pm->id }}"
+                                    {{ request('payment_method_id') == $pm->id ? 'selected' : '' }}>
+                                    {{ $pm->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
+
                         <x-form.text-input type="date" name="date" :value="request('date')" class="md:w-auto" />
+
+
+                        <x-form.select-input name="year" class="md:w-auto">
+                            <option value="">Semua Tahun</option>
+                            @foreach ($years as $year)
+                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
+
+                        <x-form.select-input name="month" class="md:w-auto">
+                            <option value="">Semua Bulan</option>
+                            @foreach ($months as $num => $name)
+                                <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </x-form.select-input>
 
                         <div class="flex items-center gap-2">
                             <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
                                 <i class="ri-filter-3-line mr-1"></i> Filter
                             </x-button.primary-button>
 
-                            @if (request()->hasAny(['search', 'date']))
+                            @if (request()->hasAny(['search', 'payment_method_id', 'date', 'year', 'month']))
                                 <x-link-button.secondary-link :href="url()->current()">
                                     <i class="ri-refresh-line"></i> Reset
                                 </x-link-button.secondary-link>
@@ -42,7 +71,7 @@
                         </div>
                     </form>
 
-                    <x-link-button.primary-link :href="route('reports.overdue.export', request()->query())" icon="ri-export-line">
+                    <x-link-button.primary-link :href="route('reports.payments.export', request()->query())" icon="ri-export-line">
                         Export Excel
                     </x-link-button.primary-link>
                 </div>

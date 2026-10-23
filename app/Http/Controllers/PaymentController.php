@@ -227,20 +227,6 @@ class PaymentController extends Controller
             ]);
     }
 
-    public function receipt(Payment $payment)
-    {
-        $school = SchoolProfile::first();
-        $payment->load(['bill.student.parents', 'paymentMethod']);
-        $formattedDate = Carbon::parse($payment->paid_at)->isoFormat('D MMMM YYYY [, pukul] HH:mm');
-
-        return view('payments.receipt', compact(
-            'payment',
-            'school',
-            'formattedDate'
-        ));
-    }
-
-
     public function downloadReceipt(Payment $payment)
     {
         $school = SchoolProfile::first();

@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\SchoolProfile;
 
 use App\Services\ActivityLogService;
 
 use App\Jobs\SendPaymentNotificationJob;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 use Midtrans\Snap;
@@ -109,7 +112,10 @@ class PaymentController extends Controller
 
             return redirect()
                 ->route('payments.receipt', $payment)
-                ->with('success', 'Cash payment recorded successfully!');
+                ->with([
+                    'success' => 'Pembayaran tunai telah berhasil dicatat!',
+                    'auto_print' => true
+                ]);
         }
 
         if ($validated['payment_method_id'] == 2) {
@@ -213,85 +219,42 @@ class PaymentController extends Controller
             }
         });
 
-        return response()->json(['message' => 'Pemberitahuan telah diproses dengan sukses']);
+        return redirect()
+            ->route('payments.receipt', $payment)
+            ->with([
+                'success' => 'Pembayaran tunai telah berhasil dicatat!',
+                'auto_print' => true
+            ]);
     }
-
-    // public function store(Request $request, Bill $bill, ActivityLogService $activityLog)
-    // {
-    //     $validated = $request->validate([
-    //         'payment_method_id' => 'required|exists:payment_methods,id',
-    //         'paid_at' => 'required',
-    //         'amount_paid' => 'required|integer|min:1',
-    //         'notes' => 'nullable'
-    //     ]);
-
-    //     if ($validated['amount_paid'] != $bill->amount) {
-
-    //         return back()->withErrors([
-    //             'amount_paid' => 'The payment amount is incorrect'
-    //         ]);
-    //     }
-
-    //     $latestPayment = Payment::latest()->first();
-
-    //     $nextNumber = $latestPayment
-    //         ? $latestPayment->id + 1
-    //         : 1;
-
-    //     $paymentCode =
-    //         'PAY-' .
-    //         now()->format('Ymd') .
-    //         '-' .
-    //         str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-
-    //     $payment = null;
-
-    //     DB::transaction(
-    //         function () use (&$payment, $paymentCode, $bill, $validated, $activityLog) {
-    //             $payment = Payment::create([
-    //                 'payment_code' => $paymentCode,
-    //                 'bill_id' => $bill->id,
-    //                 'payment_method_id' => $validated['payment_method_id'],
-    //                 'paid_at' => $validated['paid_at'],
-    //                 'amount_paid' => $validated['amount_paid'],
-    //                 'notes' => $validated['notes']
-    //             ]);
-
-    //             $bill->update([
-    //                 'status' => 'paid',
-    //                 'reminder_attempts' => 0,
-    //                 'last_reminded_at' => null,
-    //                 'escalation_status' => 'resolved'
-    //             ]);
-
-    //             $activityLog->log(
-    //                 'payment',
-    //                 'bill',
-    //                 $bill->id,
-    //                 'Bill Payment ' .
-    //                     $payment['payment_code']
-    //             );
-    //         }
-    //     );
-
-    //     // Queue Notification
-    //     SendPaymentNotificationJob::dispatch($payment);
-
-    //     return redirect()
-    //         ->route('payments.receipt', $payment)
-    //         ->with('success', 'Payment successful!');
-    // }
 
     public function receipt(Payment $payment)
     {
-        $payment->load([
-            'bill.student',
-            'paymentMethod'
-        ]);
+        $school = SchoolProfile::first();
+        $payment->load(['bill.student.parents', 'paymentMethod']);
+        $formattedDate = Carbon::parse($payment->paid_at)->isoFormat('D MMMM YYYY [, pukul] HH:mm');
 
-        return view(
-            'payments.receipt',
-            compact('payment')
-        );
+        return view('payments.receipt', compact(
+            'payment',
+            'school',
+            'formattedDate'
+        ));
+    }
+
+
+    public function downloadReceipt(Payment $payment)
+    {
+        $school = SchoolProfile::first();
+        $payment->load(['bill.student.parents', 'paymentMethod']);
+        $formattedDate = Carbon::parse($payment->paid_at)->isoFormat('D MMMM YYYY [, pukul] HH:mm');
+
+        $pdf = Pdf::loadView('payments.receipt-pdf', compact('payment', 'school', 'formattedDate'));
+
+        // Set paper size to A4
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = 'Kuitansi-SPP-' . $payment->payment_code . '-' . $payment->bill->student->name . '.pdf';
+
+        // Stream or download directly with the custom filename pre-filled
+        return $pdf->download($filename);
     }
 }

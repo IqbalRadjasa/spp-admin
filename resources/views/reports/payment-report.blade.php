@@ -95,9 +95,13 @@
                             </x-table.td>
 
                             <x-table.td>
-                                <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
-                                    Print Receipt
+
+                                <x-link-button.primary-link :href="route('payments.download-receipt', $payment)" icon="ri-printer-line">
+                                    {{ __('Download PDF Kuitansi') }}
                                 </x-link-button.primary-link>
+                                {{-- <x-link-button.primary-link :href="route('payments.receipt', $payment->id)">
+                                    Print Receipt
+                                </x-link-button.primary-link> --}}
                             </x-table.td>
                         </x-table.tr>
                     @endforeach

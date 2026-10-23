@@ -105,13 +105,12 @@ Route::middleware([
 
 
     // Payment's Routes
-    // Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
-
     Route::get('/bills/payments/{bill}/create', [PaymentController::class, 'create'])
         ->name('payments.create');
 
     Route::post('/bill/{bill}/payments', [PaymentController::class, 'store'])
         ->name('payments.store');
+
 
     // Report's Routes
     Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])
@@ -132,6 +131,8 @@ Route::middleware([
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
         ->name('payments.receipt');
 
+    Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
+        ->name('payments.download-receipt');
 
     // Filter Routes
     Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);

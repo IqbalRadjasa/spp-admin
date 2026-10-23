@@ -15,14 +15,14 @@ class PaymentMethodSeeder extends Seeder
     {
         DB::table('payment_methods')->insert([
             [
-                'name' => 'Cash',
-                'code' => 'cash',
+                'name' => 'Tunai',
+                'code' => 'tunai',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Transfer',
-                'code' => 'transfer',
+                'name' => 'Transfer/lainnya',
+                'code' => 'transfer_atau_lainnya',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

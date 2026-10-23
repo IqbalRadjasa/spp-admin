@@ -105,6 +105,8 @@ Route::middleware([
 
 
     // Payment's Routes
+    // Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
+
     Route::get('/bills/payments/{bill}/create', [PaymentController::class, 'create'])
         ->name('payments.create');
 

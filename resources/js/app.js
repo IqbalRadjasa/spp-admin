@@ -1,5 +1,7 @@
 import "./bootstrap";
 
+import "./payment/payment-handler";
+
 import Alpine from "alpinejs";
 
 Alpine.plugin(collapse);

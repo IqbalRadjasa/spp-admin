@@ -15,6 +15,9 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Midtrans Snap JS (Use app.sandbox.midtrans.com for development/sandbox) -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">
+    </script>
 </head>
 
 <body class="antialiased bg-[#FBF6EF]" data-success="{{ session('success') }}" data-error="{{ session('error') }}">

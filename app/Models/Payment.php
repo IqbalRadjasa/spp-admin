@@ -16,7 +16,9 @@ class Payment extends Model
         'payment_method_id',
         'paid_at',
         'amount_paid',
-        'notes'
+        'notes',
+        'status',
+        'cash_payment_proof'
     ];
 
     public function bill()

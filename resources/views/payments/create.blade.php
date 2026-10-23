@@ -44,7 +44,8 @@
                 <hr class="my-6 border-t border-stone-200/60">
 
                 {{-- Payment Form --}}
-                <form action="{{ route('payments.store', $bill) }}" method="POST">
+                <form id="payment-form" action="{{ route('payments.store', $bill) }}" method="POST"
+                    enctype="multipart/form-data" data-redirect-url="{{ route('bills.index') }}">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -53,11 +54,10 @@
                             <x-form.input-label for="payment_method_id" :value="__('Metode Pembayaran')" />
                             <div
                                 class="flex items-center gap-6 mt-2.5 p-3 bg-stone-50/60 rounded-xl border border-stone-200/60">
-                                <x-form.radio id="cash" name="payment_method_id" label="Cash (Tunai)"
-                                    value="1" :checked="old('payment_method_id') == 1" />
-
-                                <x-form.radio id="transfer" name="payment_method_id" label="Transfer Bank"
-                                    value="2" :checked="old('payment_method_id') == 2" />
+                                @foreach ($paymentMethods as $pm)
+                                    <x-form.radio id="{{ $pm->code }}" name="payment_method_id"
+                                        label="{{ $pm->name }}" value="{{ $pm->id }}" :checked="old('payment_method_id') == $pm->id" />
+                                @endforeach
                             </div>
                             <x-form.input-error :messages="$errors->get('payment_method_id')" class="mt-1" />
                         </div>
@@ -68,6 +68,17 @@
                             <x-form.text-input id="paid_at" class="mt-2 w-full" type="datetime-local" name="paid_at"
                                 :value="old('paid_at', now()->format('Y-m-d\TH:i'))" required autofocus autocomplete="paid_at" />
                             <x-form.input-error :messages="$errors->get('paid_at')" class="mt-1" />
+                        </div>
+                    </div>
+
+                    {{-- Cash Payment Proof (Toggled via JS, hidden by default unless Cash is selected or old input exists) --}}
+                    <div id="cash-proof-container" class="mb-6 {{ old('payment_method_id') == 1 ? '' : 'hidden' }}">
+                        <div class="input-group">
+                            <x-form.input-label for="cash_payment_proof" :value="__('Bukti Pembayaran Tunai (Foto/Scan)')" />
+                            <input type="file" id="cash_payment_proof" name="cash_payment_proof" accept="image/*"
+                                class="block w-full text-xs text-stone-500 mt-1 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#597928] file:text-[#FCECD8] hover:file:bg-[#6E3511] file:cursor-pointer file:transition-colors" />
+                            <p class="text-[11px] text-stone-500 mt-1">Format: JPG, PNG, JPEG (Maks. 2MB)</p>
+                            <x-form.input-error :messages="$errors->get('cash_payment_proof')" class="mt-1" />
                         </div>
                     </div>
 
@@ -99,7 +110,7 @@
                             Batal
                         </x-link-button.secondary-link>
 
-                        <x-button.primary-button>
+                        <x-button.primary-button type="submit">
                             {{ __('Simpan Pembayaran') }}
                         </x-button.primary-button>
                     </div>

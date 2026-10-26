@@ -22,10 +22,10 @@
         <div class="bg-white overflow-hidden shadow-sm rounded-lg">
             <div class="p-6">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-2">
-                    <form method="GET" action="{{ url()->current() }}"
+                    <form id="payment-report-filter" method="GET" action="{{ url()->current() }}"
                         class="flex flex-col sm:flex-row sm:items-center gap-3">
                         <x-form.text-input type="text" name="search" :value="request('search')"
-                            placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
+                            placeholder="Cari nama siswa atau NIS..." class="md:w-auto" />
 
                         <x-form.select-input name="payment_method_id" class="md:w-auto">
                             <option value="">Semua Metode</option>
@@ -38,7 +38,6 @@
                         </x-form.select-input>
 
                         <x-form.text-input type="date" name="date" :value="request('date')" class="md:w-auto" />
-
 
                         <x-form.select-input name="year" class="md:w-auto">
                             <option value="">Semua Tahun</option>
@@ -71,7 +70,8 @@
                         </div>
                     </form>
 
-                    <x-link-button.primary-link :href="route('reports.payments.export', request()->query())" icon="ri-export-line">
+                    <x-link-button.primary-link href="#" icon="ri-export-line"
+                        onclick="handleAjaxExport(event, '{{ route('reports.payments.export') }}?' + new URLSearchParams(new FormData(document.getElementById('payment-report-filter'))).toString())">
                         Export Excel
                     </x-link-button.primary-link>
                 </div>

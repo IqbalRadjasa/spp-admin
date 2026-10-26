@@ -23,19 +23,13 @@ class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, Wit
     {
         $query = Bill::with(['student'])
             ->where('status', 'unpaid')
-            ->when($this->request->filled('search'), function ($q) {
-                $search = $this->request->search;
-                $q->whereHas('student', function ($sq) use ($search) {
-                    $sq->where('fullname', 'like', '%' . $search . '%')
-                        ->orWhere('nis', 'like', '%' . $search . '%');
-                });
-            })
-            ->when($this->request->filled('academic_year_id'), function ($q) {
-                $q->where('academic_year_id', $this->request->academic_year_id);
-            })
             ->when($this->request->filled('month'), function ($q) {
                 $month = $this->request->month;
                 $q->where('billing_period', 'like', "%-{$month}");
+            })
+            ->when($this->request->filled('year'), function ($q) {
+                $year = $this->request->year;
+                $q->where('billing_period', 'like', "{$year}-%");
             });
 
         return $query
@@ -75,20 +69,26 @@ class OverdueExport implements FromCollection, WithHeadings, ShouldAutoSize, Wit
             );
 
         return [
+
             1 => [
                 'font' => [
-                    'bold' => true,
+                    'bold' => true
                 ],
+
                 'alignment' => [
-                    'horizontal' => 'center',
+                    'horizontal' => 'center'
                 ],
+
                 'fill' => [
+
                     'fillType' => 'solid',
+
                     'startColor' => [
-                        'rgb' => 'D9D9D9',
-                    ],
-                ],
-            ],
+                        'rgb' => 'B2BD7E'
+                    ]
+
+                ]
+            ]
         ];
     }
 }

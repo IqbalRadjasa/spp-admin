@@ -23,6 +23,19 @@ class ReportController extends Controller
     {
         $months = get_months();
         $academicYears = AcademicYear::orderBy('name', 'desc')->get();
+        $academicYearOptions = [];
+        $activeYear = activeAcademicYear();
+
+        if ($activeYear && $activeYear->name) {
+            $years = preg_split('/[\/\-]/', $activeYear->name);
+
+            foreach ($years as $year) {
+                $cleanYear = trim($year);
+                if (!empty($cleanYear)) {
+                    $academicYearOptions[$cleanYear] = $cleanYear;
+                }
+            }
+        }
 
         $query = Bill::with([
             'student' => function ($q) {
@@ -35,8 +48,9 @@ class ReportController extends Controller
                         ->orWhere('nis', 'like', '%' . $request->search . '%');
                 });
             })
-            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
-                $query->where('academic_year_id', $request->input('academic_year_id'));
+            ->when($request->filled('year'), function ($query) use ($request) {
+                $year = $request->input('year');
+                $query->where('billing_period', 'like', "{$year}-%");
             })
             ->when($request->filled('month'), function ($query) use ($request) {
                 $month = $request->input('month');
@@ -60,7 +74,8 @@ class ReportController extends Controller
                 'bills',
                 'totalOutstanding',
                 'months',
-                'academicYears'
+                'academicYears',
+                'academicYearOptions'
             )
         );
     }
@@ -127,11 +142,10 @@ class ReportController extends Controller
     {
         $nameSegments = ['laporan-tunggakan'];
 
-        if ($request->filled('academic_year_id')) {
-            $academicYear = AcademicYear::find($request->academic_year_id);
-            if ($academicYear) {
-                $nameSegments[] = str_replace('/', '-', $academicYear->name);
-            }
+        if ($request->filled('year')) {
+            $nameSegments[] = $request->year;
+        } else {
+            $nameSegments[] = 'semua-tahun';
         }
 
         if ($request->filled('month')) {
@@ -139,10 +153,10 @@ class ReportController extends Controller
             $monthName = $months[$request->month] ?? $request->month;
             $nameSegments[] = strtolower($monthName);
         } else {
-            $nameSegments[] = 'semua-periode';
+            $nameSegments[] = 'semua-bulan';
         }
 
-        $fileName = implode('-', $nameSegments) . '-' . now()->format('YmdHis') . '.xlsx';
+        $fileName = implode('-', $nameSegments) . '.xlsx';
 
         return Excel::download(
             new OverdueExport($request),
@@ -152,30 +166,33 @@ class ReportController extends Controller
 
     public function exportPayments(Request $request)
     {
-        $fileName = 'laporan-pembayaran';
+        $nameSegments = ['laporan-pembayaran'];
 
-        if ($request->year) {
-
-            $fileName .= '-' . $request->year;
+        if ($request->filled('year')) {
+            $nameSegments[] = $request->year;
+        } else {
+            $nameSegments[] = 'semua-tahun';
         }
 
-        if ($request->month) {
-
-            $fileName .= '-' . $request->month;
+        if ($request->filled('month')) {
+            $months = get_months();
+            $monthName = $months[$request->month] ?? $request->month;
+            $nameSegments[] = strtolower($monthName);
+        } else {
+            $nameSegments[] = 'semua-bulan';
         }
 
-        if ($request->payment_method_id) {
-
+        if ($request->filled('payment_method_id')) {
             $paymentMethod = PaymentMethod::find(
                 $request->payment_method_id
             );
 
-            $fileName .= '-' . Str::slug(
-                $paymentMethod->name
-            );
+            $nameSegments[] = Str::slug($paymentMethod->name);
+        } else {
+            $nameSegments[] = 'semua-metode';
         }
 
-        $fileName .= '.xlsx';
+        $fileName = implode('-', $nameSegments) . '.xlsx';
 
         return Excel::download(
             new PaymentsExport($request),

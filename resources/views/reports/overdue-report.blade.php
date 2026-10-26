@@ -23,17 +23,16 @@
         <div class="bg-white shadow-sm rounded-xl">
             <div class="p-6">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-2">
-                    <form method="GET" action="{{ url()->current() }}"
+                    <form id="overdue-report-filter" method="GET" action="{{ url()->current() }}"
                         class="flex flex-col sm:flex-row sm:items-center gap-3">
                         <x-form.text-input type="text" name="search" :value="request('search')"
                             placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
 
-                        <x-form.select-input name="academic_year_id" class="md:w-auto">
-                            <option value="">Semua Tahun Akademik</option>
-                            @foreach ($academicYears as $ay)
-                                <option value="{{ $ay->id }}"
-                                    {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
-                                    {{ $ay->name }}
+                        <x-form.select-input name="year" class="md:w-auto">
+                            <option value="">Semua Tahun</option>
+                            @foreach ($academicYearOptions as $year)
+                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                                    {{ $year }}
                                 </option>
                             @endforeach
                         </x-form.select-input>
@@ -52,7 +51,7 @@
                                 <i class="ri-filter-3-line mr-1"></i> Filter
                             </x-button.primary-button>
 
-                            @if (request()->hasAny(['search', 'academic_year_id', 'month']))
+                            @if (request()->hasAny(['search', 'year', 'month']))
                                 <x-link-button.secondary-link :href="url()->current()">
                                     <i class="ri-refresh-line"></i> Reset
                                 </x-link-button.secondary-link>
@@ -60,7 +59,8 @@
                         </div>
                     </form>
 
-                    <x-link-button.primary-link :href="route('reports.overdue.export', request()->query())" icon="ri-export-line">
+                    <x-link-button.primary-link href="#" icon="ri-export-line"
+                        onclick="handleAjaxExport(event, '{{ route('reports.overdue.export') }}?' + new URLSearchParams(new FormData(document.getElementById('overdue-report-filter'))).toString())">
                         Export Excel
                     </x-link-button.primary-link>
                 </div>
@@ -95,4 +95,46 @@
             </div>
         </div>
     </div>
+
+    <script>
+        async function handleExport(event) {
+            event.preventDefault();
+
+            confirmAction(async () => {
+                const response = await fetch('{{ route('reports.overdue.export', request()->query()) }}');
+
+                if (!response.ok) {
+                    throw new Error('Gagal mengunduh file');
+                }
+
+                const blob = await response.blob();
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+
+                a.download = 'Laporan-Overdue.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                // 4. Show success toast/alert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'File Excel berhasil diunduh.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+            }, {
+                title: 'Ekspor Data Laporan?',
+                text: 'File Excel laporan overdue akan segera disiapkan.',
+                confirmButtonText: 'Ya, Ekspor',
+                loadingTitle: 'Menyiapkan File...',
+                loadingText: 'Mohon tunggu, laporan sedang dibuat...'
+            });
+        }
+    </script>
 </x-app-layout>

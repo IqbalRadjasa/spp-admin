@@ -1,6 +1,7 @@
 import "./bootstrap";
 
 import "./payment/payment-handler";
+import "./export-excel/export-ajax";
 
 import Alpine from "alpinejs";
 

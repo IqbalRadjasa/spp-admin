@@ -17,23 +17,25 @@
             <i class="ri-menu-line text-2xl"></i>
         </button>
 
-        <div
-            class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
-            <i class="ri-school-line text-[#597928] text-base"></i>
-            <span>Sekolah:</span>
-            <span class="text-[#597928] font-bold">
-                {{ $schoolProfile ? $schoolProfile->school_name : '-' }}
-            </span>
-        </div>
+        @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
+            <div
+                class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
+                <i class="ri-school-line text-[#597928] text-base"></i>
+                <span>Sekolah:</span>
+                <span class="text-[#597928] font-bold">
+                    {{ $schoolProfile ? $schoolProfile->school_name : '-' }}
+                </span>
+            </div>
 
-        <div
-            class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
-            <i class="ri-calendar-line text-[#597928] text-base"></i>
-            <span>Tahun Akademik:</span>
-            <span class="text-[#597928] font-bold">
-                {{ $activeAcademicYear ? $activeAcademicYear->name : 'Belum Atur Aktif' }}
-            </span>
-        </div>
+            <div
+                class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
+                <i class="ri-calendar-line text-[#597928] text-base"></i>
+                <span>Tahun Akademik:</span>
+                <span class="text-[#597928] font-bold">
+                    {{ $activeAcademicYear ? $activeAcademicYear->name : 'Belum Atur Aktif' }}
+                </span>
+            </div>
+        @endif
     </div>
 
     <div class="">

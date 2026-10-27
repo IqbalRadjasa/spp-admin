@@ -5,11 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserRole;
+
 use Database\Factories\UserFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -59,7 +61,14 @@ class User extends Authenticatable
 
     public function studentParent()
     {
-        return $this->hasOne(StudentParent::class);
+        return $this->hasOne(StudentParent::class, 'user_id');
+    }
+
+    public function children(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'student_parent_relations', 'parent_id', 'student_id')
+            ->withPivot('relationship')
+            ->withTimestamps();
     }
 
     public function isAdmin(): bool

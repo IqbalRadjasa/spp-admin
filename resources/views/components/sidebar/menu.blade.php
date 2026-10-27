@@ -4,36 +4,46 @@
      </x-sidebar.sidebar-link>
  @endif
 
- <x-sidebar.sidebar-dropdown title="Siswa" icon="ri-graduation-cap-line" :active="request()->routeIs('students*')">
-     <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-         Daftar Siswa
-     </x-sidebar.sidebar-dropdown-link>
-     @if (auth()->user()->isAdmin())
-         <x-sidebar.sidebar-dropdown-link :href="route('students-promotion.index')" :active="request()->routeIs('students-promotion.*')">
-             Kenaikan Kelas Siswa
+ @if (auth()->user()->isParent())
+     <x-sidebar.sidebar-link :href="route('parent.dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('parent.dashboard')">
+         Dashboard
+     </x-sidebar.sidebar-link>
+ @endif
+
+ @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
+     <x-sidebar.sidebar-dropdown title="Siswa" icon="ri-graduation-cap-line" :active="request()->routeIs('students*')">
+         <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+             Daftar Siswa
          </x-sidebar.sidebar-dropdown-link>
-     @endif
- </x-sidebar.sidebar-dropdown>
+         @if (auth()->user()->isAdmin())
+             <x-sidebar.sidebar-dropdown-link :href="route('students-promotion.index')" :active="request()->routeIs('students-promotion.*')">
+                 Kenaikan Kelas Siswa
+             </x-sidebar.sidebar-dropdown-link>
+         @endif
+     </x-sidebar.sidebar-dropdown>
+ @endif
 
- <x-sidebar.sidebar-dropdown title="Tagihan" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*', 'payments.create')">
-     <x-sidebar.sidebar-dropdown-link :href="route('bills.index')" :active="request()->routeIs('bills.index', 'bills.detail', 'payments.create')">
-         Daftar Tagihan
-     </x-sidebar.sidebar-dropdown-link>
+ @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
+     <x-sidebar.sidebar-dropdown title="Tagihan" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*', 'payments.create')">
+         <x-sidebar.sidebar-dropdown-link :href="route('bills.index')" :active="request()->routeIs('bills.index', 'bills.detail', 'payments.create')">
+             Daftar Tagihan
+         </x-sidebar.sidebar-dropdown-link>
 
-     <x-sidebar.sidebar-dropdown-link :href="route('bills.generate.form')" :active="request()->routeIs('bills.generate.form')">
-         Buat Tagihan
-     </x-sidebar.sidebar-dropdown-link>
- </x-sidebar.sidebar-dropdown>
+         <x-sidebar.sidebar-dropdown-link :href="route('bills.generate.form')" :active="request()->routeIs('bills.generate.form')">
+             Buat Tagihan
+         </x-sidebar.sidebar-dropdown-link>
+     </x-sidebar.sidebar-dropdown>
 
- <x-sidebar.sidebar-dropdown title="Laporan" icon="ri-book-2-line" :active="request()->routeIs('reports.*', 'payments.receipt')">
-     <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
-         Laporan Tunggakan
-     </x-sidebar.sidebar-dropdown-link>
+     <x-sidebar.sidebar-dropdown title="Laporan" icon="ri-book-2-line" :active="request()->routeIs('reports.*', 'payments.receipt')">
+         <x-sidebar.sidebar-dropdown-link :href="route('reports.overdue-report')" :active="request()->routeIs('reports.overdue-report')">
+             Laporan Tunggakan
+         </x-sidebar.sidebar-dropdown-link>
 
-     <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report', 'payments.receipt')">
-         Laporan Pembayaran
-     </x-sidebar.sidebar-dropdown-link>
- </x-sidebar.sidebar-dropdown>
+         <x-sidebar.sidebar-dropdown-link :href="route('reports.payment-report')" :active="request()->routeIs('reports.payment-report', 'payments.receipt')">
+             Laporan Pembayaran
+         </x-sidebar.sidebar-dropdown-link>
+     </x-sidebar.sidebar-dropdown>
+ @endif
 
  @if (auth()->user()->isAdmin())
      <x-sidebar.sidebar-link :href="route('users.index')" icon="ri-user-line" :active="request()->routeIs('users.*')">

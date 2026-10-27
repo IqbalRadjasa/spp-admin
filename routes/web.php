@@ -18,6 +18,7 @@ use App\Http\Controllers\SchoolProfileController;
 use App\Http\Controllers\studentPromotionController;
 use App\Http\Controllers\FirstPasswordChangeController;
 
+
 Route::redirect('/', '/login');
 
 // Auth's Routes
@@ -139,6 +140,10 @@ Route::middleware([
 
     // Filter Routes
     Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);
+});
+
+Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
 });
 
 

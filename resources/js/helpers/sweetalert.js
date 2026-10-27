@@ -59,31 +59,14 @@ export function confirmDelete(callback) {
     });
 }
 
-// export function confirmAction(callback, options = {}) {
-//     Swal.fire({
-//         title: options.title ?? "Konfirmasi Tindakan?",
-//         text: options.text ?? "Apakah kamu yakin?",
-//         icon: options.icon ?? "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: options.confirmButtonColor ?? "#dc2626",
-//         cancelButtonColor: options.cancelButtonColor ?? "#6b7280",
-//         confirmButtonText: options.confirmButtonText ?? "Ya",
-//         cancelButtonText: options.cancelButtonText ?? "Batal",
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             callback();
-//         }
-//     });
-// }
-
 export function confirmAction(callback, options = {}) {
     Swal.fire({
         title: options.title ?? "Konfirmasi Tindakan?",
         text: options.text ?? "Apakah kamu yakin?",
         icon: options.icon ?? "warning",
         showCancelButton: true,
-        confirmButtonColor: options.confirmButtonColor ?? "#597928", // Matches your stone/green theme
-        cancelButtonColor: options.cancelButtonColor ?? "#6b7280",
+        confirmButtonColor: options.confirmButtonColor ?? "#597928",
+        cancelButtonColor: "#6b7280",
         confirmButtonText: options.confirmButtonText ?? "Ya",
         cancelButtonText: options.cancelButtonText ?? "Batal",
     }).then(async (result) => {
@@ -117,7 +100,7 @@ export function confirmAndSubmit(formId, options = {}) {
         icon: options.icon ?? "question",
         showCancelButton: true,
         confirmButtonColor: options.confirmButtonColor ?? "#597928",
-        cancelButtonColor: options.cancelButtonColor ?? "#d33",
+        cancelButtonColor: "#6b7280",
         confirmButtonText: options.confirmButtonText ?? "Ya, Simpan!",
         cancelButtonText: options.cancelButtonText ?? "Batal",
     }).then((result) => {

@@ -5,7 +5,7 @@
             confirmAndSubmit('studentForm', {
                 title: `{{ $mode === 'create' ? 'Simpan Data?' : 'Simpan Perubahan?' }}`,
                 text: 'Pastikan data siswa sudah benar.',
-                confirmButtonColor: '#597928',
+    
             });
         }
     }" @submit.prevent="submitForm">

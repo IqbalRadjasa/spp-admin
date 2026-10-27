@@ -38,8 +38,7 @@
                             confirmAndSubmit('generateBillsForm', {
                                 title: 'Konfirmasi Tindakan?',
                                 text: 'Pastikan periode dan jumlah tagihan sudah benar.',
-                                confirmButtonText: 'Buat',
-                                confirmButtonColor: '#597928',
+                                confirmButtonText: 'Buat'
                             });
                         }
                     }" @submit.prevent="submitForm">

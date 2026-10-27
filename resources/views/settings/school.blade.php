@@ -43,7 +43,7 @@
                             confirmAndSubmit('schoolProfileForm', {
                                 title: 'Simpan Perubahan?',
                                 text: 'Pastikan profil sudah benar.',
-                                confirmButtonColor: '#597928',
+                    
                             });
                         }
                     }" @submit.prevent="submitForm">

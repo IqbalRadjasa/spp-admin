@@ -95,11 +95,11 @@
                 actionUrl: '{{ route('settings.academic-years.store') }}',
                 yearInput: '{{ now()->format('Y') }}',
                 isActiveValue: '1',
-
+            
                 initModal(event) {
                     let detail = event.detail;
                     this.mode = detail.mode || 'create';
-
+            
                     if (this.mode === 'edit') {
                         this.actionUrl = detail.updateUrl;
                         let fullYearStr = detail.year || '';
@@ -111,12 +111,12 @@
                         this.isActiveValue = '1';
                     }
                 },
-
+            
                 onSubmitForm() {
                     confirmAndSubmit('academic-year-form', {
                         title: this.mode === 'edit' ? 'Simpan Perubahan?' : 'Simpan Data?',
                         text: 'Pastikan data sudah benar.',
-                        confirmButtonColor: '#597928',
+            
                     });
                 }
             }"

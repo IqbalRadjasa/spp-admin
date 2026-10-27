@@ -145,6 +145,14 @@ class PaymentController extends Controller
                     'email'      => $parent->email ?? $bill->student->email ?? 'customer@example.com',
                     'phone'      => $parent->phone ?? $parent->pivot->phone ?? '08123456789'
                 ],
+                'enabled_payments' => [
+                    'bca_va',
+                    'bni_va',
+                    'bri_va',
+                    'gopay',
+                    'shopeepay',
+                    'qris',
+                ],
             ];
 
             try {

@@ -1,5 +1,7 @@
 @php
-    $name = Auth::user()->name ?? 'User';
+    $user = auth()->user();
+
+    $name = $user->name ?? 'User';
     $words = explode(' ', trim($name));
     $initials = strtoupper(
         count($words) >= 2 ? substr($words[0], 0, 1) . substr(end($words), 0, 1) : substr($name, 0, 2),
@@ -7,6 +9,8 @@
 
     $activeAcademicYear = activeAcademicYear();
     $schoolProfile = schoolProfile();
+
+    $roleValue = is_object($user?->role) ? $user->role->value : $user?->role;
 @endphp
 
 <header x-data="{ openProfile: false }"
@@ -16,6 +20,38 @@
         <button class="md:hidden px-3 py-2 rounded bg-gray-200 flex items-center" @click="mobileSidebarOpen = true">
             <i class="ri-menu-line text-2xl"></i>
         </button>
+
+        @if ($user && $roleValue === 'parent')
+            @php
+                $parentChildren = $user->children ?? collect();
+                $activeChildId = session('active_child_id', $parentChildren->first()?->id);
+                $currentActiveChild = $parentChildren->where('id', $activeChildId)->first() ?? $parentChildren->first();
+            @endphp
+
+            @if ($parentChildren->count() > 0)
+                <div
+                    class="flex items-center bg-[#FCECD8]/60 border border-[#91AC67]/30 rounded-xl px-3 py-1.5 shadow-sm">
+                    <div
+                        class="w-7 h-7 rounded-full bg-[#597928] text-[#FCECD8] flex items-center justify-center font-bold text-xs mr-2 shadow-inner">
+                        <i class="ri-user-heart-line"></i>
+                    </div>
+                    <form action="{{ route('parent.switch-child') }}" method="POST" class="flex items-center gap-1.5">
+                        @csrf
+                        <span
+                            class="text-xs font-semibold text-stone-700 uppercase tracking-wider hidden sm:inline">Anak:</span>
+                        <select name="child_id" onchange="this.form.submit()"
+                            class="bg-transparent text-xs font-bold text-stone-900 border-none focus:ring-0 py-0 pl-1 pr-6 cursor-pointer">
+                            @foreach ($parentChildren as $child)
+                                <option value="{{ $child->id }}"
+                                    {{ $currentActiveChild?->id == $child->id ? 'selected' : '' }}>
+                                    {{ $child->fullname ?? $child->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            @endif
+        @endif
 
         @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
             <div

@@ -4,12 +4,6 @@
      </x-sidebar.sidebar-link>
  @endif
 
- @if (auth()->user()->isParent())
-     <x-sidebar.sidebar-link :href="route('parent.dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('parent.dashboard')">
-         Dashboard
-     </x-sidebar.sidebar-link>
- @endif
-
  @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
      <x-sidebar.sidebar-dropdown title="Siswa" icon="ri-graduation-cap-line" :active="request()->routeIs('students*')">
          <x-sidebar.sidebar-dropdown-link :href="route('students.index')" :active="request()->routeIs('students.*')">
@@ -77,4 +71,15 @@
              Pekerjaan
          </x-sidebar.sidebar-dropdown-link>
      </x-sidebar.sidebar-dropdown>
+ @endif
+
+
+ @if (auth()->user()->isParent())
+     <x-sidebar.sidebar-link :href="route('parent.dashboard')" icon="ri-dashboard-line" :active="request()->routeIs('parent.dashboard')">
+         Dashboard
+     </x-sidebar.sidebar-link>
+
+     <x-sidebar.sidebar-link :href="route('parent.bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('parent.bills.*')">
+         Tagihan & SPP
+     </x-sidebar.sidebar-link>
  @endif

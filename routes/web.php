@@ -142,8 +142,15 @@ Route::middleware([
     Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);
 });
 
+// Parent's Routes
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
+    Route::post('/switch-child', [App\Http\Controllers\Parent\DashboardController::class, 'switchChild'])->name('switch-child');
+
+    // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
+
+    // Bills
+    Route::get('/bills', [App\Http\Controllers\Parent\BillController::class, 'index'])->name('bills.index');
 });
 
 

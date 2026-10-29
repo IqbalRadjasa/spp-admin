@@ -44,7 +44,7 @@
                 </div>
 
                 <!-- Child Selector Dropdown (If parent has multiple children) -->
-                @if ($children->count() > 1)
+                {{-- @if ($children->count() > 1)
                     <form method="GET" action="{{ route('parent.dashboard') }}" class="flex items-center gap-2">
                         <label for="child_id" class="text-sm font-medium text-stone-700 whitespace-nowrap">Pilih
                             Anak:</label>
@@ -63,7 +63,7 @@
                         Anak: <span
                             class="text-stone-900 font-semibold">{{ $activeChild->fullname ?? $activeChild->name }}</span>
                     </div>
-                @endif
+                @endif --}}
             </div>
         </div>
 

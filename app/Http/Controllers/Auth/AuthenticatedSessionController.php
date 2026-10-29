@@ -41,15 +41,18 @@ class AuthenticatedSessionController extends Controller
 
         $user = auth()->user();
 
-        if ($user->role === 'admin') {
+        $roleValue = $user->role->value ?? $user->role;
+
+        if ($roleValue === 'admin') {
             return redirect()->route('dashboard');
-        } elseif ($user->role === 'tu_staff') {
-            return redirect()->route('bills.index');
-        } elseif ($user->role === 'parent') {
+        } elseif ($roleValue === 'tu_staff') {
+            return redirect()->route('students.index');
+        } elseif ($roleValue === 'parent') {
             return redirect()->route('parent.dashboard');
         }
 
-        return redirect('/');
+        // Safe error reporting for Enums
+        abort(403, 'Unauthorized role: ' . (is_object($user->role) ? $user->role->value : $user->role));
     }
 
     /**

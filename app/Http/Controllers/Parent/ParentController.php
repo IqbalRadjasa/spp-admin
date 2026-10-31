@@ -48,6 +48,6 @@ class ParentController extends Controller
             session(['active_child_id' => $request->child_id]);
         }
 
-        return back();
+        return redirect()->route('parent.bills.index');
     }
 }

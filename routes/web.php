@@ -151,6 +151,8 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->g
 
     // Bills
     Route::get('/bills', [App\Http\Controllers\Parent\BillController::class, 'index'])->name('bills.index');
+    Route::get('/bills/{bill}/show', [App\Http\Controllers\Parent\BillController::class, 'show'])
+        ->name('bills.show');
 });
 
 

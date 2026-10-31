@@ -49,4 +49,14 @@ class Bill extends Model
             default => ucfirst($this->status),
         };
     }
+
+    public function getEscalationStatusLabelAttribute(): string
+    {
+        return match (strtolower($this->escalation_status)) {
+            'resolved' => 'Diselesaikan',
+            'escalated' => 'Meningkat',
+            'normal' => 'Normal',
+            default => ucfirst($this->escalation_status ?? 'Normal'),
+        };
+    }
 }

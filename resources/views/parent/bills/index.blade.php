@@ -105,7 +105,7 @@
                                     </x-slot>
 
                                     <x-slot name="content">
-                                        <x-dropdown.dropdown-link href="{{ route('bills.show', $bill->id) }}">
+                                        <x-dropdown.dropdown-link href="{{ route('parent.bills.show', $bill->id) }}">
                                             Detail
                                         </x-dropdown.dropdown-link>
 

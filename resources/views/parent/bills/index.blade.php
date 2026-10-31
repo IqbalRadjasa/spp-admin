@@ -18,17 +18,13 @@
 
         <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6">
-                {{-- <form method="GET" action="{{ url()->current() }}"
+                <form method="GET" action="{{ url()->current() }}"
                     class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-                    <x-form.text-input type="text" name="search" :value="request('search')"
-                        placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
-
-                    <x-form.select-input name="academic_year_id" class="md:w-auto">
-                        <option value="">Semua Tahun Akademik</option>
-                        @foreach ($academicYears as $ay)
-                            <option value="{{ $ay->id }}"
-                                {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>
-                                {{ $ay->name }}
+                    <x-form.select-input name="year" class="md:w-auto">
+                        <option value="">Semua Tahun</option>
+                        @foreach ($availableYears as $year)
+                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                                {{ $year }}
                             </option>
                         @endforeach
                     </x-form.select-input>
@@ -44,18 +40,10 @@
 
                     <x-form.select-input name="status" class="md:w-auto">
                         <option value="">Semua Status</option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                    </x-form.select-input>
-
-                    <x-form.select-input name="escalation_status" class="md:w-auto">
-                        <option value="">Semua Eskalasi</option>
-                        <option value="normal" {{ request('escalation_status') == 'normal' ? 'selected' : '' }}>Normal
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Telah Dibayar
                         </option>
-                        <option value="escalated" {{ request('escalation_status') == 'escalated' ? 'selected' : '' }}>
-                            Meningkat</option>
-                        <option value="resolved" {{ request('escalation_status') == 'resolved' ? 'selected' : '' }}>
-                            Diselesaikan</option>
+                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Belum Lunas
+                        </option>
                     </x-form.select-input>
 
                     <div class="flex items-center gap-2">
@@ -63,21 +51,19 @@
                             <i class="ri-filter-3-line mr-1"></i> Filter
                         </x-button.primary-button>
 
-                        @if (request()->hasAny(['search', 'major']))
+                        @if (request()->hasAny(['year', 'month', 'status']))
                             <x-link-button.secondary-link :href="url()->current()">
                                 <i class="ri-refresh-line"></i> Reset
                             </x-link-button.secondary-link>
                         @endif
                     </div>
-                </form> --}}
+                </form>
 
                 <x-table :headers="['Jenis Tagihan', 'Periode', 'Nominal', 'Status', 'Aksi']" :empty="$bills->isEmpty()">
                     @foreach ($bills as $bill)
                         <x-table.tr>
                             <x-table.td>
                                 SPP / Tagihan Sekolah
-                                {{-- <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
-                                    :subtitle="$bill->student->nis" /> --}}
                             </x-table.td>
 
                             <x-table.td>

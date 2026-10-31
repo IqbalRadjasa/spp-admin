@@ -20,9 +20,35 @@ class BillController extends ParentController
 
         $activeChild = $this->getActiveChild();
 
-        $bills = $activeChild->bills()->latest()->paginate(5);
+        $months = get_months();
+        $availableYears = $activeChild->bills()
+            ->pluck('billing_period')
+            ->map(function ($period) {
+                return trim(substr($period, 0, 4));
+            })
+            ->filter(function ($year) {
+                return is_numeric($year) && strlen($year) === 4;
+            })
+            ->unique()
+            ->sortDesc()
+            ->values();
 
-        return view('parent.bills.index', compact('children', 'activeChild', 'bills'));
+        $query = $activeChild->bills()
+            ->when($request->filled('year'), function ($query) use ($request) {
+                $selectedYear = $request->input('year');
+                $query->where('billing_period', 'like', "%{$selectedYear}%");
+            })
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $month = $request->input('month');
+                $query->where('billing_period', 'like', "%-{$month}");
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            });
+
+        $bills = $query->latest()->paginate(5)->withQueryString();
+
+        return view('parent.bills.index', compact('children', 'activeChild', 'bills', 'availableYears', 'months'));
     }
 
     public function show(Bill $bill)

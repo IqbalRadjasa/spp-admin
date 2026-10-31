@@ -71,12 +71,13 @@
                     </div>
                 </form> --}}
 
-                <x-table :headers="['Nama Siswa', 'Periode', 'Nominal', 'Status', 'Eskalasi Status', 'Aksi']" :empty="$bills->isEmpty()">
+                <x-table :headers="['Jenis Tagihan', 'Periode', 'Nominal', 'Status', 'Aksi']" :empty="$bills->isEmpty()">
                     @foreach ($bills as $bill)
                         <x-table.tr>
                             <x-table.td>
-                                <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
-                                    :subtitle="$bill->student->nis" />
+                                SPP / Tagihan Sekolah
+                                {{-- <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
+                                    :subtitle="$bill->student->nis" /> --}}
                             </x-table.td>
 
                             <x-table.td>
@@ -90,29 +91,8 @@
                             <x-table.td>
                                 <x-table.badge variant="{{ $bill->status === 'paid' ? 'olive' : 'danger' }}"
                                     class="capitalize">
-                                    {{ $bill->status }}
+                                    {{ $bill->status_label }}
                                 </x-table.badge>
-                            </x-table.td>
-
-                            <x-table.td>
-                                @switch($bill->escalation_status)
-                                    @case('resolved')
-                                        <x-table.badge variant="olive" class="capitalize">
-                                            Diselesaikan
-                                        </x-table.badge>
-                                    @break
-
-                                    @case('escalated')
-                                        <x-table.badge variant="danger" class="capitalize">
-                                            Meningkat
-                                        </x-table.badge>
-                                    @break
-
-                                    @default
-                                        <x-table.badge variant="gray" class="capitalize">
-                                            Normal
-                                        </x-table.badge>
-                                @endswitch
                             </x-table.td>
 
                             <x-table.td>

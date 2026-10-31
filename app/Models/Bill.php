@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Bill extends Model
 {
@@ -37,5 +38,15 @@ class Bill extends Model
     public function academicYear()
     {
         return $this->belongsTo(AcademicYear::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match (strtolower($this->status)) {
+            'paid' => 'Telah Dibayar',
+            'unpaid' => 'Belum Lunas',
+            'pending' => 'Menunggu Pembayaran',
+            default => ucfirst($this->status),
+        };
     }
 }

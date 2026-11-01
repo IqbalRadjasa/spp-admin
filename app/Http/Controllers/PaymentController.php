@@ -66,9 +66,9 @@ class PaymentController extends Controller
             ]);
         }
 
-        $latestPayment = Payment::latest()->first();
-        $nextNumber = $latestPayment ? $latestPayment->id + 1 : 1;
-        $paymentCode = 'PAY-' . now()->format('Ymd') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        // $latestPayment = Payment::latest()->first();
+        // $nextNumber = $latestPayment ? $latestPayment->id + 1 : 1;
+        $paymentCode = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
 
         if ($validated['payment_method_id'] == 1) {
             $proofPath = null;
@@ -227,12 +227,16 @@ class PaymentController extends Controller
             }
         });
 
-        return redirect()
-            ->route('payments.download-receipt', $payment)
-            ->with([
-                'success' => 'Pembayaran tunai telah berhasil dicatat!',
-                'auto_print' => true
-            ]);
+        // return redirect()
+        //     ->route('payments.download-receipt', $payment)
+        //     ->with([
+        //         'success' => 'Pembayaran tunai telah berhasil dicatat!',
+        //         'auto_print' => true
+        //     ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification handled successfully'
+        ], 200);
     }
 
     public function downloadReceipt(Payment $payment)

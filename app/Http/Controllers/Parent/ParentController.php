@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers\Parent;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use Midtrans\Config;
 
 class ParentController extends Controller
 {
+
+    public function __construct()
+    {
+        Config::$serverKey    = config('midtrans.serverKey');
+        Config::$isProduction = config('midtrans.isProduction');
+        Config::$isSanitized  = config('midtrans.isSanitized');
+        Config::$is3ds        = config('midtrans.is3ds');
+    }
+
     /**
      * Global helper to get the active child from session with fallback.
      */

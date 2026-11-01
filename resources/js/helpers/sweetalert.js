@@ -42,6 +42,16 @@ export function errorAlert(options = {}) {
     });
 }
 
+export function warningAlert(options = {}) {
+    Swal.fire({
+        icon: "warning",
+        title: options.title ?? "Error",
+        html: options.html ?? "",
+        text: options.message,
+        confirmButtonColor: "#597928",
+    });
+}
+
 export function confirmDelete(callback) {
     Swal.fire({
         title: "Hapus Data?",

@@ -96,9 +96,9 @@
                                         </x-dropdown.dropdown-link>
 
                                         @if ($bill->status == 'unpaid')
-                                            <x-dropdown.dropdown-link href="{{ route('payments.create', $bill->id) }}">
-                                                Bayar
-                                            </x-dropdown.dropdown-link>
+                                            <x-dropdown.dropdown-button onclick="payBill('{{ $bill->id }}')">
+                                                Bayar Sekarang
+                                            </x-dropdown.dropdown-button>
                                         @endif
                                     </x-slot>
                                 </x-dropdown.dropdown>

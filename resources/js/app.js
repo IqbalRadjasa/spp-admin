@@ -1,6 +1,7 @@
 import "./bootstrap";
 
 import "./payment/payment-handler";
+import "./payment/parent/payment-handler";
 import "./export-excel/export-ajax";
 
 import Alpine from "alpinejs";
@@ -40,6 +41,7 @@ import {
     confirmAction,
     successAlert,
     errorAlert,
+    warningAlert,
     confirmAndSubmit,
 } from "./helpers/sweetalert";
 
@@ -47,6 +49,7 @@ window.toastError = toastError;
 window.toastSuccess = toastSuccess;
 
 window.errorAlert = errorAlert;
+window.warningAlert = warningAlert;
 window.successAlert = successAlert;
 window.confirmDelete = confirmDelete;
 window.confirmAction = confirmAction;

@@ -95,10 +95,16 @@
                                             Detail
                                         </x-dropdown.dropdown-link>
 
-                                        @if ($bill->status == 'unpaid')
+                                        @if ($bill->status === 'unpaid')
                                             <x-dropdown.dropdown-button onclick="payBill('{{ $bill->id }}')">
                                                 Bayar Sekarang
                                             </x-dropdown.dropdown-button>
+                                        @endif
+
+                                        @if ($bill->status === 'paid' && $bill->successfulPayment)
+                                            <x-dropdown.dropdown-link :href="route('payments.download-receipt', $bill->successfulPayment)">
+                                                {{ __('Download PDF Kuitansi') }}
+                                            </x-dropdown.dropdown-link>
                                         @endif
                                     </x-slot>
                                 </x-dropdown.dropdown>

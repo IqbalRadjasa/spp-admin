@@ -156,6 +156,14 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->g
     Route::post('/bills/{bill}/pay', [App\Http\Controllers\Parent\PaymentController::class, 'generateSnapToken'])->name('bills.pay');
 });
 
+Route::middleware([
+    'auth',
+])->group(
+    function () {
+        Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
+            ->name('payments.download-receipt');
+    }
+);
 
 
 require __DIR__ . '/auth.php';

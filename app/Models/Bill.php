@@ -40,6 +40,11 @@ class Bill extends Model
         return $this->belongsTo(AcademicYear::class);
     }
 
+    public function successfulPayment()
+    {
+        return $this->hasOne(Payment::class)->where('status', 'paid')->latest();
+    }
+
     public function getStatusLabelAttribute(): string
     {
         return match (strtolower($this->status)) {

@@ -34,6 +34,7 @@ class BillController extends ParentController
             ->values();
 
         $query = $activeChild->bills()
+            ->with(['successfulPayment'])
             ->when($request->filled('year'), function ($query) use ($request) {
                 $selectedYear = $request->input('year');
                 $query->where('billing_period', 'like', "%{$selectedYear}%");

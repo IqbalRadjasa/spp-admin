@@ -21,17 +21,6 @@ use App\Http\Controllers\FirstPasswordChangeController;
 
 Route::redirect('/', '/login');
 
-// Auth's Routes
-Route::middleware('auth')->group(function () {
-    Route::get('/change-first-password', [FirstPasswordChangeController::class, 'edit'])
-        ->name('password.first_change');
-    Route::post('/change-first-password', [FirstPasswordChangeController::class, 'update'])
-        ->name('password.first_change.update');
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 // Admin's Routes
 Route::middleware([
@@ -163,6 +152,15 @@ Route::middleware([
     'auth',
 ])->group(
     function () {
+        Route::get('/change-first-password', [FirstPasswordChangeController::class, 'edit'])
+            ->name('password.first_change');
+        Route::post('/change-first-password', [FirstPasswordChangeController::class, 'update'])
+            ->name('password.first_change.update');
+
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
         Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
             ->name('payments.download-receipt');
     }

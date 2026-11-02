@@ -26,12 +26,12 @@ class StudentParent extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function children(): BelongsToMany
-    {
-        return $this->belongsToMany(Student::class, 'student_parent_relations', 'parent_id', 'student_id')
-            ->withPivot('relationship')
-            ->withTimestamps();
-    }
+    // public function children(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Student::class, 'student_parent_relations', 'parent_id', 'student_id')
+    //         ->withPivot('relationship')
+    //         ->withTimestamps();
+    // }
 
     public function occupation()
     {

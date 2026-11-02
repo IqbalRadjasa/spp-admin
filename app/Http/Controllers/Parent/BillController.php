@@ -45,7 +45,8 @@ class BillController extends ParentController
             })
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->status);
-            });
+            })
+            ->where('status', 'unpaid');
 
         $bills = $query->latest()->paginate(5)->withQueryString();
 

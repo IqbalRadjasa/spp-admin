@@ -100,12 +100,6 @@
                                                 Bayar Sekarang
                                             </x-dropdown.dropdown-button>
                                         @endif
-
-                                        @if ($bill->status === 'paid' && $bill->successfulPayment)
-                                            <x-dropdown.dropdown-link :href="route('payments.download-receipt', $bill->successfulPayment)">
-                                                {{ __('Download PDF Kuitansi') }}
-                                            </x-dropdown.dropdown-link>
-                                        @endif
                                     </x-slot>
                                 </x-dropdown.dropdown>
                             </x-table.td>

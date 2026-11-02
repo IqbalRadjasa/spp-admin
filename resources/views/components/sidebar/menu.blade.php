@@ -82,4 +82,8 @@
      <x-sidebar.sidebar-link :href="route('parent.bills.index')" icon="ri-file-list-3-line" :active="request()->routeIs('parent.bills.*')">
          Tagihan & SPP
      </x-sidebar.sidebar-link>
+
+     <x-sidebar.sidebar-link :href="route('parent.payment-history.index')" icon="ri-book-2-line" :active="request()->routeIs('parent.payment-history.*')">
+         Riwayat Pembayaran
+     </x-sidebar.sidebar-link>
  @endif

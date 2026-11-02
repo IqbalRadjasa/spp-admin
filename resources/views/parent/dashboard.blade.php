@@ -42,28 +42,6 @@
                         <h1 class="font-bold text-2xl text-stone-800 uppercase tracking-tight">Dashboard</h1>
                     </div>
                 </div>
-
-                <!-- Child Selector Dropdown (If parent has multiple children) -->
-                {{-- @if ($children->count() > 1)
-                    <form method="GET" action="{{ route('parent.dashboard') }}" class="flex items-center gap-2">
-                        <label for="child_id" class="text-sm font-medium text-stone-700 whitespace-nowrap">Pilih
-                            Anak:</label>
-                        <select name="child_id" id="child_id" onchange="this.form.submit()"
-                            class="form-select text-sm rounded-lg border-stone-300 focus:border-[#597928] focus:ring-[#597928]">
-                            @foreach ($children as $child)
-                                <option value="{{ $child->id }}"
-                                    {{ $activeChild->id == $child->id ? 'selected' : '' }}>
-                                    {{ $child->fullname ?? $child->name }} (NIS: {{ $child->nis }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-                @else
-                    <div class="bg-stone-100 px-3 py-1.5 rounded-lg text-sm font-medium text-stone-700">
-                        Anak: <span
-                            class="text-stone-900 font-semibold">{{ $activeChild->fullname ?? $activeChild->name }}</span>
-                    </div>
-                @endif --}}
             </div>
         </div>
 

@@ -80,7 +80,7 @@
                 </div>
 
 
-                <x-table :headers="['Kode Pembayaran', 'Metode', 'Nominal', 'Dibayar pada']" :empty="$recentPayments->isEmpty()">
+                <x-table :headers="['Kode Transaksi', 'Metode', 'Nominal', 'Tanggal Bayar']" :empty="$recentPayments->isEmpty()">
                     @foreach ($recentPayments as $payment)
                         <x-table.tr>
                             <x-table.td class="text-[#597928] font-bold">

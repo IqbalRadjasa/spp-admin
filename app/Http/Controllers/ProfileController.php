@@ -31,11 +31,10 @@ class ProfileController extends Controller
     public function edit(): View
     {
         $user = auth()->user()->load(['studentParent']);
+        $role = $user->role->value;
         $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
 
-        // dd($user->studentParent->phone);
-
-        return view('profile.edit', compact('user', 'occupations'));
+        return view('profile.edit', compact('user', 'occupations', 'role'));
     }
 
     /**
@@ -43,12 +42,11 @@ class ProfileController extends Controller
      */
     public function update(Request $request, ActivityLogService $activityLog): RedirectResponse
     {
-        // dd($request);
         $user = auth()->user();
-        $studentParent = $user->studentParent; // Get the related student_parent record
+        $role = $user->role->value;
+        $studentParent = $user->studentParent;
 
-        // Handle case where parent record might not exist yet
-        if (!$studentParent) {
+        if (!$studentParent && $role === 'parent') {
             return redirect()->back()->with('error', 'Data profil orang tua tidak ditemukan.');
         }
 
@@ -58,37 +56,46 @@ class ProfileController extends Controller
             ]);
         }
 
-        $validated = $request->validate([
-            'fullname'          => ['required', 'string', 'max:255'],
-            'nickname'          => ['nullable', 'string', 'max:100'],
-            'phone'             => ['required', 'string', 'max:20', Rule::unique('student_parents', 'phone')->ignore($studentParent->id)->whereNull('deleted_at')],
-            'email'             => ['required', 'string', 'email', Rule::unique('users', 'email')->ignore($user->id)->whereNull('deleted_at')],
-            'address'           => ['required', 'string'], // Removed redundant 'nullable' since 'required' is there
-            'relationship'      => ['nullable', 'string'],
-            'occupation_id'     => ['nullable', 'exists:occupations,id'],
-            'occupation_custom' => ['nullable', 'string', 'max:255'],
-        ]);
+        $rules = [
+            'fullname' => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', Rule::unique('users', 'email')->ignore($user->id)->whereNull('deleted_at')],
+            'address'  => ['required', 'string'],
+        ];
+
+        if ($role === 'parent') {
+            $rules['nickname']          = ['nullable', 'string', 'max:100'];
+            $rules['phone']             = ['required', 'string', 'max:20', Rule::unique('student_parents', 'phone')->ignore($studentParent?->id)->whereNull('deleted_at')];
+            $rules['relationship']      = ['nullable', 'string'];
+            $rules['occupation_id']     = ['nullable', 'exists:occupations,id'];
+            $rules['occupation_custom'] = ['nullable', 'string', 'max:255'];
+        } else {
+            $rules['phone'] = ['nullable', 'string', 'max:20'];
+            $rules['address'] = ['nullable', 'string'];
+        }
+
+        $validated = $request->validate($rules);
 
         try {
-            DB::transaction(function () use ($validated, $user, $studentParent, $request) {
+            DB::transaction(function () use ($validated, $user, $studentParent, $request, $role) {
                 // 1. Update User Account
                 $user->update([
                     'name'    => $validated['fullname'],
                     'email'   => $validated['email'],
-                    'phone'   => normalizePhone($validated['phone']),
+                    'phone'   => isset($validated['phone']) ? normalizePhone($validated['phone']) : $user->phone,
                     'address' => $validated['address'],
                 ]);
 
-                // 2. Update StudentParent Profile
-                $studentParent->update([
-                    'fullname'          => $validated['fullname'],
-                    'nickname'          => $validated['nickname'] ?? null,
-                    'phone'             => normalizePhone($validated['phone']),
-                    'relationship'      => $validated['relationship'] ?? null,
-                    'occupation_id'     => $validated['occupation_id'] ?? null,
-                    'occupation_custom' => $validated['occupation_custom'] ?? null,
-                    'address'           => $validated['address'],
-                ]);
+                if ($role === 'parent') {
+                    $studentParent->update([
+                        'fullname'          => $validated['fullname'],
+                        'nickname'          => $validated['nickname'] ?? null,
+                        'phone'             => normalizePhone($validated['phone']),
+                        'relationship'      => $validated['relationship'] ?? null,
+                        'occupation_id'     => $validated['occupation_id'] ?? null,
+                        'occupation_custom' => $validated['occupation_custom'] ?? null,
+                        'address'           => $validated['address'],
+                    ]);
+                }
 
                 if ($request->filled('relationship')) {
                     foreach ($user->children as $student) {
@@ -99,18 +106,18 @@ class ProfileController extends Controller
                 }
             });
 
+            $entity = $role === 'parent' ? 'user & student_parent' : 'user';
             $activityLog->log(
                 'update profil',
-                'user & student_parent',
+                $entity,
                 $user->id,
                 'Profil diperbarui: ' . $validated['fullname']
             );
 
             return redirect()
-                ->route('profile.edit') // Adjusted to redirect back to parent profile or appropriate route
+                ->route('profile.edit')
                 ->with('success', 'Profil berhasil diperbarui!');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()
                 ->back()
                 ->withInput()

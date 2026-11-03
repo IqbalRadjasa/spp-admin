@@ -40,7 +40,7 @@
  @endif
 
  @if (auth()->user()->isAdmin())
-     <x-sidebar.sidebar-link :href="route('users.index')" icon="ri-user-line" :active="request()->routeIs('users.*')">
+     <x-sidebar.sidebar-link :href="route('users.index')" icon="ri-id-card-line" :active="request()->routeIs('users.*')">
          Manajemen Pengguna
      </x-sidebar.sidebar-link>
 
@@ -86,8 +86,8 @@
      <x-sidebar.sidebar-link :href="route('parent.payment-history.index')" icon="ri-book-2-line" :active="request()->routeIs('parent.payment-history.*')">
          Riwayat Pembayaran
      </x-sidebar.sidebar-link>
-
-     <x-sidebar.sidebar-link :href="route('profile.edit')" icon="ri-user-line" :active="request()->routeIs('profile.*')">
-         Profil Pengguna
-     </x-sidebar.sidebar-link>
  @endif
+
+ <x-sidebar.sidebar-link :href="route('profile.edit')" icon="ri-user-line" :active="request()->routeIs('profile.*')">
+     Profil Pengguna
+ </x-sidebar.sidebar-link>

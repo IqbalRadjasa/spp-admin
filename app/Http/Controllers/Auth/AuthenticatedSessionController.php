@@ -44,11 +44,11 @@ class AuthenticatedSessionController extends Controller
         $roleValue = $user->role->value ?? $user->role;
 
         if ($roleValue === 'admin') {
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard')->with('success', 'Berhasil masuk ke akun.');
         } elseif ($roleValue === 'tu_staff') {
-            return redirect()->route('students.index');
+            return redirect()->route('students.index')->with('success', 'Berhasil masuk ke akun.');;
         } elseif ($roleValue === 'parent') {
-            return redirect()->route('parent.dashboard');
+            return redirect()->route('parent.dashboard')->with('success', 'Berhasil masuk ke akun.');;
         }
 
         // Safe error reporting for Enums

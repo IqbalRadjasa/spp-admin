@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+        {{ __('Lupa kata sandi Anda? Tidak masalah. Cukup beri tahu alamat email Anda dan kami akan mengirimkan tautan reset kata sandi melalui email yang memungkinkan Anda memilih kata sandi baru.') }}
     </div>
 
     <!-- Session Status -->
@@ -17,10 +17,14 @@
             <x-form.input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex flex-col gap-2 mt-4">
             <x-button.primary-button>
-                {{ __('Email Password Reset Link') }}
+                {{ __('Kirim Tautan Reset Kata Sandi') }}
             </x-button.primary-button>
+
+            <x-link-button.secondary-link :href="route('login')" class="flex-1">
+                {{ __('Kembali') }}
+            </x-link-button.secondary-link>
         </div>
     </form>
 </x-guest-layout>

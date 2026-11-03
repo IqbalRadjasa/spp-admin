@@ -17,7 +17,10 @@
             </div>
         </div>
 
-        {{-- Form --}}
+        {{-- Edit Profile Form --}}
         @include('profile.partials.update-profile-information-form')
+
+        {{-- Edit Password Form --}}
+        @include('profile.partials.update-password-form')
     </div>
 </x-app-layout>

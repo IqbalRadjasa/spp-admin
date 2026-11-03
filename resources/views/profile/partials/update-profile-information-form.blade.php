@@ -1,4 +1,12 @@
-<form id="editProfileForm" action="{{ route('profile.update') }}" method="POST" class="space-y-6">
+<form id="editProfileForm" action="{{ route('profile.update') }}" method="POST" class="space-y-6" x-data="{
+    submitForm() {
+        confirmAndSubmit('editProfileForm', {
+            title: 'Simpan Perubahan?',
+            text: 'Pastikan profil sudah benar.',
+        });
+    }
+}"
+    @submit.prevent="submitForm">
     @csrf
     @method('PUT')
 
@@ -8,13 +16,6 @@
         checkOccupation() {
             const selectedOption = this.$refs.occupationSelect?.options[this.$refs.occupationSelect.selectedIndex];
             this.isOther = selectedOption ? selectedOption.getAttribute('data-is-other') === 'true' : false;
-        },
-        editProfileForm() {
-            confirmAndSubmit('editProfileForm', {
-                title: 'Simpan Perubahan?',
-                text: 'Pastikan profil sudah benar.',
-    
-            });
         }
     }"
         x-init="checkOccupation()">

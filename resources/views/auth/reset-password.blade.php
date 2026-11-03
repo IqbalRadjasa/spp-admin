@@ -14,19 +14,33 @@
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-form.input-label for="password" :value="__('Password')" />
-            <x-form.text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="new-password" />
+        <div class="mt-4" x-data="{ showPassword: false }">
+            <x-form.input-label for="password" :value="__('Kata Sandi')" />
+            <div class="relative mt-1">
+                <x-form.text-input id="password" class="block w-full pr-10"
+                    x-bind:type="showPassword ? 'text' : 'password'" name="password" required
+                    autocomplete="new-password" />
+                <button type="button" @click="showPassword = !showPassword"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-stone-500 hover:text-stone-700 focus:outline-none">
+                    <i :class="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'" class="text-lg"></i>
+                </button>
+            </div>
             <x-form.input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-form.input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <div class="mt-4" x-data="{ showConfirmPassword: false }">
+            <x-form.input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi Baru')" />
 
-            <x-form.text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" />
+            <div class="relative mt-1">
+                <x-form.text-input id="password_confirmation" class="block w-full pr-10"
+                    x-bind:type="showConfirmPassword ? 'text' : 'password'" name="password_confirmation" required
+                    autocomplete="new-password" />
+                <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-stone-500 hover:text-stone-700 focus:outline-none">
+                    <i :class="showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'" class="text-lg"></i>
+                </button>
+            </div>
 
             <x-form.input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>

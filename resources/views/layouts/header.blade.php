@@ -114,7 +114,8 @@
                         class="font-bold text-[#597928]">{{ $activeAcademicYear ? $activeAcademicYear->name : '-' }}</span>
                 </div>
 
-                <form method="POST" action="{{ route('logout') }}">
+                <form id="logoutForm" method="POST" action="{{ route('logout') }}"
+                    onsubmit="event.preventDefault(); confirmAction(() => this.submit(), {title: 'Anda yakin ingin logout?', text: '', confirmButtonText: 'Ya'});">
                     @csrf
 
                     <x-dropdown.dropdown-button type="submit" class="text-red-600">

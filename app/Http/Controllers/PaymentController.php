@@ -66,8 +66,6 @@ class PaymentController extends Controller
             ]);
         }
 
-        // $latestPayment = Payment::latest()->first();
-        // $nextNumber = $latestPayment ? $latestPayment->id + 1 : 1;
         $paymentCode = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
 
         if ($validated['payment_method_id'] == 1) {

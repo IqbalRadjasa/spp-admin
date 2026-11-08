@@ -18,6 +18,11 @@ class PaymentNotificationService
         $student =
             $payment->bill->student;
 
+        $parent = $student?->parents()->first();
+        if (!$parent || !$parent->phone) {
+            return;
+        }
+
         $message =
             "🎓 *SPP Payment Confirmation*
 
@@ -26,7 +31,7 @@ class PaymentNotificationService
         ━━━━━━━━━━━━━━
 
         👤 *Student Name*
-        {$student->name}
+        {$student->fullname}
 
         🧾 *Payment Code*
         {$payment->payment_code}
@@ -41,16 +46,18 @@ class PaymentNotificationService
 
         Thank you for your payment 🙏";
 
-
-        $this->logChannel->send($student->parent_phone, $message);
-        $this->whatsAppChannel->send($student->parent_phone, $message);
+        $this->logChannel->send($parent->phone, $message);
+        $this->whatsAppChannel->send($parent->phone, $message);
     }
 
     public function sendOverdueReminder(Bill $bill)
     {
         $student = $bill->student;
 
-        $target = $student->parent_phone;
+        $parent = $student?->parents()->first();
+        if (!$parent || !$parent->phone) {
+            return;
+        }
 
         $message =
             "⚠️ *SPP Payment Reminder*
@@ -72,10 +79,7 @@ class PaymentNotificationService
 
             Please complete the payment as soon as possible 🙏";
 
-        $this->logChannel
-            ->send($target, $message);
-
-        $this->whatsAppChannel
-            ->send($target, $message);
+        $this->logChannel->send($parent->phone, $message);
+        $this->whatsAppChannel->send($parent->phone, $message);
     }
 }

@@ -218,7 +218,7 @@ class BillController extends Controller
     {
         $validated = $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
-            'billing_period'   => 'required|string', // e.g., '2023-01'
+            'billing_period'   => 'required|string',
             'amount'           => 'required|integer|min:1'
         ]);
 
@@ -226,10 +226,9 @@ class BillController extends Controller
         $billingPeriod  = $validated['billing_period'];
         $newAmount      = $validated['amount'];
 
-        // Grab ALL student bills for this specific batch period with payment pre-loaded
         $billsToUpdate = Bill::where('academic_year_id', $academicYearId)
             ->where('billing_period', $billingPeriod)
-            ->with('payment')
+            ->with(['payment', 'student'])
             ->get();
 
         if ($billsToUpdate->isEmpty()) {
@@ -240,23 +239,19 @@ class BillController extends Controller
             foreach ($billsToUpdate as $bill) {
                 $oldAmount = $bill->amount;
 
-                // Update the bill amount
                 $bill->update(['amount' => $newAmount]);
 
-                // Handle refund logic if the bill amount was reduced
                 if ($newAmount < $oldAmount) {
-                    $payment = $bill->payment; // Uses the pre-loaded relation for this student bill
+                    $payment = $bill->payment;
 
                     if ($payment && $payment->status === 'paid') {
-                        $parent = $payment->student_parent; // Successfully resolves the parent user model via pivot
+                        $parent = $payment->student_parent;
 
-                        // Update refund tracking info on the payment record
                         $payment->update([
                             'refund_amount' => $oldAmount - $newAmount,
                             'refund_status' => 'pending_parent_response',
                         ]);
 
-                        // Dispatch the WhatsApp notification job to the parent
                         if ($parent && $parent->phone) {
                             SendUpdateBillNotificationJob::dispatch($parent, $bill, $oldAmount, $newAmount);
                         }

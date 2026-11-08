@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendUpdateBillNotificationJob;
 use App\Models\AcademicYear;
 use App\Models\Student;
 use App\Models\Bill;
-
+use App\Models\Payment;
 use App\Services\ActivityLogService;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -161,5 +162,116 @@ class BillController extends Controller
                 ->withInput()
                 ->with('error', 'Gagal membuat tagihan: ' . $e->getMessage());
         }
+    }
+
+    public function listBill(Request $request)
+    {
+        $months = get_months();
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
+        $activeAcademicYear = activeAcademicYear();
+        [$year1, $year2] = explode('/', str_replace(' ', '', $activeAcademicYear->name));
+
+        $query = Bill::select(
+            'academic_year_id',
+            'billing_period',
+            DB::raw('COUNT(*) as total_students'),
+            DB::raw('MIN(amount) as amount'), // Optional: Show total batch revenue instead of a single amount
+            DB::raw('MIN(created_at) as created_at'),
+        )
+            ->with([
+                'academicYear' => function ($q) {
+                    $q->select(['id', 'name']);
+                }
+            ])
+            ->when($request->filled('academic_year_id'), function ($query) use ($request) {
+                $query->where('academic_year_id', $request->input('academic_year_id'));
+            })
+            // Group ONLY by academic year and billing period
+            ->groupBy('academic_year_id', 'billing_period');
+
+        $bills = $query
+            ->orderBy('billing_period', 'desc')
+            ->paginate(5)
+            ->withQueryString();
+
+        $bills->getCollection()->transform(function ($bill) {
+            $date = Carbon::parse($bill->billing_period);
+
+            $bill->month_name = $date->translatedFormat('F');
+            $bill->month_number = $date->format('m');
+            $bill->year = $date->format('Y');
+
+            return $bill;
+        });
+
+        return view('bills.list-bill', compact(
+            'bills',
+            'academicYears',
+            'months',
+            'activeAcademicYear',
+            'year1',
+            'year2',
+        ));
+    }
+
+    public function updateBatch(Request $request, ActivityLogService $activityLog)
+    {
+        $validated = $request->validate([
+            'academic_year_id' => 'required|exists:academic_years,id',
+            'billing_period'   => 'required|string', // e.g., '2023-01'
+            'amount'           => 'required|integer|min:1'
+        ]);
+
+        $academicYearId = $validated['academic_year_id'];
+        $billingPeriod  = $validated['billing_period'];
+        $newAmount      = $validated['amount'];
+
+        // Grab ALL student bills for this specific batch period with payment pre-loaded
+        $billsToUpdate = Bill::where('academic_year_id', $academicYearId)
+            ->where('billing_period', $billingPeriod)
+            ->with('payment')
+            ->get();
+
+        if ($billsToUpdate->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada tagihan yang ditemukan untuk periode ini.');
+        }
+
+        DB::transaction(function () use ($billsToUpdate, $newAmount) {
+            foreach ($billsToUpdate as $bill) {
+                $oldAmount = $bill->amount;
+
+                // Update the bill amount
+                $bill->update(['amount' => $newAmount]);
+
+                // Handle refund logic if the bill amount was reduced
+                if ($newAmount < $oldAmount) {
+                    $payment = $bill->payment; // Uses the pre-loaded relation for this student bill
+
+                    if ($payment && $payment->status === 'paid') {
+                        $parent = $payment->student_parent; // Successfully resolves the parent user model via pivot
+
+                        // Update refund tracking info on the payment record
+                        $payment->update([
+                            'refund_amount' => $oldAmount - $newAmount,
+                            'refund_status' => 'pending_parent_response',
+                        ]);
+
+                        // Dispatch the WhatsApp notification job to the parent
+                        if ($parent && $parent->phone) {
+                            SendUpdateBillNotificationJob::dispatch($parent, $bill, $oldAmount, $newAmount);
+                        }
+                    }
+                }
+            }
+        });
+
+        $activityLog->log(
+            'update batch tagihan',
+            'bills',
+            null,
+            "Memperbarui batch tagihan periode {$billingPeriod} dengan nominal baru " . rupiah($newAmount)
+        );
+
+        return redirect()->route('bills.index')->with('success', 'Batch tagihan berhasil diperbarui.');
     }
 }

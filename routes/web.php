@@ -67,7 +67,7 @@ Route::middleware([
     Route::resource('users', UserController::class);
 });
 
-// Public Routes
+// Admin & Staff Routes
 Route::middleware([
     'auth',
     'role:admin,tu_staff'
@@ -92,6 +92,12 @@ Route::middleware([
 
     Route::post('/bills/generate', [BillController::class, 'generateBills'])
         ->name('bills.generate');
+
+    Route::get('/bills/list', [BillController::class, 'listBill'])
+        ->name('bills.list');
+
+    Route::put('/bills/update-batch', [BillController::class, 'updateBatch'])
+        ->name('bills.update-batch');
 
 
     // Payment's Routes
@@ -148,6 +154,7 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->g
     Route::get('/payment-history', [App\Http\Controllers\Parent\PaymentHistoryController::class, 'index'])->name('payment-history.index');
 });
 
+// Public Routes
 Route::middleware([
     'auth',
 ])->group(

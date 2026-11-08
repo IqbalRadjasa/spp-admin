@@ -20,6 +20,10 @@
  @if (auth()->user()->isAdmin() || auth()->user()->isTuStaff())
      <x-sidebar.sidebar-dropdown title="Tagihan" icon="ri-file-list-3-line" :active="request()->routeIs('bills.*', 'payments.create')">
          <x-sidebar.sidebar-dropdown-link :href="route('bills.index')" :active="request()->routeIs('bills.index', 'bills.detail', 'payments.create')">
+             Tagihan Siswa
+         </x-sidebar.sidebar-dropdown-link>
+
+         <x-sidebar.sidebar-dropdown-link :href="route('bills.list')" :active="request()->routeIs('bills.list')">
              Daftar Tagihan
          </x-sidebar.sidebar-dropdown-link>
 

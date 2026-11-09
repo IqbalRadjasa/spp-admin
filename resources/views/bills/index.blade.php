@@ -16,12 +16,17 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-lg">
+        <div class="bg-white shadow-sm rounded-lg" x-data="{
+            paymentId: null,
+            studentName: '',
+            refundAmount: '',
+            formAction: ''
+        }">
             <div class="p-6">
                 <form method="GET" action="{{ url()->current() }}"
                     class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
                     <x-form.text-input type="text" name="search" :value="request('search')"
-                        placeholder="Cari nama siswa atau NIS..." class="md:w-80" />
+                        placeholder="Cari nama siswa atau NIS..." class="md:w-auto" />
 
                     <x-form.select-input name="academic_year_id" class="md:w-auto">
                         <option value="">Semua Tahun Akademik</option>
@@ -33,19 +38,12 @@
                         @endforeach
                     </x-form.select-input>
 
-                    <x-form.select-input name="month" class="md:w-auto">
-                        <option value="">Semua Bulan</option>
-                        @foreach ($months as $num => $name)
-                            <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </x-form.select-input>
-
                     <x-form.select-input name="status" class="md:w-auto">
                         <option value="">Semua Status</option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}> Telah Dibayar
+                        </option>
+                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Belum Lunas
+                        </option>
                     </x-form.select-input>
 
                     <x-form.select-input name="escalation_status" class="md:w-auto">
@@ -58,12 +56,25 @@
                             Diselesaikan</option>
                     </x-form.select-input>
 
+                    <x-form.select-input name="refund_status" class="md:w-auto">
+                        <option value="">Semua Status Refund</option>
+                        <option value="none" {{ request('refund_status') == 'none' ? 'selected' : '' }}>Tidak ada
+                        </option>
+                        <option value="pending_parent_response"
+                            {{ request('refund_status') == 'pending_parent_response' ? 'selected' : '' }}>Menunggu
+                        </option>
+                        <option value="info_received"
+                            {{ request('refund_status') == 'info_received' ? 'selected' : '' }}>Info diterima</option>
+                        <option value="completed" {{ request('refund_status') == 'completed' ? 'selected' : '' }}>
+                            Selesai</option>
+                    </x-form.select-input>
+
                     <div class="flex items-center gap-2">
                         <x-button.primary-button type="submit" class="w-full sm:w-auto justify-center">
                             <i class="ri-filter-3-line mr-1"></i> Filter
                         </x-button.primary-button>
 
-                        @if (request()->hasAny(['search', 'major']))
+                        @if (request()->hasAny(['search', 'academic_year_id', 'status', 'escalation_status', 'refund_status']))
                             <x-link-button.secondary-link :href="url()->current()">
                                 <i class="ri-refresh-line"></i> Reset
                             </x-link-button.secondary-link>
@@ -71,8 +82,9 @@
                     </div>
                 </form>
 
-                <x-table :headers="['Nama Siswa', 'Periode', 'Nominal', 'Status', 'Eskalasi Status', 'Aksi']" :empty="$bills->isEmpty()">
+                <x-table :headers="['Nama Siswa', 'Periode', 'Nominal', 'Status', 'Eskalasi Status', 'Refund Status', 'Aksi']" :empty="$bills->isEmpty()">
                     @foreach ($bills as $bill)
+                        {{-- @dd($bill->payment->refund_status) --}}
                         <x-table.tr>
                             <x-table.td>
                                 <x-table.avatar-cell :avatar="$bill->student->avatar" :initials="$bill->student->initials" :name="$bill->student->fullname"
@@ -90,7 +102,7 @@
                             <x-table.td>
                                 <x-table.badge variant="{{ $bill->status === 'paid' ? 'olive' : 'danger' }}"
                                     class="capitalize">
-                                    {{ $bill->status }}
+                                    {{ $bill->status_label }}
                                 </x-table.badge>
                             </x-table.td>
 
@@ -116,6 +128,33 @@
                             </x-table.td>
 
                             <x-table.td>
+                                @if ($bill->payment)
+                                    @switch($bill->payment->refund_status)
+                                        @case('pending_parent_response')
+                                            <x-table.badge variant="cream">
+                                                Menunggu Respon Ortu
+                                            </x-table.badge>
+                                        @break
+
+                                        @case('completed')
+                                            <x-table.badge variant="olive">
+                                                Refund Selesai
+                                            </x-table.badge>
+                                        @break
+
+                                        @default
+                                            <x-table.badge variant="gray">
+                                                -
+                                            </x-table.badge>
+                                    @endswitch
+                                @else
+                                    <x-table.badge variant="gray">
+                                        -
+                                    </x-table.badge>
+                                @endif
+                            </x-table.td>
+
+                            <x-table.td>
                                 <x-dropdown.dropdown align="right" width="48">
                                     <x-slot name="trigger">
                                         <button type="button"
@@ -134,6 +173,19 @@
                                                 Bayar
                                             </x-dropdown.dropdown-link>
                                         @endif
+
+                                        @if ($bill->payment && $bill->payment->refund_amount > 0 && $bill->payment->refund_status === 'pending_parent_response')
+                                            <x-dropdown.dropdown-button type="button"
+                                                x-on:click="
+                                                    paymentId = '{{ $bill->payment->id }}';
+                                                    studentName = '{{ addslashes($bill->student->fullname) }}';
+                                                    refundAmount = '{{ rupiah($bill->payment->refund_amount) }}';
+                                                    formAction = '{{ route('payments.process-refund', $bill->payment->id) }}';
+                                                    $dispatch('open-modal', 'process-refund-modal');
+                                                ">
+                                                Proses Refund
+                                            </x-dropdown.dropdown-button>
+                                        @endif
                                     </x-slot>
                                 </x-dropdown.dropdown>
                             </x-table.td>
@@ -143,6 +195,52 @@
 
                 {{ $bills->links('vendor.pagination.default') }}
             </div>
+
+            <x-modal name="process-refund-modal" maxWidth="md">
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h3 class="text-lg font-bold text-gray-800">Selesaikan Refund Tagihan</h3>
+                    </div>
+
+                    {{-- Dynamic Refund Info Summary --}}
+                    <div class="bg-gray-50 p-3 rounded-lg text-sm space-y-1 text-gray-600">
+                        <p>
+                            <span class="font-medium text-gray-700">Siswa:</span>
+                            <span x-text="studentName"></span>
+                        </p>
+                        <p>
+                            <span class="font-medium text-gray-700">Nominal Refund:</span>
+                            <span class="text-green-600 font-bold" x-text="refundAmount"></span>
+                        </p>
+                    </div>
+
+                    {{-- Form Submission with Dynamic Action Route --}}
+                    <form :action="formAction" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PATCH')
+
+
+                        <div class="input-group">
+                            <x-form.input-label for="refund_bank_details" :is-required="true" :value="__('Informasi Rekening Bank Tujuan')" />
+                            <x-form.textarea id="refund_bank_details" name="refund_bank_details" rows="3"
+                                placeholder="Contoh: BCA - 1234567890 - a.n Budi Santoso" required></x-form.textarea>
+                            <x-form.input-error :messages="$errors->get('refund_bank_details')" class="mt-1" />
+                        </div>
+
+                        <div class="px-6 py-4 bg-[#FAF8F5] border-t border-stone-200/80 flex justify-end gap-2">
+                            <x-button.secondary-button type="button"
+                                x-on:click="$dispatch('close-modal', 'process-refund-modal')">
+                                Batal
+                            </x-button.secondary-button>
+
+                            <x-button.primary-button type="submit" class="bg-[#597928] hover:bg-[#6E3511]">
+                                Simpan & Selesaikan
+                            </x-button.primary-button>
+                        </div>
+                    </form>
+                </div>
+            </x-modal>
         </div>
+
     </div>
 </x-app-layout>

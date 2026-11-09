@@ -107,6 +107,7 @@ Route::middleware([
     Route::post('/bill/{bill}/payments', [PaymentController::class, 'store'])
         ->name('payments.store');
 
+    Route::patch('/payments/{payment}/refund', [BillController::class, 'processRefund'])->name('payments.process-refund');
 
     // Report's Routes
     Route::get('/reports/overdue-report', [ReportController::class, 'overdueReport'])

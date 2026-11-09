@@ -21,7 +21,8 @@ class BillController extends Controller
         $query = Bill::with([
             'student' => function ($q) {
                 $q->select(['id', 'fullname', 'nis', 'avatar']);
-            }
+            },
+            'payment'
         ])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->whereHas('student', function ($q) use ($request) {
@@ -32,21 +33,23 @@ class BillController extends Controller
             ->when($request->filled('academic_year_id'), function ($query) use ($request) {
                 $query->where('academic_year_id', $request->input('academic_year_id'));
             })
-            ->when($request->filled('month'), function ($query) use ($request) {
-                $month = $request->input('month');
-                $query->where('billing_period', 'like', "%-{$month}");
-            })
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->status);
             })
             ->when($request->filled('escalation_status'), function ($query) use ($request) {
                 $query->where('escalation_status', $request->escalation_status);
+            })
+            ->when($request->filled('refund_status'), function ($query) use ($request) {
+                $query->whereHas('payment', function ($q) use ($request) {
+                    $q->where('refund_status', $request->refund_status);
+                });
             });
 
         $bills = $query
             ->latest()
             ->paginate(5)
             ->withQueryString();
+        // dd($bills);
 
         return view('bills.index', compact('bills', 'academicYears', 'months'));
     }
@@ -268,5 +271,31 @@ class BillController extends Controller
         );
 
         return redirect()->route('bills.index')->with('success', 'Batch tagihan berhasil diperbarui.');
+    }
+
+    public function processRefund(Request $request, Payment $payment, ActivityLogService $activityLog)
+    {
+        $validated = $request->validate([
+            'refund_bank_details' => 'required|string|max:255', // e.g., "BCA - 1234567890 - a.n Budi Santoso"
+        ]);
+
+        if ($payment->refund_status === 'none' || $payment->refund_amount <= 0) {
+            return redirect()->back()->with('error', 'Tidak ada refund yang tertunda untuk pembayaran ini.');
+        }
+
+        $payment->update([
+            'refund_bank_details' => $validated['refund_bank_details'],
+            'refund_status'       => 'completed',
+            'refunded_at'         => Carbon::now(),
+        ]);
+
+        $activityLog->log(
+            'proses refund',
+            'payments',
+            $payment->id,
+            "Menyelesaikan refund sebesar " . rupiah($payment->refund_amount) . " ke rekening: " . $validated['refund_bank_details']
+        );
+
+        return redirect()->back()->with('success', 'Refund berhasil diproses dan diselesaikan.');
     }
 }

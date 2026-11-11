@@ -293,12 +293,6 @@ class StudentController extends Controller
         $validated = $request->validate([
             'fullname' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:100',
-            // 'nis' => [
-            //     'required',
-            //     'string',
-            //     'max:10',
-            //     Rule::unique('students', 'nis')->whereNull('deleted_at'), // Handles soft-deletes correctly
-            // ],
             'nisn' => [
                 'nullable',
                 'string',
@@ -313,7 +307,7 @@ class StudentController extends Controller
             'status' => 'required',
             'classroom_id' => 'required|exists:classrooms,id',
             'address' => 'required|string',
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'parent_id' => 'required|exists:users,id', // Single ID check
         ]);
 
@@ -323,17 +317,17 @@ class StudentController extends Controller
         $oldAvatarPath = $student->avatar;
 
         try {
-            // 1. Handle Avatar Upload & Replacement
             if ($request->hasFile('avatar')) {
                 $newAvatarPath = $request->file('avatar')->store('students/avatars', 'public');
                 $validated['avatar'] = $newAvatarPath;
+            } else {
+                $validated['avatar'] = $student->avatar;
             }
 
             // 2. Update Student Record
             $student->update([
                 'fullname' => $validated['fullname'],
                 'nickname' => $validated['nickname'] ?? null,
-                'nis' => $validated['nis'],
                 'nisn' => $validated['nisn'] ?? null,
                 'gender' => $validated['gender'],
                 'place_of_birth' => $validated['place_of_birth'] ?? null,

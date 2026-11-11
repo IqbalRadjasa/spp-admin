@@ -231,6 +231,10 @@ class PaymentController extends Controller
         //         'success' => 'Pembayaran tunai telah berhasil dicatat!',
         //         'auto_print' => true
         //     ]);
+
+        // Queue Notification
+        SendPaymentNotificationJob::dispatch($payment);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Notification handled successfully'

@@ -181,21 +181,9 @@ class PaymentController extends Controller
 
         $transactionStatus = $notif->transaction_status;
         $fraudStatus       = $notif->fraud_status;
-        $paymentCode       = $notif->order_id; // This is your 'PAY-20261022-0001'
+        $paymentCode       = $notif->order_id;
 
-        // Find the payment record
-        $payment = Payment::where('payment_code', $paymentCode)->first();
-
-        if (!$payment) {
-            return response()->json(['message' => 'Pembayaran tidak ditemukan'], 404);
-        }
-
-        // Prevent duplicate updates if already paid/failed
-        if ($payment->status === 'paid') {
-            return response()->json(['message' => 'Pembayaran telah diproses']);
-        }
-
-        // Map Midtrans status to your database status enum ('pending', 'paid', 'failed')
+        // Map Midtrans status to database status enum
         $newPaymentStatus = 'pending';
 
         if ($transactionStatus == 'capture') {
@@ -206,15 +194,28 @@ class PaymentController extends Controller
             $newPaymentStatus = 'failed';
         }
 
-        DB::transaction(function () use ($payment, $newPaymentStatus, $notif) {
+        $result = DB::transaction(function () use ($paymentCode, $newPaymentStatus) {
+            $payment = Payment::where('payment_code', $paymentCode)->lockForUpdate()->first();
+
+            if (!$payment) {
+                return ['status' => 'not_found'];
+            }
+
+            // Track the previous status before updating
+            $oldStatus = $payment->status;
+
+            // If the status is already what it's supposed to be, do nothing
+            if ($oldStatus === $newPaymentStatus) {
+                return ['status' => 'already_processed', 'should_notify' => false];
+            }
+
             // 1. Update Payment Status
             $payment->update([
                 'status' => $newPaymentStatus,
-                'paid_at' => ($newPaymentStatus === 'paid') ? now() : $payment->paid_at,
-                // Optionally save Midtrans details or payment type if you have columns for them
+                'paid_at' => ($newPaymentStatus === 'paid' && $oldStatus !== 'paid') ? now() : $payment->paid_at,
             ]);
 
-            // 2. If paid successfully, update the Bill status to 'paid'
+            // 2. If newly paid successfully, update the Bill status to 'paid'
             if ($newPaymentStatus === 'paid') {
                 $payment->bill->update([
                     'status' => 'paid',
@@ -223,17 +224,28 @@ class PaymentController extends Controller
                     'escalation_status' => 'resolved'
                 ]);
             }
+
+            // Determine if we should dispatch notification:
+            // Only true if the status changed *to* 'paid' right now.
+            $shouldNotify = ($oldStatus !== 'paid' && $newPaymentStatus === 'paid');
+
+            return [
+                'status' => 'processed',
+                'payment' => $payment,
+                'should_notify' => $shouldNotify
+            ];
         });
 
-        // return redirect()
-        //     ->route('payments.download-receipt', $payment)
-        //     ->with([
-        //         'success' => 'Pembayaran tunai telah berhasil dicatat!',
-        //         'auto_print' => true
-        //     ]);
+        if ($result['status'] === 'not_found') {
+            return response()->json(['message' => 'Pembayaran tidak ditemukan'], 404);
+        }
 
-        // Queue Notification
-        SendPaymentNotificationJob::dispatch($payment);
+        if ($result['status'] === 'already_processed' || !$result['should_notify']) {
+            return response()->json(['message' => 'Pembayaran telah diproses atau status tidak memerlukan notifikasi']);
+        }
+
+        // Dispatch notification ONLY if it transitioned successfully to paid
+        SendPaymentNotificationJob::dispatch($result['payment']);
 
         return response()->json([
             'status' => 'success',

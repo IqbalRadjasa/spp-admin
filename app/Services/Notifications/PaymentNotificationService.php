@@ -15,8 +15,7 @@ class PaymentNotificationService
 
     public function sendPaymentSuccess(Payment $payment)
     {
-        $student =
-            $payment->bill->student;
+        $student = $payment->bill->student;
 
         $parent = $student?->parents()->first();
         if (!$parent || !$parent->phone) {
@@ -24,27 +23,19 @@ class PaymentNotificationService
         }
 
         $message =
-            "🎓 *SPP Payment Confirmation*
-
-        Your tuition payment has been successfully received.
-
-        ━━━━━━━━━━━━━━
-
-        👤 *Student Name*
-        {$student->fullname}
-
-        🧾 *Payment Code*
-        {$payment->payment_code}
-
-        💰 *Amount Paid*
-        " . rupiah($payment->amount_paid) . "
-
-        📅 *Paid At*
-        " . $payment->paid_at->format('d M Y H:i') . "
-
-        ━━━━━━━━━━━━━━
-
-        Thank you for your payment 🙏";
+            "🎓 *Konfirmasi Pembayaran SPP*\n\n" .
+            "Pembayaran SPP Anda telah berhasil kami terima.\n\n" .
+            "━━━━━━━━━━━━━━\n\n" .
+            "👤 *Nama Siswa*\n" .
+            "{$student->fullname}\n\n" .
+            "🧾 *Kode Pembayaran*\n" .
+            "{$payment->payment_code}\n\n" .
+            "💰 *Jumlah Dibayar*\n" .
+            rupiah($payment->amount_paid) . "\n\n" .
+            "📅 *Waktu Pembayaran*\n" .
+            $payment->paid_at->format('d M Y H:i') . "\n\n" .
+            "━━━━━━━━━━━━━━\n\n" .
+            "Terima kasih atas pembayaran Anda 🙏";
 
         $this->logChannel->send($parent->phone, $message);
         $this->whatsAppChannel->send($parent->phone, $message);
@@ -59,25 +50,23 @@ class PaymentNotificationService
             return;
         }
 
+        // Format billing period nicely if it's a date string (e.g., '2026-11')
+        $formattedPeriod = \Carbon\Carbon::hasFormat($bill->billing_period, 'Y-m')
+            ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+            : $bill->billing_period;
+
         $message =
-            "⚠️ *SPP Payment Reminder*
-
-            Your tuition payment has not been completed.
-
-            ------------------------
-
-            👤 *Student Name*
-            {$student->name}
-
-            📅 *Billing Period*
-            {$bill->billing_period}
-
-            💰 *Amount*
-            " . rupiah($bill->amount) . "
-
-            ------------------------
-
-            Please complete the payment as soon as possible 🙏";
+            "⚠️ *Pengingat Pembayaran SPP*\n\n" .
+            "Tagihan SPP Anda belum diselesaikan.\n\n" .
+            "------------------------\n\n" .
+            "👤 *Nama Siswa*\n" .
+            "{$student->fullname}\n\n" .
+            "📅 *Periode Tagihan*\n" .
+            "{$formattedPeriod}\n\n" .
+            "💰 *Jumlah Tagihan*\n" .
+            rupiah($bill->amount) . "\n\n" .
+            "------------------------\n\n" .
+            "Mohon segera lakukan pembayaran secepatnya 🙏";
 
         $this->logChannel->send($parent->phone, $message);
         $this->whatsAppChannel->send($parent->phone, $message);

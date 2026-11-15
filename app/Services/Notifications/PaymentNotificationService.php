@@ -8,6 +8,8 @@ use App\Models\Payment;
 use App\Services\Notifications\Channels\LogChannel;
 use App\Services\Notifications\Channels\WhatsAppChannel;
 
+use Carbon\Carbon;
+
 class PaymentNotificationService
 {
 
@@ -51,8 +53,8 @@ class PaymentNotificationService
         }
 
         // Format billing period nicely if it's a date string (e.g., '2026-11')
-        $formattedPeriod = \Carbon\Carbon::hasFormat($bill->billing_period, 'Y-m')
-            ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+        $formattedPeriod = Carbon::hasFormat($bill->billing_period, 'Y-m')
+            ? Carbon::parse($bill->billing_period)->translatedFormat('F Y')
             : $bill->billing_period;
 
         $message =

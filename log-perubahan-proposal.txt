@@ -1,0 +1,10 @@
+Perubahan pada proposal:
+
+# BAB 3
+- Ubah Use case diagram yang lama menjadi baru
+- Tambah sub-bab 3.3.3 TU Functional Requirements
+- Ubah DFD Level 0 (Admin) of School Tuition Payment Management System (sub-bab 3.7.1.2)
+- Ubah DFD Level 1 Tuition Billing Management (sub-bab 3.7.1.1.2)
+- Ubah Tuition Billing Flowchart (sub-bab 3.7.2.2)
+- Ubah Entity Relationship Diagram (sub-bab 3.7.3)
+

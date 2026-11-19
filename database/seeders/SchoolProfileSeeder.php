@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\SchoolSetting;
+use App\Models\SchoolProfile;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class SchoolSettingSeeder extends Seeder
+class SchoolProfileSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        SchoolSetting::create([
+        SchoolProfile::create([
             'school_name' => 'My School',
             'education_level' => 'SMK'
         ]);

@@ -28,8 +28,16 @@ class FirstPasswordChangeController extends Controller
                 'must_change_password' => false,
             ]);
 
-            return redirect()->route('students.index')
-                ->with('success', 'Password Anda berhasil diperbarui.');
+            
+            $roleValue = $user->role->value ?? $user->role;
+            // dd($roleValue);
+            if ($roleValue === 'admin') {
+                return redirect()->route('dashboard')->with('success', 'Password Anda berhasil diperbarui.');
+            } elseif ($roleValue === 'tu_staff') {
+                return redirect()->route('students.index')->with('success', 'Password Anda berhasil diperbarui.');;
+            } elseif ($roleValue === 'parent') {
+                return redirect()->route('parent.dashboard')->with('success', 'Password Anda berhasil diperbarui.');;
+            }
         } catch (\Exception $e) {
             return redirect()
                 ->back()

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->decimal('refund_amount', 12, 2)->nullable()->after('cash_payment_proof');
-            $table->string('refund_status')->default('none')->after('cash_payment_proof');
+            $table->string('refund_status')->default('none')->after('refund_amount');
             // values: 'none', 'pending_parent_response', 'info_received', 'completed'
-            $table->text('refund_bank_details')->nullable()->after('cash_payment_proof'); // Stores bank name, account number, account name
-            $table->timestamp('refunded_at')->nullable()->after('cash_payment_proof');
+            $table->text('refund_bank_details')->nullable()->after('refund_status'); // Stores bank name, account number, account name
+            $table->timestamp('refunded_at')->nullable()->after('refund_bank_details');
         });
     }
 

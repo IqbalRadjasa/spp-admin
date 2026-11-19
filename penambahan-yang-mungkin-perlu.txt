@@ -1,3 +1,5 @@
 Penambahan yang mungkin perlu:
 
-- Data backup automation
+- Data backup automation.
+- Tambah seeder baru untuk tahun akademik.
+- Kondisi pembuatan jurusan dan kelas jika Educational Level nya SD dan SMP

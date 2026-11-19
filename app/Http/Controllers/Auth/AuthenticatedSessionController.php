@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
 
         $roleValue = $user->role->value ?? $user->role;
-
+        // dd($roleValue);
         if ($roleValue === 'admin') {
             return redirect()->route('dashboard')->with('success', 'Berhasil masuk ke akun.');
         } elseif ($roleValue === 'tu_staff') {

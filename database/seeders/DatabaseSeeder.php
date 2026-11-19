@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            SchoolSettingSeeder::class
+            SchoolProfileSeeder::class
         ]);
 
         $this->call([

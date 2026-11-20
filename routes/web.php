@@ -128,11 +128,8 @@ Route::middleware([
         ->name('reports.payments.export');
 
     //Receipt's Routes
-    Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
-        ->name('payments.receipt');
-
-    Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
-        ->name('payments.download-receipt');
+    // Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
+    //     ->name('payments.download-receipt');
 
     // Filter Routes
     Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);
@@ -168,11 +165,11 @@ Route::middleware([
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-        Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
-            ->name('payments.download-receipt');
     }
 );
 
+Route::get('/payments/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])
+    ->name('payments.download-receipt')
+    ->middleware('signed');
 
 require __DIR__ . '/auth.php';

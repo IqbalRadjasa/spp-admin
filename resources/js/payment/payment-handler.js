@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function toggleCashProof() {
         const selectedRadio = form.querySelector(
-            'input[name="payment_method_id"]:checked'
+            'input[name="payment_method_id"]:checked',
         );
 
         if (selectedRadio && selectedRadio.id === "tunai") {
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle form submission routing
     form.addEventListener("submit", function (e) {
         const selectedMethod = form.querySelector(
-            'input[name="payment_method_id"]:checked'
+            'input[name="payment_method_id"]:checked',
         );
 
         if (!selectedMethod) return;
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             onClose: function () {
                                 alert(
-                                    "Anda menutup popup sebelum menyelesaikan pembayaran."
+                                    "Anda menutup popup sebelum menyelesaikan pembayaran.",
                                 );
                                 if (submitButton) submitButton.disabled = false;
                             },
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         alert(
                             "Gagal memproses pembayaran: " +
-                                (data.message || "Unknown error")
+                                (data.message || "Unknown error"),
                         );
                         if (submitButton) submitButton.disabled = false;
                     }

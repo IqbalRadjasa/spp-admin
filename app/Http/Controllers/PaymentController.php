@@ -52,121 +52,196 @@ class PaymentController extends Controller
 
     public function store(Request $request, Bill $bill, ActivityLogService $activityLog)
     {
+        $isAlreadyPaid = $bill->status === 'paid' || $bill->payment()->where('status', 'paid')->exists();
+
+        if ($isAlreadyPaid) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tagihan ini sudah lunas.'
+                ], 422);
+            }
+
+            return back()->with('error', 'Tagihan ini sudah lunas.');
+        }
+
         $validated = $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
             'paid_at' => 'required',
             'amount_paid' => 'required|integer|min:1',
-            'notes' => 'nullable',
+            'notes' => 'nullable|string',
             'cash_payment_proof' => 'required_if:payment_method_id,1|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        if ($validated['amount_paid'] != $bill->amount) {
-            return back()->withErrors([
+        if ((int) $validated['amount_paid'] !== (int) $bill->amount) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Nominal pembayaran tidak sesuai dengan tagihan.'
+                ], 422);
+            }
+
+            return back()->withInput()->withErrors([
                 'amount_paid' => 'The payment amount is incorrect'
             ]);
         }
 
         $paymentCode = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
 
-        if ($validated['payment_method_id'] == 1) {
+        // 1. Cash Payment Flow
+        if ((int) $validated['payment_method_id'] === 1) {
             $proofPath = null;
+
             if ($request->hasFile('cash_payment_proof')) {
                 $proofPath = $request->file('cash_payment_proof')->store('payment-proofs', 'public');
             }
 
-            $payment = null;
+            try {
+                $payment = null;
 
-            DB::transaction(
-                function () use (&$payment, $paymentCode, $bill, $validated, $proofPath, $activityLog) {
+                DB::transaction(function () use (
+                    &$payment,
+                    $paymentCode,
+                    $bill,
+                    $validated,
+                    $proofPath,
+                    $activityLog
+                ) {
+                    $lockedBill = Bill::where('id', $bill->id)->lockForUpdate()->first();
+
+                    if (!$lockedBill || $lockedBill->status === 'paid') {
+                        throw new \RuntimeException('Tagihan ini sudah lunas.');
+                    }
+
+                    // Clear any leftover pending payments for this bill so they don't linger
+                    Payment::where('bill_id', $lockedBill->id)
+                        ->where('status', 'pending')
+                        ->lockForUpdate()
+                        ->update(['status' => 'failed']);
+
                     $payment = Payment::create([
                         'payment_code' => $paymentCode,
-                        'bill_id' => $bill->id,
+                        'bill_id' => $lockedBill->id,
                         'payment_method_id' => $validated['payment_method_id'],
-                        'status' => 'paid', // Cash is instantly paid
+                        'status' => 'paid',
                         'paid_at' => $validated['paid_at'],
-                        'amount_paid' => $validated['amount_paid'],
-                        'notes' => $validated['notes'],
+                        'amount_paid' => (int) $validated['amount_paid'],
+                        'notes' => $validated['notes'] ?? null,
                         'cash_payment_proof' => $proofPath,
                     ]);
 
-                    $bill->update([
+                    $lockedBill->update([
                         'status' => 'paid',
                         'reminder_attempts' => 0,
                         'last_reminded_at' => null,
-                        'escalation_status' => 'resolved'
+                        'escalation_status' => 'resolved',
                     ]);
 
                     $activityLog->log(
                         'pembayaran',
                         'bill',
-                        $bill->id,
-                        'Pembayaran Tagihan Tunai: ' . $payment['payment_code']
+                        $lockedBill->id,
+                        'Pembayaran Tagihan Tunai: ' . $payment->payment_code
                     );
+                });
+
+                SendPaymentNotificationJob::dispatch($payment);
+
+                return redirect()
+                    ->route('bills.index')
+                    ->with([
+                        'success' => 'Pembayaran tunai telah berhasil dicatat!',
+                    ]);
+            } catch (\Throwable $e) {
+                if ($proofPath && Storage::disk('public')->exists($proofPath)) {
+                    Storage::disk('public')->delete($proofPath);
                 }
-            );
 
-            // Queue Notification
-            SendPaymentNotificationJob::dispatch($payment);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage() ?: 'Gagal memproses pembayaran tunai.'
+                    ], 422);
+                }
 
-            return redirect()
-                ->route('payments.download-receipt', $payment)
-                ->with([
-                    'success' => 'Pembayaran tunai telah berhasil dicatat!',
-                    'auto_print' => true
-                ]);
+                return back()->withInput()->with('error', $e->getMessage() ?: 'Gagal memproses pembayaran tunai.');
+            }
         }
 
-        if ($validated['payment_method_id'] == 2) {
-            DB::transaction(
-                function () use (&$payment, $paymentCode, $bill, $validated) {
-                    // Create initial record as 'pending'
-                    $payment = Payment::create([
-                        'payment_code' => $paymentCode,
-                        'bill_id' => $bill->id,
-                        'payment_method_id' => $validated['payment_method_id'],
-                        'status' => 'pending',
-                        'paid_at' => $validated['paid_at'],
-                        'amount_paid' => $validated['amount_paid'],
-                        'notes' => $validated['notes']
-                    ]);
-                }
-            );
-
-            $parent = $bill->student->parents()->first();
-            $params = [
-                'transaction_details' => [
-                    'order_id'     => $payment->payment_code, // Use our unique payment code
-                    'gross_amount' => (int) $payment->amount_paid,
-                ],
-                'customer_details' => [
-                    'first_name' => $bill->student->name ?? 'Customer',
-                    'email'      => $parent->email ?? $bill->student->email ?? 'customer@example.com',
-                    'phone'      => $parent->phone ?? $parent->pivot->phone ?? '08123456789'
-                ],
-                'enabled_payments' => [
-                    'bca_va',
-                    'bni_va',
-                    'bri_va',
-                    'gopay',
-                    'shopeepay',
-                    'qris',
-                ],
-            ];
+        // 2. Midtrans Snap Payment Flow
+        if ((int) $validated['payment_method_id'] === 2) {
 
             try {
+                $payment = null;
+
+                DB::transaction(function () use (&$payment, $paymentCode, $bill, $validated) {
+                    
+                    $lockedBill = Bill::where('id', $bill->id)->lockForUpdate()->first();
+
+                    if (!$lockedBill || $lockedBill->status === 'paid') {
+                        throw new \RuntimeException('Tagihan ini sudah lunas.');
+                    }
+                    $payment = Payment::where('bill_id', $lockedBill->id)
+                        ->where('status', 'pending')
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($payment) {
+                        $payment->update([
+                            'payment_code' => $paymentCode,
+                            'payment_method_id' => $validated['payment_method_id'],
+                            'paid_at' => $validated['paid_at'],
+                            'amount_paid' => (int) $validated['amount_paid'],
+                            'notes' => $validated['notes'] ?? null,
+                        ]);
+                    } else {
+                        $payment = Payment::create([
+                            'payment_code' => $paymentCode,
+                            'bill_id' => $lockedBill->id,
+                            'payment_method_id' => $validated['payment_method_id'],
+                            'status' => 'pending',
+                            'paid_at' => $validated['paid_at'],
+                            'amount_paid' => (int) $validated['amount_paid'],
+                            'notes' => $validated['notes'] ?? null,
+                        ]);
+                    }
+                });
+
+                $student = $bill->student;
+                $parent = $student?->parents()->first();
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $payment->payment_code,
+                        'gross_amount' => (int) $payment->amount_paid,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $student?->fullname ?? $student?->nickname ?? 'Customer',
+                        'email' => $parent?->email ?? $student?->email ?? 'customer@example.com',
+                        'phone' => $parent?->phone ?? $parent?->pivot?->phone ?? '08123456789',
+                    ],
+                    'enabled_payments' => [
+                        'bca_va',
+                        'bni_va',
+                        'bri_va',
+                        'gopay',
+                        'shopeepay',
+                        'qris',
+                    ],
+                ];
+
                 $snapToken = Snap::getSnapToken($params);
 
-                // Return JSON for the frontend to launch the Snap popup
                 return response()->json([
                     'status' => 'success',
                     'snap_token' => $snapToken,
-                    'payment_code' => $payment->payment_code
+                    'payment_code' => $payment->payment_code,
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
+                    'message' => $e->getMessage(),
+                ], $e instanceof \RuntimeException ? 422 : 500);
             }
         }
     }
@@ -264,7 +339,7 @@ class PaymentController extends Controller
         // Set paper size to A4
         $pdf->setPaper('a4', 'portrait');
 
-        $filename = 'Kuitansi-SPP-' . $payment->payment_code . '-' . $payment->bill->student->name . '.pdf';
+        $filename = 'Kuitansi-SPP-' . $payment->payment_code . '-' . $payment->bill->student->fullname ?? $payment->bill->student->nickname ?? 'Siswa' . '.pdf';
 
         // Stream or download directly with the custom filename pre-filled
         return $pdf->download($filename);

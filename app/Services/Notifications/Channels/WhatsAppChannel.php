@@ -4,7 +4,6 @@ namespace App\Services\Notifications\Channels;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
 use App\Services\Notifications\Channels\Contracts\NotificationChannelInterface;
 
 class WhatsAppChannel implements NotificationChannelInterface

@@ -30,5 +30,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OccupationSeeder::class,
         ]);
+
+        $this->call([
+            AcademicYearSeeder::class,
+        ]);
     }
 }

@@ -103,16 +103,29 @@
                                 {{-- Education Level Selector --}}
                                 <div class="input-group">
                                     <x-form.input-label for="education_level" :value="__('Level Edukasi')" />
-                                    <div class="relative mt-1">
-                                        <x-form.select-input id="education_level" name="education_level"
-                                            x-model="educationLevel" class="w-full text-sm">
-                                            <option value="SD">SD (Sekolah Dasar)</option>
-                                            <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
-                                            <option value="SMA">SMA (Sekolah Menengah Atas)</option>
-                                            <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
-                                        </x-form.select-input>
-                                    </div>
-                                    <x-form.input-error :messages="$errors->get('education_level')" class="mt-1" />
+
+                                    @if (!empty($setting->education_level))
+                                        <div class="relative mt-1">
+                                            <input type="text" value="{{ $setting->education_level }}" disabled
+                                                readonly
+                                                class="block w-full rounded-md border-stone-200 bg-stone-100 text-stone-600 text-sm cursor-not-allowed">
+                                        </div>
+                                        <p class="mt-1 text-[11px] text-amber-700">
+                                            <i class="ri-lock-line"></i> Jenjang pendidikan dikunci permanen setelah
+                                            pengaturan awal untuk menjaga konsistensi data kelas dan jurusan.
+                                        </p>
+                                    @else
+                                        <div class="relative mt-1">
+                                            <x-form.select-input id="education_level" name="education_level"
+                                                x-model="educationLevel" class="w-full text-sm">
+                                                <option value="SD">SD (Sekolah Dasar)</option>
+                                                <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
+                                                <option value="SMA">SMA (Sekolah Menengah Atas)</option>
+                                                <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
+                                            </x-form.select-input>
+                                        </div>
+                                        <x-form.input-error :messages="$errors->get('education_level')" class="mt-1" />
+                                    @endif
                                 </div>
                             </div>
 

@@ -101,8 +101,12 @@ class SchoolProfileController extends Controller
      */
     public function edit()
     {
-
         $setting = SchoolProfile::first();
+        if (! $setting) {
+            return redirect()
+                ->route('onboarding.school.create')
+                ->with('info', 'Silakan lengkapi profil sekolah terlebih dahulu.');
+        }
 
         return view('settings.school', compact('setting'));
     }
@@ -112,27 +116,40 @@ class SchoolProfileController extends Controller
      */
     public function update(Request $request, ActivityLogService $activityLog)
     {
+        $setting = SchoolProfile::first();
+        if (! $setting) {
+            return redirect()
+                ->route('onboarding.school.create')
+                ->with('info', 'Silakan lengkapi profil sekolah terlebih dahulu.');
+        }
+
+        $isLevelLocked = filled($setting->education_level);
+
         $validated = $request->validate([
-            'school_name'     => 'required|string|max:255',
-            'education_level' => 'required|in:SD,SMP,SMA,SMK',
-            'phone'           => 'nullable|string|max:50',
-            'email'           => 'nullable|email|max:255',
-            'address'         => 'nullable|string|max:1000',
-            'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'school_name'     => ['required', 'string', 'max:255'],
+            'education_level' => $isLevelLocked
+                ? ['nullable', 'in:SD,SMP,SMA,SMK']
+                : ['required', 'in:SD,SMP,SMA,SMK'],
+            'phone'           => ['nullable', 'string', 'max:50'],
+            'email'           => ['nullable', 'email', 'max:255'],
+            'address'         => ['nullable', 'string', 'max:1000'],
+            'logo'            => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
-        $setting = SchoolProfile::first() ?? new SchoolProfile();
+        if ($isLevelLocked) {
+            $validated['education_level'] = $setting->education_level;
+        }
+
+        $newLogoPath = null;
+        $oldLogoPath = $setting->logo;
 
         if ($request->hasFile('logo')) {
-            if ($setting->logo && Storage::disk('public')->exists($setting->logo)) {
-                Storage::disk('public')->delete($setting->logo);
-            }
-
-            $validated['logo'] = $request->file('logo')->store('school-logos', 'public');
+            $newLogoPath = $request->file('logo')->store('school-logos', 'public');
+            $validated['logo'] = $newLogoPath;
         } else {
             unset($validated['logo']);
         }
-
+        
         try {
             DB::transaction(function () use ($setting, $validated, $activityLog) {
                 $setting->fill($validated);
@@ -145,6 +162,10 @@ class SchoolProfileController extends Controller
                     'Informasi profil sekolah telah diperbarui: ' . $setting->school_name
                 );
             });
+
+            if ($newLogoPath && $oldLogoPath && $oldLogoPath !== $newLogoPath && Storage::disk('public')->exists($oldLogoPath)) {
+                Storage::disk('public')->delete($oldLogoPath);
+            }
 
             return back()->with('success', 'Profil sekolah berhasil diperbarui!');
         } catch (\Exception $e) {

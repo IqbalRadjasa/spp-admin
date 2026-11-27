@@ -100,7 +100,7 @@
                             </x-table.td>
 
                             <x-table.td>
-                                <x-table.code-pill>{{ $classroom->major->name }}</x-table.code-pill>
+                                {{-- <x-table.code-pill>{{ $classroom->major->name }}</x-table.code-pill> --}}
                             </x-table.td>
 
                             <x-table.td>
@@ -156,31 +156,46 @@
             </div>
         </div>
 
-
         {{-- Classroom's Form Modal --}}
         <x-modal name="classroom-form-modal" maxWidth="md">
+            @php
+                $educationLevel = $schoolProfile->education_level ?? null;
+                $hasMajor = in_array($educationLevel, ['SMA', 'SMK']);
+                $usesParallelLetter = in_array($educationLevel, ['SD', 'SMP']);
+            @endphp
+
             <div x-data="{
                 isEdit: {{ old('_method') === 'PUT' ? 'true' : 'false' }},
                 action: @js(old('form_action', route('settings.classrooms.store'))),
+                usesParallelLetter: @js($usesParallelLetter),
+                hasMajor: @js($hasMajor),
                 form: {
                     level: @js(old('level', '')),
                     major: @js(old('major_id', '')),
                     class_number: @js(old('class_number', '')),
                     is_active: @js((string) old('is_active', '1'))
+                },
+                normalizeClassNumber() {
+                    if (this.usesParallelLetter && typeof this.form.class_number === 'string') {
+                        this.form.class_number = this.form.class_number.toUpperCase().trim();
+                    }
+                    if (!this.hasMajor) {
+                        this.form.major = '';
+                    }
                 }
-            }" {{-- Re-open modal automatically if validation fails --}}
+            }"
                 @if ($errors->any()) x-init="$nextTick(() => $dispatch('open-modal', 'classroom-form-modal'))" @endif
                 x-on:open-classroom-modal.window="
-                    isEdit = $event.detail.isEdit;
-                    action = $event.detail.action;
-                    form.level = $event.detail.level;
-                    form.major = $event.detail.major;
-                    form.class_number = $event.detail.class_number;
-                    form.is_active = String($event.detail.is_active);
-                    $dispatch('open-modal', 'classroom-form-modal');
-                ">
+                isEdit = $event.detail.isEdit;
+                action = $event.detail.action;
+                form.level = $event.detail.level ?? '';
+                form.major = hasMajor ? ($event.detail.major ?? '') : '';
+                form.class_number = $event.detail.class_number ?? '';
+                form.is_active = String($event.detail.is_active ?? '1');
+                $dispatch('open-modal', 'classroom-form-modal');
+            ">
 
-                <form x-bind:action="action" method="POST">
+                <form x-bind:action="action" method="POST" x-on:submit="normalizeClassNumber()">
                     @csrf
                     <template x-if="isEdit">
                         @method('PUT')
@@ -205,8 +220,8 @@
                                 <x-form.input-error :messages="$errors->get('level')" />
                             </div>
 
-                            {{-- Jurusan --}}
-                            @if (in_array($schoolProfile->education_level, ['SMA', 'SMK']))
+                            {{-- Jurusan (SMA / SMK only) --}}
+                            @if ($hasMajor)
                                 <div class="input-group">
                                     <x-form.input-label for="major" :value="__('Jurusan')" />
                                     <x-form.select-input id="major" name="major_id" class="mt-1"
@@ -220,12 +235,23 @@
                                 </div>
                             @endif
 
-                            {{-- Nomor Kelas --}}
+                            {{-- Nomor Kelas / Rombel --}}
                             <div class="input-group">
-                                <x-form.input-label for="class_number" :value="__('Nomor Kelas')" />
+                                <x-form.input-label for="class_number" :value="$usesParallelLetter ? __('Kelas / Rombel') : __('Nomor Kelas')" />
                                 <x-form.text-input id="class_number" class="block mt-1 w-full" type="text"
-                                    name="class_number" placeholder="Contoh: 1" x-model="form.class_number"
+                                    name="class_number" :placeholder="$usesParallelLetter ? 'Contoh: A, B, C' : 'Contoh: 1'" :maxlength="$usesParallelLetter ? 2 : 10" :pattern="$usesParallelLetter ? '[A-Za-z]{1,2}' : null"
+                                    :title="$usesParallelLetter ? 'Masukkan 1–2 huruf saja (contoh: A, B, C)' : null" x-model="form.class_number"
+                                    x-on:input="
+                                        if (usesParallelLetter) {
+                                            form.class_number = form.class_number.replace(/[^A-Za-z]/g, '').toUpperCase();
+                                        }
+                                    "
                                     required />
+                                @if ($usesParallelLetter)
+                                    <p class="mt-1 text-xs text-stone-500">
+                                        Masukkan huruf rombel saja (1–2 huruf), misalnya A, B, atau C.
+                                    </p>
+                                @endif
                                 <x-form.input-error :messages="$errors->get('class_number')" />
                             </div>
 

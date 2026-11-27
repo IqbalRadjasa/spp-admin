@@ -21,11 +21,17 @@ use App\Http\Controllers\FirstPasswordChangeController;
 
 Route::redirect('/', '/login');
 
+Route::middleware(['auth'])->prefix('onboarding/school')->name('onboarding.school.')->group(function () {
+    Route::get('/setup', [SchoolProfileController::class, 'create'])->name('create');
+    Route::post('/setup', [SchoolProfileController::class, 'store'])->name('store');
+});
+
 
 // Admin's Routes
 Route::middleware([
     'auth',
-    'role:admin'
+    'role:admin', 
+    'school.profile.completed'
 ])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -70,7 +76,8 @@ Route::middleware([
 // Admin & Staff Routes
 Route::middleware([
     'auth',
-    'role:admin,tu_staff'
+    'role:admin,tu_staff', 
+    'school.profile.completed'
 ])->group(function () {
 
     // Student's Routes

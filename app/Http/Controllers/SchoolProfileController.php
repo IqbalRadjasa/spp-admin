@@ -22,15 +22,70 @@ class SchoolProfileController extends Controller
      */
     public function create()
     {
-        //
+        $setting = SchoolProfile::first();
+
+        if ($setting && filled($setting->school_name) && filled($setting->education_level)) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('onboarding-school');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLog)
     {
-        //
+        $validated = $request->validate([
+            'school_name'     => 'required|string|max:255',
+            'education_level' => 'required|in:SD,SMP,SMA,SMK',
+            'phone'           => 'nullable|string|max:50',
+            'email'           => 'nullable|email|max:255',
+            'address'         => 'nullable|string|max:1000',
+            'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $setting = SchoolProfile::first() ?? new SchoolProfile();
+
+        // Lock education_level once already set on an existing profile
+        if ($setting->exists && filled($setting->education_level)) {
+            $validated['education_level'] = $setting->education_level;
+        }
+
+        $logoPath = null;
+
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('school-logos', 'public');
+            $validated['logo'] = $logoPath;
+        } else {
+            unset($validated['logo']);
+        }
+
+        try {
+            DB::transaction(function () use ($setting, $validated, $activityLog) {
+                $setting->fill($validated);
+                $setting->save();
+
+                $activityLog->log(
+                    'pengaturan awal profil sekolah',
+                    'school_profile',
+                    $setting->id,
+                    'Informasi profil sekolah telah ditambahkan: ' . $setting->school_name
+                );
+            });
+
+            return redirect()
+                ->route('dashboard')
+                ->with('success', 'Profil sekolah berhasil disimpan!');
+        } catch (\Throwable $e) {
+            if ($logoPath && Storage::disk('public')->exists($logoPath)) {
+                Storage::disk('public')->delete($logoPath);
+            }
+
+            return back()
+                ->withInput()
+                ->with('error', 'Gagal menyimpan profil: ' . $e->getMessage());
+        }
     }
 
     /**

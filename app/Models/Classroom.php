@@ -28,17 +28,36 @@ class Classroom extends Model
         return $this->hasMany(Student::class);
     }
 
-    public function getDisplayNameAttribute()
+    public function getDisplayNameAttribute(): string
     {
-        $parts = [
-            $this->level
-        ];
+        $level = trim((string) $this->level);
+        $classNumber = trim((string) $this->class_number);
 
-        if ($this->major) {
-            $parts[] = $this->major->code;
+        if (!$this->major_id && !$this->relationLoaded('major')) {
+            if ($classNumber !== '' && ctype_alpha($classNumber)) {
+                return $level . strtoupper($classNumber);
+            }
         }
 
-        $parts[] = $this->class_number;
+        if ($this->major) {
+            $parts = [$level];
+
+            if (!empty($this->major->code)) {
+                $parts[] = $this->major->code;
+            }
+
+            if ($classNumber !== '') {
+                $parts[] = $classNumber;
+            }
+
+            return implode('-', $parts);
+        }
+
+        if ($classNumber !== '' && ctype_alpha($classNumber)) {
+            return $level . strtoupper($classNumber);
+        }
+
+        $parts = array_filter([$level, $classNumber], fn($val) => $val !== '');
 
         return implode('-', $parts);
     }

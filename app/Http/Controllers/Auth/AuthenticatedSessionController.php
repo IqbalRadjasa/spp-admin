@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\SchoolProfile;
+
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -42,13 +44,25 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
 
         $roleValue = $user->role->value ?? $user->role;
-        // dd($roleValue);
+
         if ($roleValue === 'admin') {
+            $schoolProfile = SchoolProfile::first();
+
+            $isProfileIncomplete = ! $schoolProfile
+                || blank($schoolProfile->school_name)
+                || blank($schoolProfile->education_level);
+
+            if ($isProfileIncomplete) {
+                return redirect()
+                    ->route('onboarding.school.create')
+                    ->with('info', 'Silakan lengkapi profil sekolah terlebih dahulu sebelum masuk ke dashboard.');
+            }
+
             return redirect()->route('dashboard')->with('success', 'Berhasil masuk ke akun.');
         } elseif ($roleValue === 'tu_staff') {
-            return redirect()->route('students.index')->with('success', 'Berhasil masuk ke akun.');;
+            return redirect()->route('students.index')->with('success', 'Berhasil masuk ke akun.');
         } elseif ($roleValue === 'parent') {
-            return redirect()->route('parent.dashboard')->with('success', 'Berhasil masuk ke akun.');;
+            return redirect()->route('parent.dashboard')->with('success', 'Berhasil masuk ke akun.');
         }
 
         // Safe error reporting for Enums

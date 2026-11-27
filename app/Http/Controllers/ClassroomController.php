@@ -79,26 +79,56 @@ class ClassroomController extends Controller
      */
     public function store(Request $request, ActivityLogService $activityLog)
     {
+        $schoolProfile = SchoolProfile::first();
+        $educationLevel = $schoolProfile?->education_level;
+        $hasMajor = in_array($educationLevel, ['SMA', 'SMK'], true);
+        $usesParallelLetter = in_array($educationLevel, ['SD', 'SMP'], true);
+
+        $classNumberRules = $usesParallelLetter
+            ? ['required', 'string', 'regex:/^[A-Za-z]{1,2}$/']
+            : ['required', 'integer', 'min:1'];
+
         $validated = $request->validate([
             'level' => ['required', 'integer', 'min:1', 'max:12'],
-            'major_id' => ['required', 'integer', Rule::exists('majors', 'id')],
-            'class_number' => [
-                'required',
+            'major_id' => [
+                $hasMajor ? 'required' : 'nullable',
                 'integer',
-                'min:1',
-                Rule::unique('classrooms')->where(function ($query) use ($request) {
-                    return $query->where('level', $request->level)
-                        ->where('major_id', $request->major_id);
+                Rule::exists('majors', 'id'),
+            ],
+            'class_number' => [
+                ...$classNumberRules,
+                Rule::unique('classrooms')->where(function ($query) use ($request, $hasMajor, $usesParallelLetter) {
+                    $normalizedClassNumber = $usesParallelLetter
+                        ? strtoupper(trim((string) $request->class_number))
+                        : $request->class_number;
+
+                    $query->where('level', $request->level)
+                        ->where('class_number', $normalizedClassNumber);
+
+                    if ($hasMajor) {
+                        $query->where('major_id', $request->major_id);
+                    } else {
+                        $query->whereNull('major_id');
+                    }
+
+                    return $query;
                 }),
             ],
             'is_active' => ['required', 'boolean'],
         ], [
-            'class_number.unique' => 'Kombinasi Tingkat, Jurusan, dan Nomor Kelas ini sudah ada.',
+            'class_number.regex' => 'Huruf rombel hanya boleh berisi 1 sampai 2 huruf (contoh: A, B, C).',
+            'class_number.unique' => $usesParallelLetter
+                ? 'Kombinasi Tingkat dan Huruf Rombel ini sudah ada.'
+                : 'Kombinasi Tingkat, Jurusan, dan Nomor Kelas ini sudah ada.',
             'major_id.exists' => 'Jurusan yang dipilih tidak valid.',
         ]);
 
-        try {
+        $validated['major_id'] = $hasMajor ? $validated['major_id'] : null;
+        $validated['class_number'] = $usesParallelLetter
+            ? strtoupper(trim((string) $validated['class_number']))
+            : (int) $validated['class_number'];
 
+        try {
             DB::transaction(function () use ($validated, $activityLog) {
                 $classroom = Classroom::create($validated);
 

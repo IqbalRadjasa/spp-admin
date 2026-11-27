@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class
         ]);
 
-        $this->call([
-            SchoolProfileSeeder::class
-        ]);
+        // $this->call([
+        //     SchoolProfileSeeder::class
+        // ]);
 
         $this->call([
             PaymentMethodSeeder::class,

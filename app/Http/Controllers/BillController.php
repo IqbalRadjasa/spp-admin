@@ -81,7 +81,7 @@ class BillController extends Controller
 
         return back()->with(
             'success',
-            'Escalation note added.'
+            'Note eskalasi telah ditambahkan.'
         );
     }
 

@@ -11,3 +11,8 @@ Artisan::command('inspire', function () {
 Schedule::command(
     'reminders:overdue'
 )->dailyAt('07:00');
+
+Schedule::command('db:backup')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer();

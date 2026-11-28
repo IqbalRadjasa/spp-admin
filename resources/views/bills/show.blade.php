@@ -89,7 +89,7 @@
                                 <div>
                                     <span
                                         class="{{ $bill->status == 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }} py-1 px-2.5 text-xs font-bold rounded-lg inline-block">
-                                        {{ titleCase($bill->status) }}
+                                        {{ titleCase($bill->status_label) }}
                                     </span>
                                 </div>
                             </div>
@@ -106,21 +106,21 @@
                                             @case('resolved')
                                                 <span
                                                     class="bg-emerald-100 text-emerald-700 font-semibold py-1 px-2.5 rounded-lg text-xs">
-                                                    {{ titleCase($bill->escalation_status) }}
+                                                    {{ titleCase($bill->escalation_status_label) }}
                                                 </span>
                                             @break
 
                                             @case('escalated')
                                                 <span
                                                     class="bg-rose-100 text-rose-700 font-semibold py-1 px-2.5 rounded-lg text-xs">
-                                                    {{ titleCase($bill->escalation_status) }}
+                                                    {{ titleCase($bill->escalation_status_label) }}
                                                 </span>
                                             @break
 
                                             @default
                                                 <span
                                                     class="bg-stone-100 text-stone-600 font-semibold py-1 px-2.5 rounded-lg text-xs">
-                                                    {{ titleCase($bill->escalation_status ?? 'Normal') }}
+                                                    {{ titleCase($bill->escalation_status_label ?? 'Normal') }}
                                                 </span>
                                         @endswitch
                                     </div>

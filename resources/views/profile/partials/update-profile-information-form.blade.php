@@ -11,14 +11,18 @@
     @method('PUT')
 
     <div class="bg-white rounded-xl border border-stone-200/80 shadow-xs overflow-hidden" x-data="{
-        selectedOccupation: '{{ isset($user) && $role === 'parent' ? $user->studentParent->occupation_id : '' }}',
         isOther: false,
         checkOccupation() {
-            const selectedOption = this.$refs.occupationSelect?.options[this.$refs.occupationSelect.selectedIndex];
-            this.isOther = selectedOption ? selectedOption.getAttribute('data-is-other') === 'true' : false;
+            const select = this.$refs.occupationSelect;
+            if (!select) {
+                this.isOther = false;
+                return;
+            }
+            const selectedOption = select.options[select.selectedIndex];
+            this.isOther = selectedOption?.dataset.isOther === 'true';
         }
     }"
-        x-init="checkOccupation()">
+        x-init="$nextTick(() => checkOccupation())">
 
         {{-- Section Header --}}
         <div class="bg-[#FCECD8]/40 px-6 py-4 border-b border-stone-200/60 flex items-center justify-between">
@@ -84,10 +88,7 @@
                     </x-form.select-input>
                     <x-form.input-error :messages="$errors->get('relationship')" class="mt-1" />
                 </div>
-            @endif
-
-            {{-- Occupation Select (Parent Only) --}}
-            @if ($role === 'parent')
+                
                 <div class="input-group">
                     <x-form.input-label for="occupation_id" :value="__('Pekerjaan')"
                         class="text-xs font-semibold text-stone-700" />
@@ -96,23 +97,21 @@
                         <option value="">Pilih Pekerjaan</option>
                         @foreach ($occupations as $occupation)
                             <option value="{{ $occupation->id }}"
-                                data-is-other="{{ strtolower($occupation->name) === 'lainnya' ? 'true' : 'false' }}"
-                                @selected((isset($user) && $role === 'parent' ? $user->studentParent->occupation_id : '') == $occupation->id)>
+                                data-is-other="{{ strtolower(trim($occupation->name)) === 'lainnya' ? 'true' : 'false' }}"
+                                @selected((string) old('occupation_id', $user->studentParent->occupation_id ?? '') === (string) $occupation->id)>
                                 {{ $occupation->name }}
                             </option>
                         @endforeach
                     </x-form.select-input>
                     <x-form.input-error :messages="$errors->get('occupation_id')" class="mt-1" />
                 </div>
-            @endif
 
-            {{-- Custom Occupation (Parent Only AND "Lainnya" selected) --}}
-            @if ($role === 'parent')
-                <div class="input-group" x-show="{{ 'isOther' && $role === 'parent' }}" x-cloak x-transition>
+                {{-- Custom Occupation (Parent Only AND "Lainnya" selected) --}}
+                <div class="input-group" x-show="isOther" x-cloak x-transition>
                     <x-form.input-label for="occupation_custom" :value="__('Nama Pekerjaan Khusus')"
                         class="text-xs font-semibold text-stone-700" />
                     <x-form.text-input id="occupation_custom" class="block mt-1" type="text" name="occupation_custom"
-                        :value="isset($user) && $role === 'parent' ? $user->studentParent->occupation_custom : ''" placeholder="Contoh: Wiraswasta / Freelancer" />
+                        :value="old('occupation_custom', $user->studentParent->occupation_custom ?? '')" placeholder="Contoh: Wiraswasta / Freelancer" />
                     <x-form.input-error :messages="$errors->get('occupation_custom')" class="mt-1" />
                 </div>
             @endif

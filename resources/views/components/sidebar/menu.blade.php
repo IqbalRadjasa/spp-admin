@@ -63,9 +63,11 @@
              Tahun Akademik
          </x-sidebar.sidebar-dropdown-link>
 
-         <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
-             Jurusan
-         </x-sidebar.sidebar-dropdown-link>
+         @if (schoolProfile()->educational_level === 'SD' || schoolProfile()->educational_level === 'SMP')
+             <x-sidebar.sidebar-dropdown-link :href="route('settings.majors.index')" :active="request()->routeIs('settings.majors.index')">
+                 Jurusan
+             </x-sidebar.sidebar-dropdown-link>
+         @endif
 
          <x-sidebar.sidebar-dropdown-link :href="route('settings.classrooms.index')" :active="request()->routeIs('settings.classrooms.*')">
              Kelas

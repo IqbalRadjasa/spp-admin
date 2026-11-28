@@ -57,7 +57,7 @@
         {{-- Nama Sekolah --}}
         <div class="input-group">
             <x-form.input-label for="school_name" :value="__('Nama Sekolah')" />
-            <x-form.text-input id="school_name" class="block w-full pl-9 text-sm" type="text" name="school_name"
+            <x-form.text-input id="school_name" class="block w-full text-sm" type="text" name="school_name"
                 x-model="schoolName" required autofocus placeholder="Contoh: SD Negeri 01 Sukamaju" />
             <x-form.input-error :messages="$errors->get('school_name')" class="mt-1" />
         </div>

@@ -90,8 +90,12 @@
                     </div>
                 </form>
 
-
-                <x-table :headers="['Tingkat', 'Jurusan', 'Nama', 'Status', 'Aksi']" :empty="$classrooms->isEmpty()">
+                @php
+                    $headers = array_values(
+                        array_filter(['Tingkat', $hasMajor ? 'Jurusan' : null, 'Nama', 'Status', 'Aksi']),
+                    );
+                @endphp
+                <x-table :headers="$headers" :empty="$classrooms->isEmpty()">
                     @foreach ($classrooms as $classroom)
                         <x-table.tr>
 
@@ -99,9 +103,11 @@
                                 {{ $classroom->level }}
                             </x-table.td>
 
-                            <x-table.td>
-                                {{-- <x-table.code-pill>{{ $classroom->major->name }}</x-table.code-pill> --}}
-                            </x-table.td>
+                            @if ($hasMajor)
+                                <x-table.td>
+                                    <x-table.code-pill>{{ $classroom->major->name }}</x-table.code-pill>
+                                </x-table.td>
+                            @endif
 
                             <x-table.td>
                                 {{ $classroom->display_name }}

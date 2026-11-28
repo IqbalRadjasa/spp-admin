@@ -20,6 +20,9 @@ class ClassroomController extends Controller
     public function index(Request $request)
     {
         $schoolProfile = SchoolProfile::first();
+        $educationLevel = $schoolProfile?->education_level;
+        $hasMajor = in_array($educationLevel, ['SMA', 'SMK'], true);
+
         $majors = Major::select('id', 'name', 'code')->where('is_active', true)->orderBy('id', 'asc')->get();
 
         // Global summary metrics
@@ -59,7 +62,8 @@ class ClassroomController extends Controller
             'classrooms',
             'schoolProfile',
             'majors',
-            'summary'
+            'summary',
+            'hasMajor'
         ));
     }
 
@@ -249,6 +253,12 @@ class ClassroomController extends Controller
                 ->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+
+    public function getAllClassrooms()
+    {
+        $classrooms = Classroom::all();
+        return response()->json($classrooms);
     }
 
     public function byMajor(Major $major)

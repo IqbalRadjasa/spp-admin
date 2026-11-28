@@ -114,7 +114,8 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $schoolProfile = SchoolProfile::first();
+        $schoolProfile = SchoolProfile();
+        $educationLevel = $schoolProfile?->education_level;
         $majors = Major::select('id', 'name')->where('is_active', true)->orderBy('id', 'asc')->get();
         $classrooms = Classroom::select('id')->get();
         $occupations = Occupation::select('id', 'name')->where('is_active', true)->orderBy('code', 'asc')->get();
@@ -123,7 +124,8 @@ class StudentController extends Controller
             'classrooms',
             'majors',
             'schoolProfile',
-            'occupations'
+            'occupations',
+            'educationLevel'
         ));
     }
 
@@ -275,14 +277,16 @@ class StudentController extends Controller
 
         $majors = Major::all();
         $classrooms = Classroom::all();
-        $schoolProfile = SchoolProfile::first();
+        $schoolProfile = SchoolProfile();
+        $educationLevel = $schoolProfile?->education_level;
 
         return view('students.edit', compact(
             'student',
             'selectedParent',
             'classrooms',
             'schoolProfile',
-            'majors'
+            'majors',
+            'educationLevel'
         ));
     }
     /**

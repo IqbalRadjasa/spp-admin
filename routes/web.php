@@ -139,6 +139,7 @@ Route::middleware([
     //     ->name('payments.download-receipt');
 
     // Filter Routes
+    Route::get('/classrooms/getAll', [ClassroomController::class, 'getAllClassrooms']);
     Route::get('/classrooms/by-major/{major}', [ClassroomController::class, 'byMajor']);
 });
 

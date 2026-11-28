@@ -33,24 +33,40 @@
     <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
         {{-- Avatar Preview & Upload (Full Row) --}}
-        <div
+        <div x-data="{
+            avatarPreview: @js($mode === 'edit' && !empty($student->avatar) ? asset('storage/' . $student->avatar) : ''),
+            previewAvatar(event) {
+                const file = event.target.files?.[0];
+                if (!file) {
+                    return;
+                }
+        
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.avatarPreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }"
             class="md:col-span-2 lg:col-span-3 flex items-center gap-4 p-4 bg-[#FCECD8]/20 rounded-xl border border-[#91AC67]/20">
             <div
-                class="relative w-16 h-16 rounded-full overflow-hidden bg-stone-100 border-2 border-[#91AC67]/40 flex-shrink-0 flex items-center justify-center text-stone-400">
-                @if ($mode === 'edit' && $student->avatar)
-                    <img src="{{ asset('storage/' . $student->avatar) }}" alt="Avatar"
-                        class="w-full h-full object-cover">
-                @else
+                class="relative w-16 h-16 rounded-full overflow-hidden bg-stone-100 border-2 border-[#91AC67]/40 shrink-0 flex items-center justify-center text-stone-400">
+                <template x-if="avatarPreview">
+                    <img :src="avatarPreview" alt="Preview Avatar Siswa" class="w-full h-full object-cover">
+                </template>
+                <template x-if="!avatarPreview">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                @endif
+                </template>
             </div>
-            <div class="flex-grow">
+            <div class="grow">
                 <x-form.input-label for="avatar" :value="__('Foto Siswa / Avatar')" />
-                <input type="file" id="avatar" name="avatar" accept="image/*"
+                <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg,image/jpg,image/webp"
+                    @change="previewAvatar"
                     class="block w-full text-xs text-stone-500 mt-1 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#597928] file:text-[#FCECD8] hover:file:bg-[#6E3511] file:cursor-pointer file:transition-colors" />
+                <p class="text-[11px] text-stone-400 mt-1">JPG, PNG, atau WEBP (Maks. 2MB)</p>
                 <x-form.input-error :messages="$errors->get('avatar')" class="mt-1" />
             </div>
         </div>
@@ -168,6 +184,7 @@
             </div>
         @endif
 
+        <input type="text" id="educational-level" value="{{ $educationLevel }}" hidden>
         <div class="input-group">
             <x-form.input-label for="classroom_id" :is-required="true" :value="__('Kelas')" />
             <x-form.select-input name="classroom_id" id="classroom-filter" class="mt-1 w-full" required>
